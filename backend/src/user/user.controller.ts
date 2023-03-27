@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, 
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpException } from '@nestjs/common';
 
 @Controller('user')
 export class UserController {
@@ -18,8 +19,11 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const user = await this.userService.findOne(+id);
+    if (!user)
+        throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    return user;
   }
 
   @Patch(':id')
