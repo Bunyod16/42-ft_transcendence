@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
 		UserModule,
 		ConfigModule.forRoot({ isGlobal: true }),
+		MatchesModule,
 	],
   controllers: [
 		AppController,
