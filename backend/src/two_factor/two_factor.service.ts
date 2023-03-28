@@ -3,7 +3,6 @@ import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { TwoFactor } from './entities/two_factor.entity';
 import { Repository } from 'typeorm';
-import { twoFactorProviders } from './two_factor.providers';
 
 @Injectable()
 export class TwoFactorService {
