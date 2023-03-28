@@ -34,7 +34,7 @@ let TwoFactorService = class TwoFactorService {
             id: id,
         });
     }
-    remove(id) {
+    async remove(id) {
         return this.twoFactorRepository.delete({
             id: id,
         });

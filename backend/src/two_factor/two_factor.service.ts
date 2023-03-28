@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 // import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { TwoFactor } from './entities/two_factor.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class TwoFactorService {
@@ -33,7 +33,7 @@ export class TwoFactorService {
   //   return `This action updates a #${id} twoFactor`;
   // }
 
-  remove(id: number) {
+  async remove(id: number): Promise<DeleteResult> {
     return this.twoFactorRepository.delete({
       id: id,
     });

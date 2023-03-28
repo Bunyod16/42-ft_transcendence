@@ -31,14 +31,25 @@ let TwoFactorController = class TwoFactorController {
         return twoFactor;
     }
     async findOne(id) {
+        common_1.Logger.log(`[twoFactor] Trying to get twoFactor with id = [${id}]`);
         const twoFactor = await this.twoFactorService.findOne(+id);
         if (!twoFactor) {
+            common_1.Logger.log(`[twoFactor] twoFactor with id = [${id}] doeesn't exist`);
             throw new common_1.HttpException('Not Found', common_1.HttpStatus.NOT_FOUND);
         }
         return twoFactor;
     }
-    remove(id) {
-        return this.twoFactorService.remove(+id);
+    async remove(id) {
+        const twoFactor_raw = await this.twoFactorService.findOne(+id);
+        const twoFactor = await this.twoFactorService.remove(+id);
+        common_1.Logger.log(`[twoFactor] Trying to delete twoFactor with id = [${id}]`);
+        if (!twoFactor || twoFactor.affected === 0) {
+            common_1.Logger.log(`[twoFactor] twoFactor with id = [${id}] doeesn't exist`);
+            throw new common_1.HttpException('Not Found', common_1.HttpStatus.NOT_FOUND);
+        }
+        twoFactor.raw = twoFactor_raw;
+        common_1.Logger.log(`[twoFactor] Deleted twoFactor with id = [${id}]`);
+        return twoFactor;
     }
 };
 __decorate([
@@ -66,7 +77,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "remove", null);
 TwoFactorController = __decorate([
     (0, common_1.Controller)('two-factor'),
