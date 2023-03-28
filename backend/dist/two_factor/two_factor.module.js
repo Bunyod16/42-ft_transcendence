@@ -6,29 +6,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.TwoFactorModule = void 0;
 const common_1 = require("@nestjs/common");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const user_module_1 = require("./user/user.module");
+const two_factor_service_1 = require("./two_factor.service");
+const two_factor_controller_1 = require("./two_factor.controller");
+const database_module_1 = require("../database/database.module");
 const config_1 = require("@nestjs/config");
-const two_factor_module_1 = require("./two_factor/two_factor.module");
-let AppModule = class AppModule {
+const two_factor_providers_1 = require("./two_factor.providers");
+let TwoFactorModule = class TwoFactorModule {
 };
-AppModule = __decorate([
+TwoFactorModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            user_module_1.UserModule,
-            config_1.ConfigModule.forRoot({ isGlobal: true }),
-            two_factor_module_1.TwoFactorModule,
-        ],
-        controllers: [
-            app_controller_1.AppController,
-        ],
+        imports: [database_module_1.DatabaseModule, config_1.ConfigModule],
+        controllers: [two_factor_controller_1.TwoFactorController],
         providers: [
-            app_service_1.AppService,
+            ...two_factor_providers_1.twoFactorProviders,
+            two_factor_service_1.TwoFactorService
         ],
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], TwoFactorModule);
+exports.TwoFactorModule = TwoFactorModule;
+//# sourceMappingURL=two_factor.module.js.map

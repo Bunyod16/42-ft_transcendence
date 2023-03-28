@@ -12,69 +12,69 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchesController = void 0;
+exports.TwoFactorController = void 0;
 const common_1 = require("@nestjs/common");
-const matches_service_1 = require("./matches.service");
-const create_match_dto_1 = require("./dto/create-match.dto");
-const update_match_dto_1 = require("./dto/update-match.dto");
-let MatchesController = class MatchesController {
-    constructor(matchesService) {
-        this.matchesService = matchesService;
+const two_factor_service_1 = require("./two_factor.service");
+const create_two_factor_dto_1 = require("./dto/create-two_factor.dto");
+const update_two_factor_dto_1 = require("./dto/update-two_factor.dto");
+let TwoFactorController = class TwoFactorController {
+    constructor(twoFactorService) {
+        this.twoFactorService = twoFactorService;
     }
-    create(createMatchDto) {
-        return this.matchesService.create(createMatchDto);
+    create(createTwoFactorDto) {
+        return this.twoFactorService.create(createTwoFactorDto);
     }
     findAll() {
-        return this.matchesService.findAll();
+        return this.twoFactorService.findAll();
     }
     findOne(id) {
-        return this.matchesService.findOne(+id);
+        return this.twoFactorService.findOne(+id);
     }
-    update(id, updateMatchDto) {
-        return this.matchesService.update(+id, updateMatchDto);
+    update(id, updateTwoFactorDto) {
+        return this.twoFactorService.update(+id, updateTwoFactorDto);
     }
     remove(id) {
-        return this.matchesService.remove(+id);
+        return this.twoFactorService.remove(+id);
     }
 };
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_match_dto_1.CreateMatchDto]),
+    __metadata("design:paramtypes", [create_two_factor_dto_1.CreateTwoFactorDto]),
     __metadata("design:returntype", void 0)
-], MatchesController.prototype, "create", null);
+], TwoFactorController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], MatchesController.prototype, "findAll", null);
+], TwoFactorController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], MatchesController.prototype, "findOne", null);
+], TwoFactorController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_match_dto_1.UpdateMatchDto]),
+    __metadata("design:paramtypes", [String, update_two_factor_dto_1.UpdateTwoFactorDto]),
     __metadata("design:returntype", void 0)
-], MatchesController.prototype, "update", null);
+], TwoFactorController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], MatchesController.prototype, "remove", null);
-MatchesController = __decorate([
-    (0, common_1.Controller)('matches'),
-    __metadata("design:paramtypes", [matches_service_1.MatchesService])
-], MatchesController);
-exports.MatchesController = MatchesController;
-//# sourceMappingURL=matches.controller.js.map
+], TwoFactorController.prototype, "remove", null);
+TwoFactorController = __decorate([
+    (0, common_1.Controller)('two-factor'),
+    __metadata("design:paramtypes", [two_factor_service_1.TwoFactorService])
+], TwoFactorController);
+exports.TwoFactorController = TwoFactorController;
+//# sourceMappingURL=two_factor.controller.js.map

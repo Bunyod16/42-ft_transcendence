@@ -1,1 +1,1 @@
-export declare function encodePassword(rawPassword: string): string;
+export declare function encodePassword(rawPassword: string): any;
