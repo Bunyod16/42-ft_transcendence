@@ -23,15 +23,18 @@ let TwoFactorService = class TwoFactorService {
         console.log(createTwoFactorDto);
         return this.twoFactorRepository.save(createTwoFactorDto);
     }
-    findAll() {
+    async findAll() {
         return this.twoFactorRepository.find({
             relations: {
                 user: true,
-            }
+            },
         });
     }
-    findOne(id) {
-        return `This action returns a #${id} twoFactor`;
+    async findOne(id) {
+        console.log(this.twoFactorRepository.findOneBy({ id: id }));
+        return this.twoFactorRepository.findOneBy({
+            id: id,
+        });
     }
     update(id, updateTwoFactorDto) {
         return `This action updates a #${id} twoFactor`;

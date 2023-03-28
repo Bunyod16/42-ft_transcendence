@@ -3,7 +3,6 @@ import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { TwoFactor } from './entities/two_factor.entity';
 import { Repository } from 'typeorm';
-import { twoFactorProviders } from './two_factor.providers';
 
 @Injectable()
 export class TwoFactorService {
@@ -13,20 +12,23 @@ export class TwoFactorService {
   ) {}
 
   create(createTwoFactorDto: CreateTwoFactorDto) {
-		console.log(createTwoFactorDto);
-				return this.twoFactorRepository.save(createTwoFactorDto);
+    console.log(createTwoFactorDto);
+    return this.twoFactorRepository.save(createTwoFactorDto);
   }
 
-  findAll() {
-		 return this.twoFactorRepository.find({
-			relations: {
-				user: true,
-			}
-		});
+  async findAll(): Promise<TwoFactor[]> {
+    return this.twoFactorRepository.find({
+      relations: {
+        user: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} twoFactor`;
+  async findOne(id: number): Promise<TwoFactor> {
+    console.log(this.twoFactorRepository.findOneBy({ id: id }));
+    return this.twoFactorRepository.findOneBy({
+      id: id,
+    });
   }
 
   update(id: number, updateTwoFactorDto: UpdateTwoFactorDto) {

@@ -16,7 +16,6 @@ exports.TwoFactorController = void 0;
 const common_1 = require("@nestjs/common");
 const two_factor_service_1 = require("./two_factor.service");
 const create_two_factor_dto_1 = require("./dto/create-two_factor.dto");
-const update_two_factor_dto_1 = require("./dto/update-two_factor.dto");
 let TwoFactorController = class TwoFactorController {
     constructor(twoFactorService) {
         this.twoFactorService = twoFactorService;
@@ -27,11 +26,12 @@ let TwoFactorController = class TwoFactorController {
     findAll() {
         return this.twoFactorService.findAll();
     }
-    findOne(id) {
-        return this.twoFactorService.findOne(+id);
-    }
-    update(id, updateTwoFactorDto) {
-        return this.twoFactorService.update(+id, updateTwoFactorDto);
+    async findOne(id) {
+        const twoFactor = await this.twoFactorService.findOne(+id);
+        if (!twoFactor) {
+            throw new common_1.HttpException('Not Found', common_1.HttpStatus.NOT_FOUND);
+        }
+        return twoFactor;
     }
     remove(id) {
         return this.twoFactorService.remove(+id);
@@ -55,16 +55,8 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_two_factor_dto_1.UpdateTwoFactorDto]),
-    __metadata("design:returntype", void 0)
-], TwoFactorController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

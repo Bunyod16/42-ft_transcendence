@@ -1,10 +1,17 @@
-import { PrimaryColumn, CreateDateColumn, Entity, Column, OneToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Entity,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class TwoFactor {
-	 @PrimaryGeneratedColumn()
-	 id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @OneToOne(() => User)
   @JoinColumn()

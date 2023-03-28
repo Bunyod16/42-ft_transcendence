@@ -7,7 +7,7 @@ export declare class TwoFactorService {
     constructor(twoFactorRepository: Repository<TwoFactor>);
     create(createTwoFactorDto: CreateTwoFactorDto): Promise<CreateTwoFactorDto & TwoFactor>;
     findAll(): Promise<TwoFactor[]>;
-    findOne(id: number): string;
+    findOne(id: number): Promise<TwoFactor>;
     update(id: number, updateTwoFactorDto: UpdateTwoFactorDto): string;
     remove(id: number): string;
 }
