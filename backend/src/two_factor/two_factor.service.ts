@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
-import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
+// import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { TwoFactor } from './entities/two_factor.entity';
 import { Repository } from 'typeorm';
 
@@ -12,7 +12,6 @@ export class TwoFactorService {
   ) {}
 
   create(createTwoFactorDto: CreateTwoFactorDto) {
-    console.log(createTwoFactorDto);
     return this.twoFactorRepository.save(createTwoFactorDto);
   }
 
@@ -25,17 +24,18 @@ export class TwoFactorService {
   }
 
   async findOne(id: number): Promise<TwoFactor> {
-    console.log(this.twoFactorRepository.findOneBy({ id: id }));
     return this.twoFactorRepository.findOneBy({
       id: id,
     });
   }
 
-  update(id: number, updateTwoFactorDto: UpdateTwoFactorDto) {
-    return `This action updates a #${id} twoFactor`;
-  }
+  // update(id: number, updateTwoFactorDto: UpdateTwoFactorDto) {
+  //   return `This action updates a #${id} twoFactor`;
+  // }
 
   remove(id: number) {
-    return `This action removes a #${id} twoFactor`;
+    return this.twoFactorRepository.delete({
+      id: id,
+    });
   }
 }

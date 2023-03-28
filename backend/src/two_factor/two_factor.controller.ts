@@ -23,8 +23,12 @@ export class TwoFactorController {
   }
 
   @Get()
-  findAll() {
-    return this.twoFactorService.findAll();
+  async findAll() {
+    const twoFactor = this.twoFactorService.findAll();
+    if (!twoFactor) {
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    }
+    return twoFactor;
   }
 
   @Get(':id')

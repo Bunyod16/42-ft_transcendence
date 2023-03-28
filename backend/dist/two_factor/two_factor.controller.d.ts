@@ -6,5 +6,5 @@ export declare class TwoFactorController {
     create(createTwoFactorDto: CreateTwoFactorDto): Promise<CreateTwoFactorDto & import("./entities/two_factor.entity").TwoFactor>;
     findAll(): Promise<import("./entities/two_factor.entity").TwoFactor[]>;
     findOne(id: string): Promise<import("./entities/two_factor.entity").TwoFactor>;
-    remove(id: string): string;
+    remove(id: string): Promise<import("typeorm").DeleteResult>;
 }

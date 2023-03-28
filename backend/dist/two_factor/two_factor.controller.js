@@ -23,8 +23,12 @@ let TwoFactorController = class TwoFactorController {
     create(createTwoFactorDto) {
         return this.twoFactorService.create(createTwoFactorDto);
     }
-    findAll() {
-        return this.twoFactorService.findAll();
+    async findAll() {
+        const twoFactor = this.twoFactorService.findAll();
+        if (!twoFactor) {
+            throw new common_1.HttpException('Not Found', common_1.HttpStatus.NOT_FOUND);
+        }
+        return twoFactor;
     }
     async findOne(id) {
         const twoFactor = await this.twoFactorService.findOne(+id);
@@ -48,7 +52,7 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),

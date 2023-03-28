@@ -20,7 +20,6 @@ let TwoFactorService = class TwoFactorService {
         this.twoFactorRepository = twoFactorRepository;
     }
     create(createTwoFactorDto) {
-        console.log(createTwoFactorDto);
         return this.twoFactorRepository.save(createTwoFactorDto);
     }
     async findAll() {
@@ -31,16 +30,14 @@ let TwoFactorService = class TwoFactorService {
         });
     }
     async findOne(id) {
-        console.log(this.twoFactorRepository.findOneBy({ id: id }));
         return this.twoFactorRepository.findOneBy({
             id: id,
         });
     }
-    update(id, updateTwoFactorDto) {
-        return `This action updates a #${id} twoFactor`;
-    }
     remove(id) {
-        return `This action removes a #${id} twoFactor`;
+        return this.twoFactorRepository.delete({
+            id: id,
+        });
     }
 };
 TwoFactorService = __decorate([
