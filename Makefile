@@ -6,22 +6,20 @@ DEV_POSTGRESQL_VOLUME = dev_trancendence_posgresdb
 all : prod
 
 dev :
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
 
 prod :	
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
 down :
 	docker compose down
 
-clean_dev :
-	docker compose down
+clean_dev : down
 	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
 	docker rmi $(NAME)-nestjs
 	docker rmi $(NAME)-nextjs
 
-clean_prod :
-	docker compose down
+clean_prod : down
 	docker volume rm $(NAME)_$(POSTGRESQL_VOLUME)
 	docker rmi $(NAME)-nestjs
 	docker rmi $(NAME)-nextjs
