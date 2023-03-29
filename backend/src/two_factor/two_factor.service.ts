@@ -11,7 +11,9 @@ export class TwoFactorService {
     private twoFactorRepository: Repository<TwoFactor>,
   ) {}
 
-  create(createTwoFactorDto: CreateTwoFactorDto) {
+  async create(
+    createTwoFactorDto: CreateTwoFactorDto,
+  ): Promise<CreateTwoFactorDto & TwoFactor> {
     return this.twoFactorRepository.save(createTwoFactorDto);
   }
 
@@ -34,8 +36,14 @@ export class TwoFactorService {
   // }
 
   async remove(id: number): Promise<DeleteResult> {
-    return this.twoFactorRepository.delete({
-      id: id,
-    });
+    return this.twoFactorRepository.delete({ id });
+
+    //idk why but docs show to use this instead of the above
+    // return await this.twoFactorRepository
+    //   .createQueryBuilder('two_factor')
+    //   .delete()
+    //   .from(TwoFactor)
+    //   .where('id = :id', { id: id })
+    //   .execute();
   }
 }

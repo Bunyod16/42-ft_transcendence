@@ -20,8 +20,20 @@ let TwoFactorController = class TwoFactorController {
     constructor(twoFactorService) {
         this.twoFactorService = twoFactorService;
     }
-    create(createTwoFactorDto) {
-        return this.twoFactorService.create(createTwoFactorDto);
+    async create(createTwoFactorDto) {
+        try {
+            const twoFactor = await this.twoFactorService.create(createTwoFactorDto);
+            if (!twoFactor) {
+                common_1.Logger.log(`[twoFactor] Couldnt create twoFactor`);
+                throw new common_1.HttpException('Internal Server Error', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            common_1.Logger.log(`[twoFactor] Created twoFactor with id = [${twoFactor.id}]`);
+            return twoFactor;
+        }
+        catch (error) {
+            common_1.Logger.error(`[twoFactor] twoFactor for user with id = [${createTwoFactorDto.user.id}] already exists`);
+            throw new common_1.HttpException('Internal Server Error: twoFactor for user already exists', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async findAll() {
         const twoFactor = this.twoFactorService.findAll();
@@ -40,14 +52,12 @@ let TwoFactorController = class TwoFactorController {
         return twoFactor;
     }
     async remove(id) {
-        const twoFactor_raw = await this.twoFactorService.findOne(+id);
-        const twoFactor = await this.twoFactorService.remove(+id);
+        const twoFactor = await this.twoFactorService.remove(id);
         common_1.Logger.log(`[twoFactor] Trying to delete twoFactor with id = [${id}]`);
         if (!twoFactor || twoFactor.affected === 0) {
             common_1.Logger.log(`[twoFactor] twoFactor with id = [${id}] doeesn't exist`);
             throw new common_1.HttpException('Not Found', common_1.HttpStatus.NOT_FOUND);
         }
-        twoFactor.raw = twoFactor_raw;
         common_1.Logger.log(`[twoFactor] Deleted twoFactor with id = [${id}]`);
         return twoFactor;
     }
@@ -57,7 +67,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_two_factor_dto_1.CreateTwoFactorDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
@@ -74,9 +84,9 @@ __decorate([
 ], TwoFactorController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "remove", null);
 TwoFactorController = __decorate([

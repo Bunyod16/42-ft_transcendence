@@ -19,7 +19,7 @@ let TwoFactorService = class TwoFactorService {
     constructor(twoFactorRepository) {
         this.twoFactorRepository = twoFactorRepository;
     }
-    create(createTwoFactorDto) {
+    async create(createTwoFactorDto) {
         return this.twoFactorRepository.save(createTwoFactorDto);
     }
     async findAll() {
@@ -35,9 +35,7 @@ let TwoFactorService = class TwoFactorService {
         });
     }
     async remove(id) {
-        return this.twoFactorRepository.delete({
-            id: id,
-        });
+        return this.twoFactorRepository.delete({ id });
     }
 };
 TwoFactorService = __decorate([

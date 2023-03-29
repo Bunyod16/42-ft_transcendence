@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TwoFactorService } from './two_factor.service';
 import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
@@ -19,8 +20,27 @@ export class TwoFactorController {
   constructor(private readonly twoFactorService: TwoFactorService) {}
 
   @Post()
-  create(@Body() createTwoFactorDto: CreateTwoFactorDto) {
-    return this.twoFactorService.create(createTwoFactorDto);
+  async create(@Body() createTwoFactorDto: CreateTwoFactorDto) {
+    try {
+      const twoFactor = await this.twoFactorService.create(createTwoFactorDto);
+      if (!twoFactor) {
+        Logger.log(`[twoFactor] Couldnt create twoFactor`);
+        throw new HttpException(
+          'Internal Server Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      Logger.log(`[twoFactor] Created twoFactor with id = [${twoFactor.id}]`);
+      return twoFactor;
+    } catch (error) {
+      Logger.error(
+        `[twoFactor] twoFactor for user with id = [${createTwoFactorDto.user.id}] already exists`,
+      );
+      throw new HttpException(
+        'Internal Server Error: twoFactor for user already exists',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()
@@ -50,16 +70,16 @@ export class TwoFactorController {
   // }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    const twoFactor_raw = await this.twoFactorService.findOne(+id);
-    const twoFactor = await this.twoFactorService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    // const twoFactor_raw = await this.twoFactorService.findOne(id);
+    const twoFactor = await this.twoFactorService.remove(id);
     Logger.log(`[twoFactor] Trying to delete twoFactor with id = [${id}]`);
 
     if (!twoFactor || twoFactor.affected === 0) {
       Logger.log(`[twoFactor] twoFactor with id = [${id}] doeesn't exist`);
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
-    twoFactor.raw = twoFactor_raw;
+    // twoFactor.raw = twoFactor_raw;
     Logger.log(`[twoFactor] Deleted twoFactor with id = [${id}]`);
     return twoFactor;
   }
