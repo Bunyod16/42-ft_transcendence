@@ -90,6 +90,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "remove", null);
 TwoFactorController = __decorate([
+    ApiTags('two-factor'),
     (0, common_1.Controller)('two-factor'),
     __metadata("design:paramtypes", [two_factor_service_1.TwoFactorService])
 ], TwoFactorController);

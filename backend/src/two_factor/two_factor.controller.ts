@@ -14,7 +14,9 @@ import {
 import { TwoFactorService } from './two_factor.service';
 import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 // import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('two-factor')
 @Controller('two-factor')
 export class TwoFactorController {
   constructor(private readonly twoFactorService: TwoFactorService) {}
