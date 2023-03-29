@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    environment:
+      DB_HOST: ${DB_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+    volumes:
+      - trancendence_posgresdb:/var/lib/postgresql/data
+    # to ensure database is alive before starting every other service
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  nestjs:
+    environment:
+      LISTEN_PORT: ${NEST_LISTEN_PORT}
+      ENV: ${ENV}
+    entrypoint: ["node", "dist/main"]
+
+  nextjs:
+    entrypoint: ["npx", "next", "start"]
+
+volumes:
+  trancendence_posgresdb:

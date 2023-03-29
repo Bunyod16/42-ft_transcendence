@@ -4,23 +4,9 @@ services:
   postgresdb:
     container_name: postgresdb
     image: postgres:14.7-bullseye
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-    # to ensure database is alive before starting every other service
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${DB_NAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
     restart: unless-stopped
     expose:
-      - "5432"
-    volumes:
-      - trancendence_posgresdb:/var/lib/postgresql/data
+      - ${DB_PORT}
     configs:
       - source: postgres_initsql
         target: /docker-entrypoint-initdb.d/init.sh
@@ -29,10 +15,8 @@ services:
     container_name: nestjs
     build:
       context: ./backend
-    volumes:
-      - trancendence_nestjs:/trancendence_nestjs
     expose:
-      - "3000"
+      - ${NEST_LISTEN_PORT}
     depends_on:
       postgresdb:
         condition: service_healthy
@@ -42,10 +26,8 @@ services:
     container_name: nextjs
     build:
       context: ./frontend
-    volumes:
-      - trancendence_nextjs:/trancendence_nextjs
     ports:
-      - "3000:3000"
+      - "3000:${NEXT_LISTEN_PORT}"
     depends_on:
       postgresdb:
         condition: service_healthy
@@ -56,8 +38,3 @@ services:
 configs:
   postgres_initsql:
     file: ./backend/postgres/init.sh
-
-volumes:
-  trancendence_posgresdb:
-  trancendence_nestjs:
-  trancendence_nextjs:
