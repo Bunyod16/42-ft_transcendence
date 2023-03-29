@@ -5,8 +5,6 @@ services:
     container_name: postgresdb
     image: postgres:14.7-bullseye
     restart: unless-stopped
-    expose:
-      - ${DB_PORT}
     configs:
       - source: postgres_initsql
         target: /docker-entrypoint-initdb.d/init.sh
@@ -15,8 +13,6 @@ services:
     container_name: nestjs
     build:
       context: ./backend
-    expose:
-      - ${NEST_LISTEN_PORT}
     depends_on:
       postgresdb:
         condition: service_healthy

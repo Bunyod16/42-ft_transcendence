@@ -18,11 +18,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    expose:
+      - ${DB_PORT}
 
   nestjs:
     environment:
       LISTEN_PORT: ${NEST_LISTEN_PORT}
       ENV: ${ENV}
+    expose:
+      - ${NEST_LISTEN_PORT}
     entrypoint: ["node", "dist/main"]
 
   nextjs:

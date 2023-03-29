@@ -20,6 +20,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    expose:
+      - ${DEV_DB_PORT}
 
   nestjs:
     environment:
@@ -29,6 +31,8 @@ services:
       - ./backend:/trancendence_nestjs
     ports:
       - "3005:${DEV_NEST_LISTEN_PORT}"
+    expose:
+      - ${DEV_NEST_LISTEN_PORT}
     entrypoint: ["npx", "nest", "start", "--debug","--watch"]
 
   nextjs:
