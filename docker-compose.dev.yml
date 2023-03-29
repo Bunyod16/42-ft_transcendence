@@ -3,13 +3,11 @@ version: '3.8'
 services:
   postgresdb:
     environment:
-      DB_HOST: ${DEV_DB_HOST}
       POSTGRES_USER: ${DEV_POSTGRES_USER}
       POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD}
       DB_NAME: ${DEV_DB_NAME}
       DB_USER: ${DEV_DB_USER}
       DB_PASSWORD: ${DEV_DB_PASSWORD}
-      DB_PORT: ${DEV_DB_PORT}
     ports:
       - "7000:${DEV_DB_PORT}"
     volumes:
@@ -25,6 +23,11 @@ services:
 
   nestjs:
     environment:
+      DB_HOST: ${DEV_DB_HOST}
+      DB_PORT: ${DEV_DB_PORT}
+      DB_NAME: ${DEV_DB_NAME}
+      DB_USERNAME: ${DEV_DB_USER}
+      DB_PASSWORD: ${DEV_DB_PASSWORD}
       LISTEN_PORT: ${DEV_NEST_LISTEN_PORT}
       ENV: ${DEV_ENV}
     volumes:
