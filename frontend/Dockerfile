@@ -10,6 +10,8 @@ RUN npm install
 
 COPY ./ /inception_nextjs/
 
-EXPOSE 3002
+RUN npm run build
 
-CMD [ "npm", "run", "dev"]
+EXPOSE 3000
+
+ENTRYPOINT ["npx", "next", "start"]
