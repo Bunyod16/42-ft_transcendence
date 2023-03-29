@@ -23,16 +23,16 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-      return this.userRepository.findOneBy({
-        id: id,
-      });
+    return this.userRepository.findOneBy({
+      id: id,
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     this.userRepository.update({
       id: id,
     },
-    updateUserDto,
+      updateUserDto,
     )
   }
 
