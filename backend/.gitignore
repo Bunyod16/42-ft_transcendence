@@ -6,4 +6,5 @@ dist
 dist/
 dist/*
 dist/**
+dist/tsconfig.build.tsbuildinfo
 .DS_Store
