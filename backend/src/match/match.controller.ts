@@ -14,9 +14,7 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common';
 import { MatchService } from './match.service';
-// import { UserService } from 'src/user/user.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-// import { UpdateMatchDto } from './dto/update-match.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Match } from './entities/match.entity';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -143,6 +141,38 @@ export class MatchController {
     updateMatchDto.isPrivate = isPrivate ?? match.isPrivate;
 
     const res = await this.matchService.updateScores(id, updateMatchDto);
+    res.raw = await this.matchService.findOne(id);
+    return res;
+  }
+
+  @Patch(':id/updateGameEnded')
+  async updateGameEnded(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateMatchDto: UpdateMatchDto,
+  ) {
+    const match: Match = await this.matchService.findOne(id);
+
+    if (!match) {
+      Logger.log(
+        `match with id = [${id}] doesn't exist`,
+        `[match => updatePrivate()]`,
+      );
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    }
+
+    if (match.endedAt !== null) {
+      Logger.log(
+        `match with id = [${id}] already ended`,
+        `[match => updatePrivate()]`,
+      );
+      throw new HttpException(
+        'Not Modified: Game Already Ended',
+        HttpStatus.NOT_MODIFIED,
+      );
+    }
+    updateMatchDto.endedAt = new Date() ?? match.endedAt;
+
+    const res = await this.matchService.updateGameEnded(id, updateMatchDto);
     res.raw = await this.matchService.findOne(id);
     return res;
   }

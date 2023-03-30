@@ -61,10 +61,6 @@ export class MatchService {
     // });
   }
 
-  async updatePrivate(id: number, updateMatchDto: UpdateMatchDto) {
-    return this.matchRepository.update(id, updateMatchDto);
-  }
-
   // async update_scores(
   //   id: number,
   //   playerOneScoreUpdate: number,
@@ -90,6 +86,14 @@ export class MatchService {
     updateMatchDto: UpdateMatchDto,
   ): Promise<any> {
     return this.matchRepository.update(id, updateMatchDto);
+  }
+
+  async updatePrivate(id: number, updateMatchDto: UpdateMatchDto) {
+    return this.matchRepository.update(id, updateMatchDto);
+  }
+
+  async updateGameEnded(id: number, UpdateMatchDto: UpdateMatchDto) {
+    return this.matchRepository.update(id, UpdateMatchDto);
   }
 
   async remove(id: number): Promise<DeleteResult> {

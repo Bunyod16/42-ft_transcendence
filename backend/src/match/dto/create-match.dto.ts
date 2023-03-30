@@ -12,4 +12,6 @@ export class CreateMatchDto {
   playerTwoScore: number;
 
   isPrivate: boolean;
+
+  endedAt: Date;
 }

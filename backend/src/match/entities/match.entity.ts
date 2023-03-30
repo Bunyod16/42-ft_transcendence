@@ -19,6 +19,9 @@ export class Match {
   @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
+  @Column({ default: null })
+  endedAt: Date;
+
   @Column({ default: false })
   isPrivate: boolean;
 
