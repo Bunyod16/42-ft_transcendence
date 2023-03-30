@@ -14,6 +14,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { encodePassword } from 'src/utils/bcrypt';
 
 @ApiTags('user')
 @Controller('user')
@@ -21,8 +22,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    createUserDto.password = encodePassword(createUserDto.password);
+    return await this.userService.create(createUserDto);
   }
 
   @Get()

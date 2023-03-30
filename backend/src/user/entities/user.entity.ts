@@ -1,4 +1,6 @@
+import { match } from 'assert';
 import { Match } from 'src/match/entities/match.entity';
+import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
 import {
   Entity,
   Column,
@@ -32,8 +34,8 @@ export class User {
   @Column({ default: 0 })
   losses: number;
 
-  @Column({ default: '' })
-  achievements: string;
+  @OneToMany(() => UserAchievement, (userAchivements) => userAchivements.user)
+  achievements: UserAchievement[];
 
   @Column({ default: false })
   online: boolean;

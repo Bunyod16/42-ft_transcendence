@@ -1,24 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Match } from 'src/match/entities/match.entity';
+import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
 
 export class CreateUserDto {
+  @ApiProperty()
+  nickName: string;
 
-    @ApiProperty()
-    nickName: string;
+  createdAt: Date;
 
-    createdAt: Date;
+  updatedAt: Date;
 
-    updatedAt: Date;
+  @ApiProperty()
+  password: string;
 
-    @ApiProperty()
-    password: string;
+  // avatar:
 
-    // avatar:
+  wins: number;
 
-    wins: number;
+  losses: number;
 
-    losses: number;
+  achievements: UserAchievement[];
 
-    achievements: string;
+  matchesAsPlayerOne: Match[];
 
-    online: boolean;
+  matchesAsPlayerTwo: Match[];
+
+  online: boolean;
 }

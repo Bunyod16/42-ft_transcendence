@@ -56,18 +56,23 @@ export class MatchController {
   @Get()
   async findAll() {
     const match = this.matchService.findAll();
+
     Logger.log(`Trying to get all matches`, 'match => findAll()');
+
     if (!match) {
       Logger.log(`Cant find matches table`, 'match => findAll()');
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
+
     return match;
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    Logger.log(`Trying to get match with id = [${id}]`, 'match => findOne()');
     const match = await this.matchService.findOne(id);
+
+    Logger.log(`Trying to get match with id = [${id}]`, 'match => findOne()');
+
     if (!match) {
       Logger.log(
         `match with id = [${id}] doeesn't exist`,
@@ -75,6 +80,7 @@ export class MatchController {
       );
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
+
     return match;
   }
 
@@ -187,8 +193,9 @@ export class MatchController {
       Logger.log(`match with id = [${id}] doesn't exist`, '[match]');
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
-    match.raw = match_raw;
     Logger.log(`Deleted match with id = [${id}]`, '[match]');
+
+    match.raw = match_raw;
     return match;
   }
 }
