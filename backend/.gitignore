@@ -5,4 +5,5 @@ package-lock.json
 dist
 dist/
 dist/*
+dist/**
 .DS_Store
