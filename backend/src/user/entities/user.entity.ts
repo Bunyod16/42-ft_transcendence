@@ -1,4 +1,13 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Match } from 'src/match/entities/match.entity';
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -17,15 +26,23 @@ export class User {
   @Column()
   password: string;
 
-  @Column({default: 0})
-  wins: number
+  @Column({ default: 0 })
+  wins: number;
 
-  @Column({default: 0})
-  losses: number
+  @Column({ default: 0 })
+  losses: number;
 
-  @Column({default: ''})
-  achievements: string
+  @Column({ default: '' })
+  achievements: string;
 
-  @Column({default: false})
-  online: boolean
+  @Column({ default: false })
+  online: boolean;
+
+  @OneToMany(() => Match, (match) => match.playerOne)
+  @JoinColumn({ name: 'playerOne' })
+  matchesAsPlayerOne: Match[];
+
+  @OneToMany(() => Match, (match) => match.playerTwo)
+  @JoinColumn({ name: 'playerTwo' })
+  matchesAsPlayerTwo: Match[];
 }

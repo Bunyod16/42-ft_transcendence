@@ -7,9 +7,6 @@ import { twoFactorProviders } from './two_factor.providers';
 @Module({
   imports: [ConfigModule],
   controllers: [TwoFactorController],
-  providers: [
-    ...twoFactorProviders,
-    TwoFactorService
-  ],
+  providers: [...twoFactorProviders, TwoFactorService],
 })
 export class TwoFactorModule {}
