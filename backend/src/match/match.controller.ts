@@ -167,7 +167,7 @@ export class MatchController {
       );
       throw new HttpException(
         'Not Modified: Game Already Ended',
-        HttpStatus.NOT_MODIFIED,
+        HttpStatus.BAD_REQUEST,
       );
     }
     updateMatchDto.endedAt = new Date() ?? match.endedAt;
