@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,7 +16,7 @@ export class Match {
   @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @CreateDateColumn({ name: 'updatedAt' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
   @Column({ default: false })
