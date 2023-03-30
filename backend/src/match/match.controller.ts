@@ -37,10 +37,12 @@ export class MatchController {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+
       Logger.log(
         `Created match with id = [${match_to_add}]`,
         'match => create()',
       );
+
       return match_to_add;
     } catch (error) {
       // Logger.error(
@@ -191,7 +193,10 @@ export class MatchController {
 
     if (!match || match.affected === 0) {
       Logger.log(`match with id = [${id}] doesn't exist`, '[match]');
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        "Not Found: match doesn't exist",
+        HttpStatus.NOT_FOUND,
+      );
     }
     Logger.log(`Deleted match with id = [${id}]`, '[match]');
 

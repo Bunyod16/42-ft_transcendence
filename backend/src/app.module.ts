@@ -7,6 +7,7 @@ import { TwoFactorModule } from './two_factor/two_factor.module';
 import { DatabaseModule } from './database/database.module';
 import { MatchModule } from './match/match.module';
 import { UserAchievementModule } from './user_achievement/user_achievement.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserAchievementModule } from './user_achievement/user_achievement.modul
     ConfigModule.forRoot({ isGlobal: true }),
     MatchModule,
     UserAchievementModule,
+    AchievementModule,
   ],
   controllers: [
     AppController,
