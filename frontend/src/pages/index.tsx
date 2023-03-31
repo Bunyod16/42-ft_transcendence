@@ -15,8 +15,11 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography variant="h3" component="h1" gutterBottom>
           Material UI - Next.js example in TypeScript
+        </Typography>
+        <Typography variant="body1">
+          This text actually looks huge lol
         </Typography>
       </Box>
     </Container>
