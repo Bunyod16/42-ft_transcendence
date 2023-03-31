@@ -1,23 +1,24 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import * as React from "react";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export default function Home() {
   return (
-    <>
-      <Head>
-        <title>RMG PONG</title>
-        <meta
-          name="description"
-          content="The next best entertainment in 2023"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className={styles.main}></main>
-    </>
+    <Container maxWidth="lg">
+      <Box
+        sx={{
+          my: 4,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" component="h1" gutterBottom>
+          Material UI - Next.js example in TypeScript
+        </Typography>
+      </Box>
+    </Container>
   );
 }
