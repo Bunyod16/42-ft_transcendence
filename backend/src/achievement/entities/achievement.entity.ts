@@ -1,10 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
 export class Achievement {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  text: string;
+  @Column({ unique: true })
+  name: string;
+
+  @Column({ unique: true })
+  description: string;
+
+  @OneToMany(
+    () => UserAchievement,
+    (userAchievement) => userAchievement.achievement,
+  )
+  userAchievements: UserAchievement[];
 }

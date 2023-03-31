@@ -1,4 +1,5 @@
 export class CreateAchievementDto {
   id: number;
-  text: string;
+  name: string;
+  description: string;
 }

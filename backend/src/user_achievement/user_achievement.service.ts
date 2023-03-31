@@ -19,24 +19,26 @@ export class UserAchievementService {
 
   async findAll() {
     return await this.userAchievementRepository
-      .createQueryBuilder('Achivement')
-      .select(['Achivement', 'user.id', 'user.nickName'])
-      .leftJoin('Achivement.user', 'user')
+      .createQueryBuilder('userAchievement')
+      .select(['userAchievement', 'achievement', 'user.id', 'user.nickName'])
+      .leftJoin('userAchievement.achievement', 'achievement')
+      .leftJoin('userAchievement.user', 'user')
       .getMany();
   }
 
   async findOne(id: number) {
     return await this.userAchievementRepository
-      .createQueryBuilder('Achivement')
+      .createQueryBuilder('userAchievement')
       .where({ id: id })
-      .select(['Achivement', 'user.id', 'user.nickName'])
-      .leftJoin('Achivement.user', 'user')
+      .select(['userAchievement', 'achievement', 'user.id', 'user.nickName'])
+      .leftJoin('userAchievement.achievement', 'achievement')
+      .leftJoin('userAchievement.user', 'user')
       .getOne();
   }
 
-  // update(id: number, updateUserAchievementDto: UpdateUserAchievementDto) {
-  //   return `This action updates a #${id} userAchievement`;
-  // }
+  async update(id: number, updateUserAchievementDto: UpdateUserAchievementDto) {
+    return this.userAchievementRepository.update(id, updateUserAchievementDto);
+  }
 
   async remove(id: number) {
     return this.userAchievementRepository.delete({ id });

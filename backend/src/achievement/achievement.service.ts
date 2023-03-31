@@ -32,10 +32,10 @@ export class AchievementService {
       .getOne();
   }
 
-  async findOneText(text: string) {
+  async findOneName(name: string) {
     return await this.achievementRepository
       .createQueryBuilder('Achievement')
-      .where({ text: text })
+      .where({ name: name})
       .select(['Achievement'])
       .getOne();
   }

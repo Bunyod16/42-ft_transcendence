@@ -21,7 +21,9 @@ export class UserService {
       relations: {
         matchesAsPlayerOne: true,
         matchesAsPlayerTwo: true,
-        achievements: true,
+        achievements: {
+          achievement: true,
+        },
       },
     });
   }
@@ -29,7 +31,12 @@ export class UserService {
   async findOne(id: number): Promise<User> {
     return this.userRepository.findOne({
       where: { id: id },
-      relations: ['matchesAsPlayerOne', 'matchesAsPlayerTwo', 'achievements'],
+      relations: [
+        'matchesAsPlayerOne',
+        'matchesAsPlayerTwo',
+        'achievements',
+        'achievements.achievement',
+      ],
     });
   }
 

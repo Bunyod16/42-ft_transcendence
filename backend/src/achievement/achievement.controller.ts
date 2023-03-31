@@ -25,11 +25,11 @@ export class AchievementController {
   async create(@Body() createAchievementDto: CreateAchievementDto) {
     //If Achievement Text already exists
     const achievement_dup: Achievement =
-      await this.achievementService.findOneText(createAchievementDto.text);
+      await this.achievementService.findOneName(createAchievementDto.name);
     if (achievement_dup !== null) {
       Logger.log(
-        `achievement with text = [${createAchievementDto.text}] already exist`,
-        `[Achievement => updateText()]`,
+        `achievement with name = [${createAchievementDto.name}] already exist`,
+        `Achievement => updateText()`,
       );
       throw new HttpException(
         'Bad Request: Achievement Text Already Exist',
@@ -57,10 +57,7 @@ export class AchievementController {
 
       return achievement;
     } catch (error) {
-      Logger.error(
-        `achievement Couldn't be Added`,
-        `[Achievement => create()]`,
-      );
+      Logger.error(`achievement Couldn't be Added`, `Achievement => create()`);
       Logger.error(error, `[Achievement => create()]`);
       throw new HttpException(
         'Internal Server Error: Some Bad Shit Happened',
@@ -103,36 +100,41 @@ export class AchievementController {
     return achievement;
   }
 
-  @Patch(':id/updateText')
-  async updateText(
+  @Patch(':id/update')
+  async update(
     @Param('id', ParseIntPipe) id: number,
-    @Query('text') text: string,
+    @Query('name') name: string,
+    @Query('description') description: string,
     @Body() updateAchievementDto: UpdateAchievementDto,
   ) {
     const achievement: Achievement = await this.achievementService.findOne(id);
     if (!achievement) {
       Logger.log(
         `achievement with id = [${id}] doesn't exist`,
-        `[Achievement => updateText()]`,
+        `Achievement => updateText()`,
       );
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Not Found: Achivement doesnt exists',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     //check if achieivement already exist
-    const achievement_dup: Achievement =
-      await this.achievementService.findOneText(text);
-    if (achievement_dup !== null) {
-      Logger.log(
-        `achievement with text = [${text}] already exist`,
-        `[Achievement => updateText()]`,
-      );
-      throw new HttpException(
-        'Not Modified: Achievement Text Already Exist',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // const achievement_dup: Achievement =
+    //   await this.achievementService.findOneText(name);
+    // if (achievement_dup !== null) {
+    //   Logger.log(
+    //     `achievement with name = [${name}] already exist`,
+    //     `[Achievement => updateText()]`,
+    //   );
+    //   throw new HttpException(
+    //     'Not Modified: Achievement Text Already Exist',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    updateAchievementDto.text = text ?? achievement.text;
+    updateAchievementDto.name = name ?? achievement.name;
+    updateAchievementDto.description = description ?? achievement.description;
 
     try {
       const res = await this.achievementService.update(
@@ -145,12 +147,12 @@ export class AchievementController {
     } catch (error) {
       Logger.error(
         `achievement with id = [${id}] couldn't be updated`,
-        `[Achievement => updateText()]`,
+        `Achievement => updateText()`,
       );
-      Logger.error(error, `[Achievement => updateText()]`);
+      Logger.error(error, `Achievement => update()`);
       throw new HttpException(
-        'Internal Server Error: Some Bad Shit Happened',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        'BAD_REQUEST: Achivement duplicate name or description',
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -161,20 +163,23 @@ export class AchievementController {
     const achieivement = await this.achievementService.remove(id);
     Logger.log(
       `Trying to delete achievement with id = [${id}]`,
-      '[Achievement]',
+      'Achievement => remove()',
     );
 
     if (!achieivement || achieivement.affected === 0) {
       Logger.log(
         `achievement with id = [${id}] doesn't exist`,
-        '[Achievement]',
+        'Achievement => remove()',
       );
       throw new HttpException(
         "Not Found: achievement doeesn't exist",
         HttpStatus.NOT_FOUND,
       );
     }
-    Logger.log(`Deleted achieivement with id = [${id}]`, '[Achievement]');
+    Logger.log(
+      `Deleted achieivement with id = [${id}]`,
+      'Achievement => remove()',
+    );
 
     achieivement.raw = achieivement_raw;
     return achieivement;
