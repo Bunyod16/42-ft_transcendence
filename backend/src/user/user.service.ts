@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { encodePassword } from 'src/utils/bcrypt';
+// import { encodePassword } from 'src/utils/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -12,28 +12,36 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const password = encodePassword(createUserDto.password);
-    const newUser = this.userRepository.create({ ...createUserDto, password})
-    return this.userRepository.save(newUser);
+  async create(createUserDto: CreateUserDto) {
+    return this.userRepository.save(createUserDto);
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: {
+        matchesAsPlayerOne: true,
+        matchesAsPlayerTwo: true,
+        achievements: {
+          achievement: true,
+        },
+      },
+    });
   }
 
   async findOne(id: number): Promise<User> {
-    return this.userRepository.findOneBy({
-      id: id,
+    return this.userRepository.findOne({
+      where: { id: id },
+      relations: [
+        'matchesAsPlayerOne',
+        'matchesAsPlayerTwo',
+        'achievements',
+        'achievements.achievement',
+      ],
     });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    this.userRepository.update({
-      id: id,
-    },
-      updateUserDto,
-    )
+    this.userRepository.update({ id: id }, updateUserDto);
   }
 
   remove(id: number) {

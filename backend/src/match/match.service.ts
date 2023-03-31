@@ -79,6 +79,8 @@ export class MatchService {
   //     .execute();
   // }
 
+  //All 3 of these updates shuold just be one and all the checking should be done
+  //in controller
   async updateScores(
     id: number,
     // playerOneScoreUpdate: number,
@@ -92,8 +94,8 @@ export class MatchService {
     return this.matchRepository.update(id, updateMatchDto);
   }
 
-  async updateGameEnded(id: number, UpdateMatchDto: UpdateMatchDto) {
-    return this.matchRepository.update(id, UpdateMatchDto);
+  async updateGameEnded(id: number, updateMatchDto: UpdateMatchDto) {
+    return this.matchRepository.update(id, updateMatchDto);
   }
 
   async remove(id: number): Promise<DeleteResult> {
