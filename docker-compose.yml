@@ -8,6 +8,8 @@ services:
     configs:
       - source: postgres_initsql
         target: /docker-entrypoint-initdb.d/init.sh
+    networks:
+      - ft_trancendence
 
   nestjs:
     container_name: nestjs
@@ -17,6 +19,8 @@ services:
       postgresdb:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - ft_trancendence
 
   nextjs:
     container_name: nextjs
@@ -30,7 +34,12 @@ services:
       nestjs:
         condition: service_started
     restart: unless-stopped
+    networks:
+      - ft_trancendence
 
 configs:
   postgres_initsql:
     file: ./backend/postgres/init.sh
+
+networks:
+  ft_trancendence:
