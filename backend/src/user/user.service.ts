@@ -13,9 +13,9 @@ export class UserService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    const password = encodePassword(createUserDto.password);
-    const newUser = this.userRepository.create({ ...createUserDto, password})
-    return this.userRepository.save(newUser);
+    // const password = encodePassword(createUserDto.password);
+    // const newUser = this.userRepository.create({ ...createUserDto, password})
+    return this.userRepository.save(createUserDto);
   }
 
   async findAll(): Promise<User[]> {
@@ -25,6 +25,14 @@ export class UserService {
   async findOne(id: number): Promise<User> {
     return this.userRepository.findOneBy({
       id: id,
+    });
+  }
+
+  async findOneByUsername(nickName: string): Promise<User> {
+    if (nickName == undefined)
+      return null;
+    return this.userRepository.findOneBy({
+      nickName: nickName,
     });
   }
 

@@ -16,6 +16,7 @@ exports.TwoFactorController = void 0;
 const common_1 = require("@nestjs/common");
 const two_factor_service_1 = require("./two_factor.service");
 const create_two_factor_dto_1 = require("./dto/create-two_factor.dto");
+const swagger_1 = require("@nestjs/swagger");
 let TwoFactorController = class TwoFactorController {
     constructor(twoFactorService) {
         this.twoFactorService = twoFactorService;
@@ -90,7 +91,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TwoFactorController.prototype, "remove", null);
 TwoFactorController = __decorate([
-    ApiTags('two-factor'),
+    (0, swagger_1.ApiTags)('two-factor'),
     (0, common_1.Controller)('two-factor'),
     __metadata("design:paramtypes", [two_factor_service_1.TwoFactorService])
 ], TwoFactorController);

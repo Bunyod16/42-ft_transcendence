@@ -5,6 +5,8 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TwoFactorModule } from './two_factor/two_factor.module';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -12,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
     TwoFactorModule,
     DatabaseModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
   ],
   controllers: [
     AppController,
