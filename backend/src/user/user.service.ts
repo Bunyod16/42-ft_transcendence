@@ -40,6 +40,14 @@ export class UserService {
     });
   }
 
+  async findOneByUsername(nickName: string): Promise<User> {
+    if (nickName == undefined)
+      return null;
+    return this.userRepository.findOneBy({
+      nickName: nickName,
+    });
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     this.userRepository.update({ id: id }, updateUserDto);
   }

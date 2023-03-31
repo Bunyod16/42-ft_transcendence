@@ -24,11 +24,8 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   'updated_at': Date;
 
-  @Column()
-  password: string;
-
-  @Column({ default: 0 })
-  wins: number;
+  @Column({default: 0})
+  wins: number
 
   @Column({ default: 0 })
   losses: number;

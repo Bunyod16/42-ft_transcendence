@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { MatchModule } from './match/match.module';
 import { UserAchievementModule } from './user_achievement/user_achievement.module';
 import { AchievementModule } from './achievement/achievement.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AchievementModule } from './achievement/achievement.module';
     MatchModule,
     UserAchievementModule,
     AchievementModule,
+    AuthModule,
   ],
   controllers: [
     AppController,
