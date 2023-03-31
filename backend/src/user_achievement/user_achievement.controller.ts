@@ -42,6 +42,10 @@ export class UserAchievementController {
 
     //see if user and achivement exist
     if (user === null) {
+      Logger.log(
+        `Bad Request: user with id = [${user_id}] Doesn't exist`,
+        'UserAchivement => create()',
+      );
       throw new HttpException(
         `Bad Request: user with id = [${user_id}] Doesn't exist`,
         HttpStatus.BAD_REQUEST,
@@ -49,6 +53,10 @@ export class UserAchievementController {
     }
 
     if (achive === null) {
+      Logger.log(
+        `Bad Request: achievement with id = [${achievement_id}] Doesn't exist`,
+        'UserAchivement => create()',
+      );
       throw new HttpException(
         `Bad Request: achievement with id = [${achievement_id}] Doesn't exist`,
         HttpStatus.BAD_REQUEST,
@@ -170,20 +178,23 @@ export class UserAchievementController {
 
       Logger.log(
         `Trying to delete achievement with id = [${id}]`,
-        'UserAchivement => findOne()',
+        'UserAchivement => remove()',
       );
 
       if (!achievement || achievement.affected === 0) {
         Logger.log(
           `UserAchievement with id = [${id}] doeesn't exist`,
-          'UserAchivement => findOne()',
+          'UserAchivement => remove()',
         );
         throw new HttpException(
           `Bad Request: User Achivement doesn't exist`,
           HttpStatus.BAD_REQUEST,
         );
       }
-      Logger.log(`Deleted match with id = [${id}]`, '[match]');
+      Logger.log(
+        `Deleted match with id = [${id}]`,
+        'UserAchievement => remove()',
+      );
 
       achievement.raw = achievement_raw;
       return achievement;
