@@ -35,7 +35,7 @@ export class AchievementService {
   async findOneName(name: string) {
     return await this.achievementRepository
       .createQueryBuilder('Achievement')
-      .where({ name: name})
+      .where({ name: name })
       .select(['Achievement'])
       .getOne();
   }
