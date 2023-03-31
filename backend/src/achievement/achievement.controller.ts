@@ -31,20 +31,20 @@ export class AchievementController {
       if (!achievement) {
         Logger.log("Couldn't create achievement", 'Achievement => create()');
         throw new HttpException(
-          'Internal Server Error',
+          `Internal Server Error: Couldn't create achievement`,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
       Logger.log(
-        `Created Achievement with id = [${achievement.id}]`,
+        `Created achievement with id = [${achievement.id}]`,
         'Achievement => create()',
       );
 
       return achievement;
     } catch (error) {
-      Logger.error(`achievement Couldn't be Added`, `Achievement => create()`);
-      Logger.error(error, `[Achievement => create()]`);
+      Logger.error(`achievement couldn't be added`, `Achievement => create()`);
+      Logger.error(error, `Achievement => create()`);
       throw new HttpException(
         'Internal Server Error: Some Bad Shit Happened',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -56,7 +56,7 @@ export class AchievementController {
   async findAll() {
     const achievement = this.achievementService.findAll();
 
-    Logger.log(`Trying to get all matches`, 'Achievement => findAll()');
+    Logger.log(`Getting all in achievement`, 'Achievement => findAll()');
 
     if (!achievement) {
       Logger.log(`Cant find matches table`, 'Achievement => findAll()');
@@ -122,7 +122,7 @@ export class AchievementController {
         `achievement with id = [${id}] couldn't be updated`,
         `Achievement => updateText()`,
       );
-      Logger.error(error, `Achievement => update()`);
+      Logger.error(error, `Achievement => updateText()`);
       throw new HttpException(
         'BAD_REQUEST: Achivement duplicate name or description',
         HttpStatus.BAD_REQUEST,
