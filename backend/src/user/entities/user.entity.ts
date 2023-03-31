@@ -1,3 +1,4 @@
+import { FriendRequest } from 'src/friend_request/entities/friend_request.entity';
 import { Match } from 'src/match/entities/match.entity';
 import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
 import {
@@ -33,12 +34,14 @@ export class User {
   @Column({ default: 0 })
   losses: number;
 
-  @OneToMany(() => UserAchievement, (userAchivements) => userAchivements.user)
-  achievements: UserAchievement[];
-
   @Column({ default: false })
   online: boolean;
 
+  //Achievements
+  @OneToMany(() => UserAchievement, (userAchivements) => userAchivements.user)
+  achievements: UserAchievement[];
+
+  //Matches Correlation
   @OneToMany(() => Match, (match) => match.playerOne)
   @JoinColumn({ name: 'playerOne' })
   matchesAsPlayerOne: Match[];
@@ -46,4 +49,13 @@ export class User {
   @OneToMany(() => Match, (match) => match.playerTwo)
   @JoinColumn({ name: 'playerTwo' })
   matchesAsPlayerTwo: Match[];
+
+  //FriendRequest
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.requester)
+  @JoinColumn({ name: 'requester' })
+  requests: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.responder)
+  @JoinColumn({ name: 'responder' })
+  responses: FriendRequest[];
 }
