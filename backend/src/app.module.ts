@@ -9,6 +9,9 @@ import { MatchModule } from './match/match.module';
 import { UserAchievementModule } from './user_achievement/user_achievement.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtAccessModule } from './jwt_access/jwt_access.module';
+import { UserService } from './user/user.service';
+import { userProviders } from './user/user.providers';
 
 @Module({
   imports: [
@@ -20,12 +23,15 @@ import { AuthModule } from './auth/auth.module';
     UserAchievementModule,
     AchievementModule,
     AuthModule,
+    JwtAccessModule,
   ],
   controllers: [
     AppController,
   ],
   providers: [
     AppService,
+    UserService,
+    ...userProviders,
   ],
 })
 export class AppModule {}
