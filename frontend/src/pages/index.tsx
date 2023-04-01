@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import Navbar from "@/component/layout/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 export default function Home() {
   return (
