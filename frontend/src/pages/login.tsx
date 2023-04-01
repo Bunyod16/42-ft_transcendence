@@ -1,16 +1,16 @@
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from '@mui/material'
 
 export default function Login() {
   return (
     <Container
-      maxWidth="xl"
+      maxWidth='xl'
       sx={{
-        background: "#AAAAAA",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
+        background: '#AAAAAA',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
       }}
     />
-  );
+  )
 }

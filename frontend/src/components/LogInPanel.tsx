@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button } from '@mui/material'
 
 export default function LoginPanel() {
   return (
@@ -8,8 +8,8 @@ export default function LoginPanel() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-padding: '40px 20px',
+        padding: '40px 20px',
       }}
     />
-  );
+  )
 }
