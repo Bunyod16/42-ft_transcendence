@@ -9,10 +9,7 @@ export class CreateUserDto {
 
     updatedAt: Date;
 
-    @ApiProperty()
-    password: string;
-
-    // avatar:
+    avatar: string;
 
     wins: number;
 
