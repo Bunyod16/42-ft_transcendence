@@ -1,16 +1,19 @@
-import { Box, Button, Container, Typography } from '@mui/material'
+import { Container } from "@mui/material";
+import LoginPanel from "../components/LogInPanel";
 
 export default function Login() {
   return (
     <Container
-      maxWidth='xl'
+      maxWidth={false}
       sx={{
-        background: '#AAAAAA',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
+        background: "#22333B",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
       }}
-    />
-  )
+    >
+      <LoginPanel />
+    </Container>
+  );
 }
