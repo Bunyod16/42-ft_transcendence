@@ -9,6 +9,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -43,4 +44,8 @@ export class User {
   @OneToMany(() => Match, (match) => match.playerTwo)
   @JoinColumn({ name: 'playerTwo' })
   matchesAsPlayerTwo: Match[];
+
+  @Column({ nullable: true })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }

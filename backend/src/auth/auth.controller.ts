@@ -2,27 +2,30 @@ import { HttpService } from '@nestjs/axios';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import {
-  Body,
   Controller,
   Get,
+  Post,
   HttpCode,
   HttpStatus,
-  Post,
   Request,
   UseGuards,
-  Redirect,
   Query,
-  HttpException,
   Res,
+  Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import RequestWithUser from './requestWithUser.interace';
+import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly userService: UserService,
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,) {}
+    private readonly configService: ConfigService,
+    private readonly jwtAccessService: JwtAccessService,) {}
 
   @Get('login')
   login(@Res() res) {
@@ -31,9 +34,11 @@ export class AuthController {
 
   @Get('callback')
     async ftAuthRedirect(
-    @Query() query,
+      @Query() query,
+      @Req() request: RequestWithUser
   ) {
 
+    const {user} = request;
     var postData = {
         'grant_type' : 'authorization_code',
         'client_id' : this.configService.get('FORTY_TWO_API_UID'),
@@ -45,11 +50,13 @@ export class AuthController {
     var headers: {
         'Content-Type': 'application/json',
     }
-    
     try {
-        const resp = await this.httpService.axiosRef.post('https://api.intra.42.fr/oauth/token', postData, {headers});
-        const intra_data = await this.httpService.axiosRef.get('https://api.intra.42.fr/v2/me', {headers: {'Authorization':`Bearer ${resp.data.access_token}`}});
-        return this.authService.signIn(intra_data.data.login)
+      const resp = await this.httpService.axiosRef.post('https://api.intra.42.fr/oauth/token', postData, {headers});
+      const intra_data = await this.httpService.axiosRef.get('https://api.intra.42.fr/v2/me', {headers: {'Authorization':`Bearer ${resp.data.access_token}`}});
+      const tokens = await this.authService.signIn(intra_data.data.login)
+
+      request.res.setHeader('Set-Cookie', [tokens.accessToken, tokens.refreshToken])
+      return user;
     }
     catch (error) {
         console.log(error);
@@ -59,8 +66,26 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('refresh')
+  refresh(@Req() req: RequestWithUser) {
+    const accessTokenCookie = this.jwtAccessService.generateAccessToken(req.user);
+   
+      req.res.setHeader('Set-Cookie', accessTokenCookie);
+      return req.user;
+  }
+
+  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
+
+  @UseGuards(AuthGuard)
+  @Post('log-out')
+  @HttpCode(200)
+  async logOut(@Req() request: RequestWithUser) {
+    await this.userService.removeRefreshToken(request.user.id);
+    request.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
+  }
+
 }

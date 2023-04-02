@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
-import { Config } from 'prettier';
 
 @Injectable()
 export class JwtAccessService {
@@ -13,12 +12,13 @@ export class JwtAccessService {
     private readonly configService: ConfigService) {}
 
 
-  async generateAccessToken(user: User): Promise<string> {
+  generateAccessToken(user: User) {
     const payload = { sub: user.id };
-    return this.jwtService.signAsync(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRY'),
     });
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRY')}`;
   }
 
   async verifyAccessToken(token: string): Promise<User> {

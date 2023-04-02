@@ -5,12 +5,14 @@ import { HttpModule } from '@nestjs/axios';
 import { UserModule } from 'src/user/user.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtAccessModule } from 'src/jwt_access/jwt_access.module';
+import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
 
 @Module({
   imports: [
     HttpModule,
     UserModule,
     JwtAccessModule,
+    JwtRefreshModule,
     DatabaseModule,
     AuthModule,
   ],
