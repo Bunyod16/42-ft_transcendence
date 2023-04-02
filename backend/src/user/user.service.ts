@@ -3,7 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-// import { encodePassword } from 'src/utils/bcrypt';
+import { encodePassword } from 'src/utils/bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,9 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {
+    // const password = encodePassword(createUserDto.password);
+    // const newUser = this.userRepository.create({ ...createUserDto, password})
     return this.userRepository.save(createUserDto);
   }
 
@@ -40,6 +43,14 @@ export class UserService {
     });
   }
 
+  async findOneByUsername(nickName: string): Promise<User> {
+    if (nickName == undefined)
+      return null;
+    return this.userRepository.findOneBy({
+      nickName: nickName,
+    });
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     this.userRepository.update({ id: id }, updateUserDto);
   }
@@ -49,4 +60,31 @@ export class UserService {
       id: id,
     });
   }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userRepository.update(userId, {
+      currentHashedRefreshToken
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+    const user = await this.findOne(userId);
+ 
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken
+    );
+ 
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.userRepository.update(userId, {
+      currentHashedRefreshToken: null
+    });
+  }
+
 }

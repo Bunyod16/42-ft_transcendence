@@ -9,6 +9,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -24,11 +25,8 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   'updated_at': Date;
 
-  @Column()
-  password: string;
-
-  @Column({ default: 0 })
-  wins: number;
+  @Column({default: 0})
+  wins: number
 
   @Column({ default: 0 })
   losses: number;
@@ -46,4 +44,10 @@ export class User {
   @OneToMany(() => Match, (match) => match.playerTwo)
   @JoinColumn({ name: 'playerTwo' })
   matchesAsPlayerTwo: Match[];
+
+  @Column({
+    nullable: true
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }
