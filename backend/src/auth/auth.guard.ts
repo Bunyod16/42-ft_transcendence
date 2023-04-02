@@ -5,14 +5,14 @@ import {
     UnauthorizedException,
   } from '@nestjs/common';
   import { Request } from 'express';
-  import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
-  import { Inject } from '@nestjs/common';
+  import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
+import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
+import { CookieSerializeOptions, parse, serialize } from 'cookie';
 
-  @Injectable()
+@Injectable()
   export class AuthGuard implements CanActivate {
-    constructor(private readonly jwtService: JwtAccessService) {}
-    
-  
+    constructor(private readonly jwtService: JwtRefreshService) {}
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
@@ -20,7 +20,7 @@ import {
         throw new UnauthorizedException();
       }
       try {
-        const payload = await this.jwtService.verifyAccessToken(token);
+        const payload = await this.jwtService.verifyRefreshToken(token);
         // 💡 We're assigning the payload to the request object here
         // so that we can access it in our route handlers
         request['user'] = payload;
@@ -31,7 +31,11 @@ import {
     }
   
     private extractTokenFromHeader(request: Request): string | undefined {
-      const [type, token] = request.headers.authorization?.split(' ') ?? [];
-      return type === 'Bearer' ? token : undefined;
+      const cookieHeader = request.headers.cookie;
+      if (!cookieHeader) {
+        return undefined;
+      }
+      const cookies = parse(cookieHeader);
+      return cookies.Refresh;
     }
   }

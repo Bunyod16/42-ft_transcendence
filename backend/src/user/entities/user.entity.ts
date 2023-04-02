@@ -1,4 +1,5 @@
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -25,4 +26,10 @@ export class User {
 
   @Column({default: false})
   online: boolean
+
+  @Column({
+    nullable: true
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }
