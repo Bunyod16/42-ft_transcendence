@@ -25,6 +25,6 @@ import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
     // }
   ],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

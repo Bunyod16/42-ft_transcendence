@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
+import { UserAuthGuard } from './auth.guard';
 import {
   Controller,
   Get,
@@ -77,7 +77,7 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get('refresh')
   refresh(@Req() req: RequestWithUser) {
     const accessTokenCookie = this.jwtAccessService.generateAccessToken(
@@ -88,13 +88,13 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(UserAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(UserAuthGuard)
   @Post('log-out')
   @HttpCode(200)
   async logOut(@Req() request: RequestWithUser) {
