@@ -14,16 +14,18 @@ prod :
 down :
 	docker compose down
 
-clean_dev : down
+clean_dev_volume : down
 	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
-	docker rmi $(NAME)-nestjs
-	docker rmi $(NAME)-nextjs
 
-clean_prod : down
+rm_prod_volume : down
 	docker volume rm $(NAME)_$(POSTGRESQL_VOLUME)
+
+rm_img :
 	docker rmi $(NAME)-nestjs
 	docker rmi $(NAME)-nextjs
 
-re : clean all
+re_dev : clean_dev all
 
-.PHONY : all down clean_dev clean_prod re dev prod
+re_prod : clean_prod all
+
+.PHONY : all down clean_dev clean_prod re dev prod rm_img
