@@ -14,7 +14,6 @@ import { ChatLineService } from './chat_line.service';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { Logger } from '@nestjs/common';
-import { ChatType } from './entities/chat_line.entity';
 
 @Controller('chat-line')
 export class ChatLineController {
@@ -22,7 +21,7 @@ export class ChatLineController {
 
   @Post()
   async create(@Body() body: any) {
-    let chat_type: string = body.chatLineType;
+    // let chat_type: string = body.chatLineType;
     const chat_id: number = parseInt(body.chatId);
     const text: string = body.text;
 
@@ -33,18 +32,8 @@ export class ChatLineController {
       );
     }
 
-    //check if chat type is valid type
-    chat_type = chat_type.toLowerCase();
-    if (!Object.values(ChatType).includes(chat_type as string as ChatType)) {
-      throw new HttpException(
-        `Bad Request: Invalid Chat Type`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const createChatLineDto: CreateChatLineDto = new CreateChatLineDto();
 
-    createChatLineDto.chatType = chat_type as ChatType;
     createChatLineDto.text = text;
 
     try {

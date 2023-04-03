@@ -5,11 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-export enum ChatType {
-  DIRECT_MESSAGE = 'direct_message',
-  CHAT_CHANNEL = 'chat_channel',
-}
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class ChatLine {
@@ -22,12 +18,10 @@ export class ChatLine {
   @Column()
   text: string;
 
-  @Column()
-  chatType: ChatType;
+  @ManyToOne(() => User, (user) => user.sentMessages)
+  sender: User;
 
-  // @ManyToOne(() => DirectMessage, (directMessage) => directMessage.chatLines)
-  // directMessage: DirectMessage;
-
+  //For chat channel link
   // @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatLines)
   // chatChannel: ChatChannel;
 }

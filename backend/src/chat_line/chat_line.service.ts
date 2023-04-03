@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
-import { ChatLine, ChatType } from './entities/chat_line.entity';
+import { ChatLine } from './entities/chat_line.entity';
 
 @Injectable()
 export class ChatLineService {
@@ -10,15 +10,11 @@ export class ChatLineService {
     @Inject('CHAT_LINE_REPOSITORY')
     private chatLineRepository: Repository<ChatLine>,
   ) {}
-  // private readonly directMessageService: DirectMessageService,
   // private readonly chatChannelService: ChatChannelService,
 
-  async create(createChatLineDto: CreateChatLineDto, chat_id: number) {
-    // if (createChatLineDto.chatType === ChatType.CHAT_CHANNEL) {
-    //   this.chatChannelService.findOne(chat_id);
-    // } else {
-    //   this.directMessageService.findOne(chat_id);
-    // }
+  async create(createChatLineDto: CreateChatLineDto, channel_id: number) {
+    //find chat Channel and handle accordingly
+    // this.chatChannelService.findOne(chat_id);
 
     return this.chatLineRepository.save(createChatLineDto);
   }

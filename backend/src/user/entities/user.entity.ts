@@ -11,6 +11,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { ChatLine } from 'src/chat_line/entities/chat_line.entity';
 
 @Entity()
 export class User {
@@ -60,4 +61,8 @@ export class User {
   @Column({ nullable: true })
   @Exclude()
   public currentHashedRefreshToken?: string;
+
+  @OneToMany(() => ChatLine, (chatLine) => chatLine.sender)
+  @JoinColumn({ name: 'sender' })
+  sentMessages: ChatLine[];
 }

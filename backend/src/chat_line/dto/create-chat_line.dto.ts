@@ -1,8 +1,7 @@
-import { ChatType } from '../entities/chat_line.entity';
+import { User } from 'src/user/entities/user.entity';
 
 export class CreateChatLineDto {
   text: string;
-  chatType: ChatType;
-  // directMessage: DirectMessage;
+  sender: User;
   // chatChannel: ChatChannel;
 }
