@@ -13,6 +13,7 @@ services:
 
   nestjs:
     container_name: nestjs
+    image: 42-ft_transendence-nestjs
     build:
       context: ./backend
     depends_on:
@@ -24,6 +25,7 @@ services:
 
   nextjs:
     container_name: nextjs
+    image: 42-ft_transendence-nextjs
     build:
       context: ./frontend
     ports:
