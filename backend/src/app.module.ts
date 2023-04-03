@@ -10,6 +10,10 @@ import { UserAchievementModule } from './user_achievement/user_achievement.modul
 import { AchievementModule } from './achievement/achievement.module';
 import { FriendRequestModule } from './friend_request/friend_request.module';
 import { ChatLineModule } from './chat_line/chat_line.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtAccessModule } from './jwt_access/jwt_access.module';
+import { UserService } from './user/user.service';
+import { userProviders } from './user/user.providers';
 
 @Module({
   imports: [
@@ -22,12 +26,10 @@ import { ChatLineModule } from './chat_line/chat_line.module';
     AchievementModule,
     FriendRequestModule,
     ChatLineModule,
+    AuthModule,
+    JwtAccessModule,
   ],
-  controllers: [
-    AppController,
-  ],
-  providers: [
-    AppService,
-  ],
+  controllers: [AppController],
+  providers: [AppService, UserService, ...userProviders],
 })
 export class AppModule {}

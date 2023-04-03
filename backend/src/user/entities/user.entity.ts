@@ -10,6 +10,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -24,9 +25,6 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   'updated_at': Date;
-
-  @Column()
-  password: string;
 
   @Column({ default: 0 })
   wins: number;
@@ -58,4 +56,8 @@ export class User {
   @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.responder)
   @JoinColumn({ name: 'responder' })
   responses: FriendRequest[];
+
+  @Column({ nullable: true })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }
