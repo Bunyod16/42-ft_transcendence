@@ -27,13 +27,7 @@ import { ChatChannelsModule } from './chat_channels/chat_channels.module';
     JwtAccessModule,
     ChatChannelsModule,
   ],
-  controllers: [
-    AppController,
-  ],
-  providers: [
-    AppService,
-    UserService,
-    ...userProviders,
-  ],
+  controllers: [AppController],
+  providers: [AppService, UserService, ...userProviders],
 })
 export class AppModule {}
