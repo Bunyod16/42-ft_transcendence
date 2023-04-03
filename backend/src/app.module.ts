@@ -9,6 +9,7 @@ import { MatchModule } from './match/match.module';
 import { UserAchievementModule } from './user_achievement/user_achievement.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { FriendRequestModule } from './friend_request/friend_request.module';
+import { ChatLineModule } from './chat_line/chat_line.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FriendRequestModule } from './friend_request/friend_request.module';
     UserAchievementModule,
     AchievementModule,
     FriendRequestModule,
+    ChatLineModule,
   ],
   controllers: [
     AppController,

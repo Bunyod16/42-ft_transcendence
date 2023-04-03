@@ -18,7 +18,6 @@ import { UpdateFriendRequestDto } from './dto/update-friend_request.dto';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { FriendRequest, FriendStatus } from './entities/friend_request.entity';
-import { catchError } from 'rxjs';
 
 @Controller('friend-request')
 export class FriendRequestController {
