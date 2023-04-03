@@ -13,9 +13,9 @@ export class CreateUserDto {
   @ApiProperty()
   password: string;
 
-  // avatar:
-
   wins: number;
+
+  avatar: string;
 
   losses: number;
 
