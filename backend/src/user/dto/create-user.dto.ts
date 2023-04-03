@@ -13,6 +13,8 @@ export class CreateUserDto {
   @ApiProperty()
   password: string;
 
+  wins: number;
+
   avatar: string;
 
   losses: number;

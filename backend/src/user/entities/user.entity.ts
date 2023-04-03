@@ -45,9 +45,7 @@ export class User {
   @JoinColumn({ name: 'playerTwo' })
   matchesAsPlayerTwo: Match[];
 
-  @Column({
-    nullable: true
-  })
+  @Column({ nullable: true })
   @Exclude()
   public currentHashedRefreshToken?: string;
 }

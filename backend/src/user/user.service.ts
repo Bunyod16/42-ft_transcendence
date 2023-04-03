@@ -3,7 +3,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { encodePassword } from 'src/utils/bcrypt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
