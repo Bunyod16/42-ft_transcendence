@@ -1,15 +1,9 @@
 // import { Widgets } from "@mui/icons-material";
 import {
   Box,
-  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
 } from "@mui/material";
 import React, { useState } from "react";
 import Channels from "./SidePanel/Channels";
@@ -29,14 +23,7 @@ type TabTypes = "friends" | "channels";
 
 export default function SidePanel() {
   const [tabs, setTabs] = useState<TabTypes>("friends");
-  const [chats, setChats] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
 
-  function handleMessageSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-    setChats((prevState) => [...prevState, message]);
-    setMessage("");
-  }
   return (
     <Box sx={{ minWidth: "350px", width: "25%" }}>
       <Box sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
