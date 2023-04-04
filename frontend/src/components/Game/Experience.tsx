@@ -1,11 +1,33 @@
 import * as THREE from "three";
 
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-
 function Experience() {
   return (
     <>
-      <mesh geometry={boxGeometry} />
+      <color args={["#252731"]} attach="background" />
+
+      {/* player 1 */}
+      <mesh>
+        <boxGeometry />
+        <meshStandardMaterial color="orange" />
+      </mesh>
+
+      {/* player 2 */}
+      <mesh>
+        <boxGeometry />
+        <meshStandardMaterial color="orange" />
+      </mesh>
+
+      {/* table */}
+      <mesh>
+        <boxGeometry />
+        <meshStandardMaterial color="darkgreen" />
+      </mesh>
+
+      {/* Pong */}
+      <mesh>
+        <sphereGeometry />
+        <meshStandardMaterial color="gray" />
+      </mesh>
     </>
   );
 }
