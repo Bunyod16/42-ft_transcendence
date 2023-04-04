@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAccessModule } from './jwt_access/jwt_access.module';
 import { UserService } from './user/user.service';
 import { userProviders } from './user/user.providers';
+import { ChatChannelsModule } from './chat_channels/chat_channels.module';
 
 @Module({
   imports: [
@@ -24,14 +25,9 @@ import { userProviders } from './user/user.providers';
     AchievementModule,
     AuthModule,
     JwtAccessModule,
+    ChatChannelsModule,
   ],
-  controllers: [
-    AppController,
-  ],
-  providers: [
-    AppService,
-    UserService,
-    ...userProviders,
-  ],
+  controllers: [AppController],
+  providers: [AppService, UserService, ...userProviders],
 })
 export class AppModule {}

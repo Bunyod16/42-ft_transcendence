@@ -10,7 +10,7 @@ import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
 import { CookieSerializeOptions, parse, serialize } from 'cookie';
 
 @Injectable()
-  export class AuthGuard implements CanActivate {
+  export class UserAuthGuard implements CanActivate {
     constructor(private readonly jwtService: JwtRefreshService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
