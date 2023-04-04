@@ -10,8 +10,6 @@ import { UserAchievementModule } from './user_achievement/user_achievement.modul
 import { AchievementModule } from './achievement/achievement.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAccessModule } from './jwt_access/jwt_access.module';
-import { UserService } from './user/user.service';
-import { userProviders } from './user/user.providers';
 import { ChatChannelsModule } from './chat_channels/chat_channels.module';
 
 @Module({
@@ -28,6 +26,6 @@ import { ChatChannelsModule } from './chat_channels/chat_channels.module';
     ChatChannelsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService, ...userProviders],
+  providers: [AppService],
 })
 export class AppModule {}
