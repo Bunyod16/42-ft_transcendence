@@ -31,8 +31,6 @@ services:
     ports:
       - "3000:${NEXT_LISTEN_PORT}"
     depends_on:
-      postgresdb:
-        condition: service_healthy
       nestjs:
         condition: service_started
     restart: unless-stopped
