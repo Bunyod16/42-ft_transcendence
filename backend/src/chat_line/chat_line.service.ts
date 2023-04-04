@@ -21,7 +21,7 @@ export class ChatLineService {
 
     chatLine.text = text;
 
-    return this.chatLineRepository.save(chatLine);
+    return await this.chatLineRepository.save(chatLine);
   }
 
   async findAll() {
