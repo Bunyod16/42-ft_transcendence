@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Navbar from "@/components/layout/Navbar";
+import Game from "@/components/Game";
 
 export default function Home() {
   return (
@@ -23,9 +24,7 @@ export default function Home() {
           <Typography variant="h3" component="h1" gutterBottom>
             Material UI - Next.js example in TypeScript
           </Typography>
-          <Typography variant="body1">
-            This text actually looks huge lol
-          </Typography>
+          <Typography variant="body1">This text actually looks huge lol</Typography>
           <Stack spacing={2} direction="row">
             <Button variant="contained" color="primary">
               Text
@@ -37,6 +36,7 @@ export default function Home() {
               Outlined
             </Button>
           </Stack>
+          <Game />
         </Box>
       </Container>
     </>
