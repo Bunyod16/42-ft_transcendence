@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AchievementService } from './achievement.service';
 import { AchievementController } from './achievement.controller';
-import { achievementProviders } from './achievement.provider';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Achievement } from './entities/achievement.entity';
+import { UserAchievementModule } from 'src/user_achievement/user_achievement.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [TypeOrmModule.forFeature([Achievement]), ConfigModule],
   controllers: [AchievementController],
-  providers: [...achievementProviders, AchievementService],
-  exports: [AchievementService],
+  providers: [AchievementService],
+  exports: [AchievementService, TypeOrmModule],
 })
 export class AchievementModule {}
