@@ -17,11 +17,7 @@ describe('TwoFactorController', () => {
       providers: [
         {
           provide: TwoFactorService,
-          useValue: {
-            getAll: jest.fn().mockResolvedValue([
-              { name: 'Test Cat 2', breed: 'Test Breed 2', age: 3 },
-            ]),
-          },
+          useValue: {},
         },
       ],
     }).compile();

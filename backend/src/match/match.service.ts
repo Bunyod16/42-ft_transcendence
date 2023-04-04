@@ -1,13 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class MatchService {
   constructor(
-    @Inject('MATCH_REPOSITORY')
+    @InjectRepository(Match)
     private matchRepository: Repository<Match>,
   ) {}
 

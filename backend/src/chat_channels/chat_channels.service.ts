@@ -1,8 +1,6 @@
 import {
-  HttpCode,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
 } from '@nestjs/common';
 import { CreateChatChannelDto } from './dto/create-chat_channel.dto';
@@ -10,11 +8,12 @@ import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { Repository } from 'typeorm';
 import { ChannelType, ChatChannel } from './entities/chat_channel.entity';
 import { validate } from 'class-validator';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ChatChannelsService {
   constructor(
-    @Inject('CHAT_CHANNEL_REPOSITORY')
+    @InjectRepository(ChatChannel)
     private chatChannelRepository: Repository<ChatChannel>,
   ) {}
 

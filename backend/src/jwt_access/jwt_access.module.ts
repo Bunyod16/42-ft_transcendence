@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAccessService } from './jwt_access.service';
 import { UserModule } from 'src/user/user.module';
 import { UserService } from 'src/user/user.service';
-import { userProviders } from 'src/user/user.providers';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -12,17 +11,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        signOptions: { expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRY') },
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRY'),
+        },
       }),
       inject: [ConfigService],
     }),
     UserModule,
+    ConfigModule,
   ],
   providers: [
     { provide: 'JwtAccessService', useClass: JwtAccessService },
     JwtAccessService,
     UserService,
-    ...userProviders,
+    ConfigService,
   ],
   exports: [JwtAccessService],
 })
