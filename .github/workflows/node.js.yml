@@ -29,5 +29,4 @@ jobs:
       - run: cd backend
       - run: pwd
       - run: cd backend && npm ci
-      - run: npm run build --if-present
       - run: npm run test
