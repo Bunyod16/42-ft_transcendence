@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { ChatLineService } from './chat_line.service';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { Logger } from '@nestjs/common';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @Controller('chat-line')
 export class ChatLineController {
@@ -22,13 +22,14 @@ export class ChatLineController {
   @Post()
   async create(@Body() body: any) {
     // let chat_type: string = body.chatLineType;
-    const chat_id: number = parseInt(body.chatId);
+    const chat_id: number = parseInt(body.channelId);
     const text: string = body.text;
 
-    if (typeof body.chatId !== 'number') {
-      throw new HttpException(
-        `Bad Request: ChatId is not a number`,
+    if (typeof body.channelId !== 'number') {
+      throw new CustomException(
+        `Bad Request: ChannelId is not a number`,
         HttpStatus.BAD_REQUEST,
+        `ChatLine => create()`,
       );
     }
 
@@ -37,24 +38,22 @@ export class ChatLineController {
     createChatLineDto.text = text;
 
     try {
-      const chat_line = await this.chatLineService.create(
-        createChatLineDto,
-        chat_id,
-      );
+      const chat_line = await this.chatLineService.create(text, chat_id);
 
       return chat_line;
     } catch (error) {
       Logger.error(error, `ChatLine => create()`);
-      throw new HttpException(
+      throw new CustomException(
         `Bad Request: ChatLine already exist`,
         HttpStatus.BAD_REQUEST,
+        `ChatLine => create()`,
       );
     }
   }
 
   @Get()
-  findAll() {
-    return this.chatLineService.findAll();
+  async findAll() {
+    return await this.chatLineService.findAll();
   }
 
   @Get(':id')
@@ -67,11 +66,11 @@ export class ChatLineController {
     );
 
     if (!chat_line) {
-      Logger.log(
+      throw new CustomException(
         `chat_line with id = [${id}] doeesn't exist`,
-        'ChatLine => findOne()',
+        HttpStatus.NOT_FOUND,
+        `ChatLine => findOne()`,
       );
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
 
     return chat_line;
@@ -86,7 +85,7 @@ export class ChatLineController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatLineService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.chatLineService.remove(id);
   }
 }
