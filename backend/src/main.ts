@@ -10,6 +10,8 @@ async function bootstrap() {
     .setDescription('The ft_transendence API description')
     .setVersion('1.0')
     .addTag('ft_transendence')
+    .addCookieAuth('Authentication')
+    .addCookieAuth('Refresh')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

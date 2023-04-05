@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository, In } from 'typeorm';
@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 // import { encodePassword } from 'src/utils/bcrypt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
 
 @Injectable()
 export class UserService {
@@ -48,6 +49,11 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
+    if (id == null)
+      throw new HttpException(
+        'Not found: UserId cannot be undefined',
+        HttpStatus.NOT_FOUND,
+      );
     return this.userRepository.findOne({
       where: { id: id },
       relations: [
