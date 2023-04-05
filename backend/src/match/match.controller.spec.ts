@@ -12,8 +12,8 @@ describe('MatchController', () => {
       providers: [
         {
           provide: MatchService,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

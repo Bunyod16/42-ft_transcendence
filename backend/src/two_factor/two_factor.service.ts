@@ -5,7 +5,6 @@ import { TwoFactor } from './entities/two_factor.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-
 @Injectable()
 export class TwoFactorService {
   constructor(

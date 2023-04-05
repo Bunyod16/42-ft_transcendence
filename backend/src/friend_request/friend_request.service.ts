@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateFriendRequestDto } from './dto/create-friend_request.dto';
 import { UpdateFriendRequestDto } from './dto/update-friend_request.dto';
@@ -7,7 +8,7 @@ import { FriendRequest } from './entities/friend_request.entity';
 @Injectable()
 export class FriendRequestService {
   constructor(
-    @Inject('FRIEND_REQUEST_REPOSITORY')
+    @InjectRepository(FriendRequest)
     private friendRequestRepository: Repository<FriendRequest>,
   ) {}
 

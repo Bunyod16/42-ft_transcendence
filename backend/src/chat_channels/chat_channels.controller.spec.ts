@@ -9,7 +9,6 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UserController } from 'src/user/user.controller';
 import { UserService } from 'src/user/user.service';
 import { ConfigModule } from '@nestjs/config';
-import { User } from 'src/user/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';

@@ -1,4 +1,5 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { Repository } from 'typeorm';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
@@ -8,7 +9,7 @@ import { ChatLine } from './entities/chat_line.entity';
 @Injectable()
 export class ChatLineService {
   constructor(
-    @Inject('CHAT_LINE_REPOSITORY')
+    @InjectRepository(ChatLine)
     private chatLineRepository: Repository<ChatLine>,
   ) {}
   // private readonly chatChannelService: ChatChannelService,
