@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box
+      component={"div"}
       sx={{
         height: "100vh",
         width: "100vw",
@@ -13,7 +14,9 @@ function DefaultLayout({ children }: { children: React.ReactNode }) {
       }}
     >
       <Navbar />
-      <Box sx={{ height: "100%", width: "100%" }}>{children}</Box>
+      <Box component={"div"} sx={{ height: "100%", width: "100%" }}>
+        {children}
+      </Box>
     </Box>
   );
 }
