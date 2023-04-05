@@ -111,12 +111,12 @@ export class FriendRequestController {
   async findAll() {
     const friendRequest = this.friendRequestService.findAll();
 
-    Logger.log(`Trying to get all friendRequest`, 'FriendStatus => findAll()');
-
-    if (!friendRequest) {
-      Logger.log(`Cant find friendRequest table`, 'FriendStatus => findAll()');
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    }
+    // Logger.log(`Trying to get all friendRequest`, 'FriendStatus => findAll()');
+    //
+    // if (!friendRequest) {
+    //   Logger.log(`Cant find friendRequest table`, 'FriendStatus => findAll()');
+    //   throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    // }
 
     return friendRequest;
   }
