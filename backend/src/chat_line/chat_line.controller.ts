@@ -8,22 +8,27 @@ import {
   Delete,
   ParseIntPipe,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ChatLineService } from './chat_line.service';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { Logger } from '@nestjs/common';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { UserAuthGuard } from 'src/auth/auth.guard';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('chat-line')
+@UseGuards(UserAuthGuard)
 export class ChatLineController {
   constructor(private readonly chatLineService: ChatLineService) {}
 
   @Post()
-  async create(@Body() body: any) {
-    // let chat_type: string = body.chatLineType;
-    const chat_id: number = parseInt(body.channelId);
+  async create(@Body() body: any, @Req() req: any) {
+    const channel_id: number = parseInt(body.channelId);
     const text: string = body.text;
+    const sender: User = req.user;
 
     if (typeof body.channelId !== 'number') {
       throw new CustomException(
@@ -38,7 +43,11 @@ export class ChatLineController {
     createChatLineDto.text = text;
 
     try {
-      const chat_line = await this.chatLineService.create(text, chat_id);
+      const chat_line = await this.chatLineService.create(
+        text,
+        channel_id,
+        sender,
+      );
 
       return chat_line;
     } catch (error) {

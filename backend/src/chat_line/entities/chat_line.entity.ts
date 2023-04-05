@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { ChatChannel } from 'src/chat_channels/entities/chat_channel.entity';
 
 @Entity()
 export class ChatLine {
@@ -22,6 +23,6 @@ export class ChatLine {
   sender: User;
 
   //For chat channel link
-  // @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatLines)
-  // chatChannel: ChatChannel;
+  @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatLines)
+  chatChannel: ChatChannel;
 }

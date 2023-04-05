@@ -5,23 +5,23 @@ import { Repository } from 'typeorm';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { ChatLine } from './entities/chat_line.entity';
+import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ChatLineService {
   constructor(
     @InjectRepository(ChatLine)
     private chatLineRepository: Repository<ChatLine>,
+    private readonly chatChannelService: ChatChannelsService,
   ) {}
-  // private readonly chatChannelService: ChatChannelService,
 
-  async create(text: string, channel_id: number) {
+  async create(text: string, channel_id: number, sender: User) {
     const chatLine: CreateChatLineDto = new CreateChatLineDto();
 
-    //find chat Channel and handle accordingly
-    // this.chatChannelService.findOne(channel_id);
-
+    chatLine.chatChannel = await this.chatChannelService.findOne(channel_id);
     chatLine.text = text;
-
+    chatLine.sender = sender;
     return await this.chatLineRepository.save(chatLine);
   }
 

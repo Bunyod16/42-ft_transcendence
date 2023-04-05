@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from 'src/user/entities/user.entity';
 
 import { ValidateIf } from 'class-validator';
+import { ChatLine } from 'src/chat_line/entities/chat_line.entity';
 
 export enum ChannelType {
   PUBLIC = 'public',
@@ -36,4 +38,7 @@ export class ChatChannel {
   @ValidateIf((entity) => entity.channel_type === ChannelType.PROTECTED)
   @Column({ nullable: true })
   password: string;
+
+  @OneToMany(() => ChatLine, (chatLine) => chatLine.chatChannel)
+  chatLines: ChatLine[];
 }

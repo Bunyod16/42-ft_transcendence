@@ -42,7 +42,7 @@ export class AuthController {
   @Get('callback')
   async ftAuthRedirect(@Query() query, @Req() request: RequestWithUser) {
     const { user } = request;
-    var postData = {
+    const postData = {
       grant_type: 'authorization_code',
       client_id: this.configService.get('FORTY_TWO_API_UID'),
       client_secret: this.configService.get('FORTY_TWO_API_SECRET'),
