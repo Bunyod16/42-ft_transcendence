@@ -3,3 +3,8 @@ export interface ISize {
   y: number;
   z: number;
 }
+
+export enum Controls {
+  up = "up",
+  down = "down",
+}
