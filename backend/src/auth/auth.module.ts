@@ -6,7 +6,6 @@ import { UserModule } from 'src/user/user.module';
 import { JwtAccessModule } from 'src/jwt_access/jwt_access.module';
 import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
 import { ConfigModule } from '@nestjs/config';
-import { Global } from '@nestjs/common';
 
 @Global()
 @Module({
