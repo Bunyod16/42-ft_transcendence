@@ -1,19 +1,14 @@
 import * as THREE from "three";
+import { ISize } from "./types";
+import {
+  ballMaterial,
+  boxGeometry,
+  sphereGeometry,
+  tableMaterial,
+} from "./resource";
+import Player from "./Player";
 
 THREE.ColorManagement.enabled = true;
-
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-const sphereGeometry = new THREE.SphereGeometry(1, 1, 1);
-
-const tableMaterial = new THREE.MeshStandardMaterial({ color: "darkgreen" });
-const playerMaterial = new THREE.MeshStandardMaterial({ color: "yellow" });
-const ballMaterial = new THREE.MeshStandardMaterial({ color: "white" });
-
-interface ISize {
-  x: number;
-  y: number;
-  z: number;
-}
 
 interface ITableProps {
   tableSize: ISize;
@@ -25,22 +20,6 @@ function Table({ tableSize }: ITableProps) {
       scale={[tableSize.x, tableSize.y, tableSize.z]}
       material={tableMaterial}
       receiveShadow
-    />
-  );
-}
-
-interface IPlayerProps {
-  tableSize: ISize;
-  playerLR: number;
-}
-function Player({ tableSize, playerLR }: IPlayerProps) {
-  return (
-    <mesh
-      geometry={boxGeometry}
-      material={playerMaterial}
-      scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
-      position={[playerLR * (tableSize.x / 2 - 0.1), tableSize.y + 0.02, 0]}
-      castShadow
     />
   );
 }
