@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { HttpModule } from '@nestjs/axios';
@@ -7,6 +7,7 @@ import { JwtAccessModule } from 'src/jwt_access/jwt_access.module';
 import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+@Global()
 @Module({
   imports: [
     HttpModule,
@@ -24,6 +25,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     // }
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, JwtAccessModule, JwtRefreshModule],
 })
 export class AuthModule {}

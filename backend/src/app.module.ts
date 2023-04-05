@@ -13,6 +13,7 @@ import { ChatChannelsModule } from './chat_channels/chat_channels.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DataSource } from 'typeorm';
     AuthModule,
     JwtAccessModule,
     ChatChannelsModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService],
