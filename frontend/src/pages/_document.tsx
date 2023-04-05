@@ -9,8 +9,8 @@ import Document, {
 } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";
-import theme, { inconsolata } from "@/theme";
-import createEmotionCache from "@/createEmotionCache";
+import theme, { inconsolata } from "@/styles/theme";
+import createEmotionCache from "@/styles/createEmotionCache";
 import { MyAppProps } from "./_app";
 
 interface MyDocumentProps extends DocumentProps {
@@ -70,7 +70,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (
-        App: React.ComponentType<React.ComponentProps<AppType> & MyAppProps>
+        App: React.ComponentType<React.ComponentProps<AppType> & MyAppProps>,
       ) =>
         function EnhanceApp(props) {
           return <App emotionCache={cache} {...props} />;
