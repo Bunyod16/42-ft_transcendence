@@ -32,6 +32,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('/many')
+  async findMany(@Body() body: any) {
+    const user_ids: number[] = body.ids;
+    return this.userService.findMany(user_ids);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findOne(+id);
