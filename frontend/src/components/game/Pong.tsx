@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { ISize } from "./types";
-import { useControls } from "leva";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
