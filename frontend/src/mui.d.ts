@@ -9,6 +9,8 @@
 //   }
 // }
 
+// module augmentation - https://stackoverflow.com/questions/60424596/cant-customize-color-palette-types-on-material-ui-theme-in-typescript
+
 import "@mui/material/styles/createPalette";
 import "@mui/material";
 
