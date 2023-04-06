@@ -1,8 +1,8 @@
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { sphereGeometry, ballMaterial } from "./resource";
+import { ballMaterial, boxGeometry } from "./resource";
 import { ISize } from "./types";
 import { useEffect, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { button, useControls } from "leva";
 
 interface IBallProps {
   tableSize: ISize;
@@ -10,18 +10,51 @@ interface IBallProps {
 
 function Ball({ tableSize }: IBallProps) {
   const body = useRef<RapierRigidBody>(null);
+  useControls({
+    push: button(() => {
+      if (body.current) {
+        body.current.applyImpulse({ x: 0.05, y: 0, z: 0 }, true);
+        console.log("apply impulse");
+      }
+    }),
+    reset: button(() => {
+      if (body.current) {
+        body.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        body.current.setTranslation(
+          { x: 0, y: 0, z: tableSize.y + 0.02 },
+          true,
+        );
+      }
+    }),
+  });
+
+  // useEffect(() => {
+  //   if (body.current) {
+  //     console.log(body.current.mass());
+  //     // body.current.setAdditionalMass(5, true);
+  //     body.current.applyImpulse({ x: 0, y: 20, z: 0 }, true);
+  //     console.log("apply impulse");
+  //   }
+  // }, [body]);
 
   return (
-    <RigidBody type="dynamic" ref={body}>
+    <RigidBody
+      ref={body}
+      // colliders="ball"
+      mass={5}
+      position={[0, 0, tableSize.y + 0.02]}
+      // linearDamping={0.5}
+      restitution={1}
+      lockRotations={true}
+    >
       <mesh
-        geometry={sphereGeometry}
+        geometry={boxGeometry}
         material={ballMaterial}
-        scale={tableSize.y / 2}
-        position={[0, 0, tableSize.y + 0.02]}
+        scale={tableSize.y}
         castShadow
       >
-        <sphereGeometry />
-        <meshStandardMaterial color="gray" />
+        {/* <sphereGeometry />
+        <meshStandardMaterial color="gray" /> */}
       </mesh>
     </RigidBody>
   );

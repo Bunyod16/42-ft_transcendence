@@ -25,31 +25,35 @@ function Player({ tableSize, playerLR }: IPlayerProps) {
 
       if (keys.up) {
         body.current.setNextKinematicTranslation({
-          x: 0,
+          x: bodyPosition.x,
           y: bodyPosition.y + steps,
-          z: 0,
+          z: bodyPosition.z,
         });
       }
 
       if (keys.down) {
         body.current.setNextKinematicTranslation({
-          x: 0,
+          x: bodyPosition.x,
           y: bodyPosition.y - steps,
-          z: 0,
+          z: bodyPosition.z,
         });
       }
     }
   });
 
   return (
-    <RigidBody type="kinematicPosition" ref={body}>
+    <RigidBody
+      type="kinematicPosition"
+      ref={body}
+      position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
+      rotation={[Math.PI / 2, 0, 0]}
+      restitution={1}
+    >
       <mesh
         geometry={boxGeometry}
         material={playerMaterial}
         scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
-        position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
         castShadow
-        rotation={[Math.PI / 2, 0, 0]}
       />
     </RigidBody>
   );
