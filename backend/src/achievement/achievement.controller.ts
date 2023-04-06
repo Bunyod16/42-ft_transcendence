@@ -6,17 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
   HttpStatus,
   Logger,
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
 import { AchievementService } from './achievement.service';
-import { CreateAchievementDto } from './dto/create-achievement.dto';
-import { UpdateAchievementDto } from './dto/update-achievement.dto';
-import { Achievement } from './entities/achievement.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @ApiTags('achievement')
 @Controller('achievement')
@@ -24,32 +21,37 @@ export class AchievementController {
   constructor(private readonly achievementService: AchievementService) {}
 
   @Post()
-  async create(@Body() createAchievementDto: CreateAchievementDto) {
-    try {
-      const achievement = await this.achievementService.create(
-        createAchievementDto,
+  async create(@Body() body: any) {
+    const achievemnt_name: string = body.name;
+    const achievemnt_des: string = body.description;
+
+    if (
+      typeof achievemnt_name === 'undefined' ||
+      typeof achievemnt_des === 'undefined'
+    )
+      throw new CustomException(
+        `Body bad request parameters`,
+        HttpStatus.BAD_REQUEST,
+        `Achievement => create()`,
       );
 
-      if (!achievement) {
-        Logger.log("Couldn't create achievement", 'Achievement => create()');
-        throw new HttpException(
-          `Internal Server Error: Couldn't create achievement`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    try {
+      const achievement = await this.achievementService.create(
+        achievemnt_name,
+        achievemnt_des,
+      );
 
       Logger.log(
-        `Created achievement with id = [${achievement.id}]`,
+        `Created Achievement with id = [${achievement.id}]`,
         'Achievement => create()',
       );
 
       return achievement;
     } catch (error) {
-      Logger.error(`achievement couldn't be added`, `Achievement => create()`);
-      Logger.error(error, `Achievement => create()`);
-      throw new HttpException(
-        'Internal Server Error: Some Bad Shit Happened',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      throw new CustomException(
+        `Achivement already exist`,
+        HttpStatus.BAD_REQUEST,
+        `Achievement => create()`,
       );
     }
   }
@@ -58,12 +60,15 @@ export class AchievementController {
   async findAll() {
     const achievement = this.achievementService.findAll();
 
-    Logger.log(`Getting all in achievement`, 'Achievement => findAll()');
-
     if (!achievement) {
-      Logger.log(`Cant find matches table`, 'Achievement => findAll()');
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      throw new CustomException(
+        `Cant find Achievements table`,
+        HttpStatus.BAD_REQUEST,
+        `Achievement => findAll()`,
+      );
     }
+
+    Logger.log(`Getting all Achievements`, 'Achievement => findAll()');
 
     return achievement;
   }
@@ -73,17 +78,27 @@ export class AchievementController {
     const achievement = await this.achievementService.findOne(id);
 
     Logger.log(
-      `Trying to get achievement with id = [${id}]`,
+      `Getting achievement with id = [${id}]`,
       'Achievement => findOne()',
     );
 
-    if (!achievement) {
-      Logger.log(
-        `achievement with id = [${id}] doeesn't exist`,
-        'Achievement => findOne()',
+    return achievement;
+  }
+
+  @Get(':name/name')
+  async findOneName(@Param('name') name: string) {
+    if (typeof name !== 'string')
+      throw new CustomException(
+        `Param bad request parameters`,
+        HttpStatus.BAD_REQUEST,
+        `Achievement => findOneName()`,
       );
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-    }
+
+    const achievement = await this.achievementService.findOneName(name);
+    Logger.log(
+      `Getting achievement with name = [${name}]`,
+      'Achievement => findOneName()',
+    );
 
     return achievement;
   }
@@ -93,78 +108,26 @@ export class AchievementController {
     @Param('id', ParseIntPipe) id: number,
     @Query('name') name: string,
     @Query('description') description: string,
-    @Body() updateAchievementDto: UpdateAchievementDto,
   ) {
-    const achievement: Achievement = await this.achievementService.findOne(id);
-
-    if (!achievement) {
-      Logger.log(
-        `achievement with id = [${id}] doesn't exist`,
-        `Achievement => updateText()`,
-      );
-      throw new HttpException(
-        'Not Found: Achivement doesnt exists',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    updateAchievementDto.name = name ?? achievement.name;
-    updateAchievementDto.description = description ?? achievement.description;
-
-    try {
-      const res = await this.achievementService.update(
-        id,
-        updateAchievementDto,
-      );
-
-      res.raw = await this.achievementService.findOne(id);
-      return res;
-    } catch (error) {
-      Logger.error(
-        `achievement with id = [${id}] couldn't be updated`,
-        `Achievement => updateText()`,
-      );
-      Logger.error(error, `Achievement => updateText()`);
-      throw new HttpException(
-        'BAD_REQUEST: Achivement duplicate name or description',
+    if (typeof name === 'undefined' && typeof description === 'undefined') {
+      throw new CustomException(
+        `Query bad request parameters`,
         HttpStatus.BAD_REQUEST,
+        `Achievement => findOneName()`,
       );
     }
+
+    const achievement = await this.achievementService.update(
+      id,
+      name,
+      description,
+    );
+
+    return achievement;
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    try {
-      const achieivement_raw = await this.achievementService.findOne(id);
-      const achieivement = await this.achievementService.remove(id);
-      Logger.log(
-        `Trying to delete achievement with id = [${id}]`,
-        'Achievement => remove()',
-      );
-
-      if (!achieivement || achieivement.affected === 0) {
-        Logger.log(
-          `achievement with id = [${id}] doesn't exist`,
-          'Achievement => remove()',
-        );
-        throw new HttpException(
-          "Not Found: achievement doeesn't exist",
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      Logger.log(
-        `Deleted achieivement with id = [${id}]`,
-        'Achievement => remove()',
-      );
-
-      achieivement.raw = achieivement_raw;
-      return achieivement;
-    } catch (error) {
-      Logger.error(error, `Achievement => remove()`);
-      throw new HttpException(
-        `Internal Server Error: Some bad shit happened`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return this.achievementService.remove(id);
   }
 }

@@ -20,13 +20,21 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const exception_obj = exception.getResponse() as any;
 
-    const statusCode =
-      exception instanceof HttpException ? exception.getStatus() : 500;
-    const message =
-      `Not Found : ${exception.message}` ||
-      'Internal Server Error: Some bad shit happened';
+    const statusCode = exception.getStatus();
+    let message: string;
+    switch (statusCode) {
+      case 500:
+        message = `Internal Server Error: `;
+      case 404:
+        message = `Not Found: `;
+      case 400:
+        message = `Bad Request: `;
+    }
+    message += `${exception.message}`;
 
-    Logger.log(exception_obj.message, exception_obj.location);
+    if (statusCode === 500)
+      Logger.error(exception_obj.message, exception_obj.location);
+    else Logger.log(exception_obj.message, exception_obj.location);
 
     response.status(statusCode).json({
       statusCode,

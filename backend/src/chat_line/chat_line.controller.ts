@@ -38,10 +38,6 @@ export class ChatLineController {
       );
     }
 
-    const createChatLineDto: CreateChatLineDto = new CreateChatLineDto();
-
-    createChatLineDto.text = text;
-
     try {
       const chat_line = await this.chatLineService.create(
         text,
@@ -73,14 +69,6 @@ export class ChatLineController {
       `Trying to get chat_line with id = [${id}]`,
       'ChatLine => findOne()',
     );
-
-    if (!chat_line) {
-      throw new CustomException(
-        `chat_line with id = [${id}] doeesn't exist`,
-        HttpStatus.NOT_FOUND,
-        `ChatLine => findOne()`,
-      );
-    }
 
     return chat_line;
   }
