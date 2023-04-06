@@ -14,6 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { QueueModule } from './queue/queue.module';
+import { GameStateModule } from './game_state/gameState.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { QueueModule } from './queue/queue.module';
     JwtAccessModule,
     ChatChannelsModule,
     QueueModule,
+    GameStateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
