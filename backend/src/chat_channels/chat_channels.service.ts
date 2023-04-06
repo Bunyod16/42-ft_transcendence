@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateChatChannelDto } from './dto/create-chat_channel.dto';
 import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { Repository } from 'typeorm';

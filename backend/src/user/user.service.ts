@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { User } from './entities/user.entity';
+// import { encodePassword } from 'src/utils/bcrypt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
@@ -22,6 +23,21 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({
+      relations: {
+        matchesAsPlayerOne: true,
+        matchesAsPlayerTwo: true,
+        achievements: {
+          achievement: true,
+        },
+      },
+    });
+  }
+
+  async findMany(ids: number[]): Promise<User[]> {
+    return this.userRepository.find({
+      where: {
+        id: In(ids),
+      },
       relations: {
         matchesAsPlayerOne: true,
         matchesAsPlayerTwo: true,

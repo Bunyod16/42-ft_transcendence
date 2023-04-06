@@ -1,25 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AchievementService } from './achievement.service';
-import { Achievement } from './entities/achievement.entity';
+import { FriendRequest } from './entities/friend_request.entity';
+import { FriendRequestService } from './friend_request.service';
 
-describe('AchievementService', () => {
-  let service: AchievementService;
-  let repo: Repository<AchievementService>;
+describe('FriendRequestService', () => {
+  let service: FriendRequestService;
+  let repo: Repository<FriendRequest>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AchievementService,
+        FriendRequestService,
         {
-          provide: getRepositoryToken(Achievement),
+          provide: getRepositoryToken(FriendRequest),
           useValue: {},
         },
       ],
     }).compile();
 
-    service = module.get<AchievementService>(AchievementService);
+    service = module.get<FriendRequestService>(FriendRequestService);
   });
 
   it('should be defined', () => {

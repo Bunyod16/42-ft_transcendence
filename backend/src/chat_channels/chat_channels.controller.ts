@@ -17,11 +17,11 @@ import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('chat-channels')
+@UseGuards(UserAuthGuard)
 @Controller('chat-channels')
 export class ChatChannelsController {
   constructor(private readonly chatChannelsService: ChatChannelsService) {}
 
-  @UseGuards(UserAuthGuard)
   @Post()
   create(
     @Body() createChatChannelDto: CreateChatChannelDto,

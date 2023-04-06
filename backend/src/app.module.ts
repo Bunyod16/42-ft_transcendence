@@ -7,6 +7,8 @@ import { TwoFactorModule } from './two_factor/two_factor.module';
 import { MatchModule } from './match/match.module';
 import { UserAchievementModule } from './user_achievement/user_achievement.module';
 import { AchievementModule } from './achievement/achievement.module';
+import { FriendRequestModule } from './friend_request/friend_request.module';
+import { ChatLineModule } from './chat_line/chat_line.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAccessModule } from './jwt_access/jwt_access.module';
 import { ChatChannelsModule } from './chat_channels/chat_channels.module';
@@ -41,6 +43,8 @@ import { QueueModule } from './queue/queue.module';
     MatchModule,
     UserAchievementModule,
     AchievementModule,
+    FriendRequestModule,
+    ChatLineModule,
     AuthModule,
     JwtAccessModule,
     ChatChannelsModule,

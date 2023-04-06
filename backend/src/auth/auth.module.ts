@@ -5,7 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { UserModule } from 'src/user/user.module';
 import { JwtAccessModule } from 'src/jwt_access/jwt_access.module';
 import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 @Global()
 @Module({
