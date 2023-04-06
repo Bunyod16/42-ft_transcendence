@@ -1,3 +1,4 @@
+import axios from "axios";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -30,20 +31,17 @@ const useUserStore = create<UserState>()(
       login: async () => {
         try {
           // Send a request to your backend server to authenticate the user
-          const response = await fetch("/api/login", {
-            method: "POST",
-            credentials: "include", // Send cookies with the request
+          const response = await axios.get("/api/login", {
+            // credentials: "include", // Send cookies with the request
           });
 
-          if (response.ok) {
-            // The user is authenticated, retrieve their information from the JWT cookie
-            const { name, email } = await response.json();
-            set(() => ({
-              isLoggedIn: true,
-              name,
-              email,
-            }));
-          }
+          // The user is authenticated, retrieve their information from the JWT cookie
+          const { name, email } = await response.data;
+          set(() => ({
+            isLoggedIn: true,
+            name,
+            email,
+          }));
         } catch (error) {
           console.error(error);
         }
