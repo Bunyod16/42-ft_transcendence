@@ -8,11 +8,13 @@ import { useRef } from "react";
 interface IPlayerProps {
   tableSize: ISize;
   playerLR: number;
+  isPlayer: boolean;
 }
 
-function Player({ tableSize, playerLR }: IPlayerProps) {
+function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const [sub, getKeys] = useKeyboardControls<Controls>();
   const body = useRef<RapierRigidBody>(null);
+  console.log(isPlayer);
 
   useFrame((state, delta) => {
     if (body.current) {
@@ -23,20 +25,22 @@ function Player({ tableSize, playerLR }: IPlayerProps) {
 
       const bodyPosition = body.current.translation();
 
-      if (keys.up) {
-        body.current.setNextKinematicTranslation({
-          x: bodyPosition.x,
-          y: bodyPosition.y + steps,
-          z: bodyPosition.z,
-        });
-      }
+      if (isPlayer) {
+        if (keys.up) {
+          body.current.setNextKinematicTranslation({
+            x: bodyPosition.x,
+            y: bodyPosition.y + steps,
+            z: bodyPosition.z,
+          });
+        }
 
-      if (keys.down) {
-        body.current.setNextKinematicTranslation({
-          x: bodyPosition.x,
-          y: bodyPosition.y - steps,
-          z: bodyPosition.z,
-        });
+        if (keys.down) {
+          body.current.setNextKinematicTranslation({
+            x: bodyPosition.x,
+            y: bodyPosition.y - steps,
+            z: bodyPosition.z,
+          });
+        }
       }
     }
   });
