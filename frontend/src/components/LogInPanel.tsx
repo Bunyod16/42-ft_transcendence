@@ -1,8 +1,11 @@
+import useUserStore from "@/store/userStore";
 import { Box, Button, Typography } from "@mui/material";
 
 export default function LoginPanel() {
+  const { login } = useUserStore();
   return (
     <Box
+      component={"div"}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -35,6 +38,7 @@ export default function LoginPanel() {
           transition: "0.3s",
           "&:hover": { backgroundColor: "accent.hover" },
         }}
+        onClick={login}
       >
         <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography>
       </Button>
