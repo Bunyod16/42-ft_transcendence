@@ -9,7 +9,7 @@ function Experience() {
 
       <OrbitControls />
 
-      <Physics>
+      <Physics gravity={[0, 0, 0]}>
         <Debug />
         <directionalLight
           castShadow

@@ -15,7 +15,7 @@ function Game() {
         // orthographic
         shadows
         camera={{
-          position: [0, 2, 4],
+          position: [0, -6, 3],
           // zoom: 200,
           fov: 45,
           near: 0.1,

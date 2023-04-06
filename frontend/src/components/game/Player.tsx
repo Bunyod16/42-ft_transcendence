@@ -26,16 +26,16 @@ function Player({ tableSize, playerLR }: IPlayerProps) {
       if (keys.up) {
         body.current.setNextKinematicTranslation({
           x: 0,
-          y: 0,
-          z: bodyPosition.z + steps,
+          y: bodyPosition.y + steps,
+          z: 0,
         });
       }
 
       if (keys.down) {
         body.current.setNextKinematicTranslation({
           x: 0,
-          y: 0,
-          z: bodyPosition.z - steps,
+          y: bodyPosition.y - steps,
+          z: 0,
         });
       }
     }
@@ -47,8 +47,9 @@ function Player({ tableSize, playerLR }: IPlayerProps) {
         geometry={boxGeometry}
         material={playerMaterial}
         scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
-        position={[playerLR * (tableSize.x / 2 - 0.1), tableSize.y + 0.02, 0]}
+        position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
         castShadow
+        rotation={[Math.PI / 2, 0, 0]}
       />
     </RigidBody>
   );

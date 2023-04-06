@@ -1,12 +1,9 @@
 import * as THREE from "three";
 import { ISize } from "./types";
-import {
-  ballMaterial,
-  boxGeometry,
-  sphereGeometry,
-  tableMaterial,
-} from "./resource";
+import { useControls } from "leva";
+import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
+import Ball from "./Ball";
 
 THREE.ColorManagement.enabled = true;
 
@@ -19,26 +16,9 @@ function Table({ tableSize }: ITableProps) {
       geometry={boxGeometry}
       scale={[tableSize.x, tableSize.y, tableSize.z]}
       material={tableMaterial}
+      rotation={[Math.PI / 2, 0, 0]}
       receiveShadow
     />
-  );
-}
-
-interface IBallProps {
-  tableSize: ISize;
-}
-function Ball({ tableSize }: IBallProps) {
-  return (
-    <mesh
-      geometry={sphereGeometry}
-      material={ballMaterial}
-      scale={tableSize.y / 2}
-      position={[0, tableSize.y + 0.02, 0]}
-      castShadow
-    >
-      <sphereGeometry />
-      <meshStandardMaterial color="gray" />
-    </mesh>
   );
 }
 
