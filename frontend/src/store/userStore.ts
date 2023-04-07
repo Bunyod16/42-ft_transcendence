@@ -26,25 +26,26 @@ const useUserStore = create<UserState>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-      ...(typeof window !== "undefined" &&
-        JSON.parse(localStorage.getItem("user") ?? "{}")),
-      login: async () => {
-        try {
-          // Send a request to your backend server to authenticate the user
-          const response = await axios.get("/api/login", {
-            // credentials: "include", // Send cookies with the request
-          });
-
-          // The user is authenticated, retrieve their information from the JWT cookie
-          const { name, email } = await response.data;
-          set(() => ({
-            isLoggedIn: true,
-            name,
-            email,
-          }));
-        } catch (error) {
-          console.error(error);
-        }
+      // ...(typeof window !== "undefined" &&
+      //   JSON.parse(localStorage.getItem("user") ?? "{}")),
+      login: () => {
+        // axios
+        //   .get("/auth/login")
+        //   .then((res) => {
+        //     const { name, email } = res.data;
+        //     set(() => ({
+        //       isLoggedIn: true,
+        //       name,
+        //       email,
+        //     }));
+        //   })
+        //   .catch((err) => console.log(err));
+        set(() => ({
+          isLoggedIn: true,
+          name: "jatan",
+          email: "jatan@email.com",
+        }));
+        console.log("logged in");
       },
       logout: async () => {
         try {

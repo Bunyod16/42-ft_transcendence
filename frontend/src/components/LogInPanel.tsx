@@ -1,8 +1,21 @@
+import React from "react";
+
 import useUserStore from "@/store/userStore";
 import { Box, Button, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function LoginPanel() {
-  const { login } = useUserStore();
+  const { login, isLoggedIn } = useUserStore();
+  const router = useRouter();
+  const [pushCalled, setPushCalled] = React.useState(false);
+
+  // React.useEffect(() => {
+  //   if (isLoggedIn === false && pushCalled === false) {
+  //     router.push("/");
+  //     setPushCalled(true);
+  //   }
+  // }, [isLoggedIn, pushCalled, router]);
+
   return (
     <Box
       component={"div"}
