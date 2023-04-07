@@ -2,6 +2,8 @@ NAME = 42-ft_transendence
 
 POSTGRESQL_VOLUME = trancendence_posgresdb
 DEV_POSTGRESQL_VOLUME = dev_trancendence_posgresdb
+DEV_REDIS_VOLUME = dev_redis_volume
+REDIS_VOLUME = redis_volume
 
 all : dev
 
@@ -15,9 +17,11 @@ down :
 	docker compose down
 
 rm_dev_volume :
+	docker volume rm $(NAME)_$(DEV_REDIS_VOLUME)
 	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
 
 rm_prod_volume :
+	docker volume rm $(NAME)_$(REDIS_VOLUME)
 	docker volume rm $(NAME)_$(POSTGRESQL_VOLUME)
 
 rm_img :
