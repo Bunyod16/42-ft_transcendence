@@ -42,7 +42,7 @@ services:
       - "3005:${DEV_NEST_LISTEN_PORT}"
     expose:
       - ${DEV_NEST_LISTEN_PORT}
-    entrypoint: ["npx", "nest", "start", "--debug","--watch"]
+    entrypoint: ["npx", "nest", "start", "--watch"]
 
   nextjs:
     volumes:
