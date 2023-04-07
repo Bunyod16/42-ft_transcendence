@@ -11,6 +11,24 @@ services:
     networks:
       - ft_trancendence
 
+  redis:
+    container_name: redis
+    image: redis:7.2-rc-bullseye
+    restart: unless-stopped
+    configs:
+      - source: redis_config
+        target: /usr/local/etc/redis/redis.conf
+    networks:
+      - ft_trancendence
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    entrypoint: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
   nestjs:
     container_name: nestjs
     image: 42-ft_transendence-nestjs
@@ -18,6 +36,8 @@ services:
       context: ./backend
     depends_on:
       postgresdb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -40,6 +60,8 @@ services:
 configs:
   postgres_initsql:
     file: ./backend/postgres/init.sh
+  redis_config:
+    file: ./backend/redis/redis.conf
 
 networks:
   ft_trancendence:
