@@ -2,13 +2,13 @@ FROM node:18.15-bullseye
 
 RUN apt update -y && apt upgrade -y
 
-WORKDIR /inception_nextjs
+WORKDIR /trancendence_nextjs
 
-COPY package*.json /inception_nextjs/
+COPY package*.json /trancendence_nextjs/
 
 RUN npm install
 
-COPY ./ /inception_nextjs/
+COPY ./ /trancendence_nextjs/
 
 EXPOSE 3000
 
