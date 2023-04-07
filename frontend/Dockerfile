@@ -2,13 +2,17 @@ FROM node:18.15-bullseye
 
 RUN apt update -y && apt upgrade -y
 
-WORKDIR /inception_nextjs
+RUN npm i -g pnpm
 
-COPY package*.json /inception_nextjs/
+WORKDIR /trancendence_nextjs
 
-RUN npm install
+COPY package*.json /trancendence_nextjs/
 
-COPY ./ /inception_nextjs/
+COPY pnpm-lock.yaml /trancendence_nextjs/
+
+RUN pnpm install
+
+COPY ./ /trancendence_nextjs/
 
 EXPOSE 3000
 

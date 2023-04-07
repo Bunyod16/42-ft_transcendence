@@ -21,6 +21,12 @@ services:
     expose:
       - ${DEV_DB_PORT}
 
+  redis:
+    volumes:
+      - dev_redis_volume:/data
+    ports:
+      - "3002:6379"
+
   nestjs:
     environment:
       DB_HOST: ${DEV_DB_HOST}
@@ -44,4 +50,5 @@ services:
     entrypoint: ["npx", "next", "dev"]
 
 volumes:
+  dev_redis_volume:
   dev_trancendence_posgresdb:

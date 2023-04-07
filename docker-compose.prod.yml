@@ -19,6 +19,10 @@ services:
     expose:
       - ${DB_PORT}
 
+  redis:
+    volumes:
+      - redis_volume:/data
+
   nestjs:
     environment:
       DB_HOST: ${DB_HOST}
@@ -36,4 +40,5 @@ services:
     entrypoint: ["npx", "next", "start"]
 
 volumes:
+  redis_volume:
   trancendence_posgresdb:

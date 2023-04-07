@@ -2,13 +2,13 @@ FROM node:18.15-bullseye
 
 RUN apt update -y && apt upgrade -y
 
-WORKDIR /inception_nestjs
+WORKDIR /trancendence_nestjs
 
-COPY package*.json /inception_nestjs/
+COPY package*.json /trancendence_nestjs/
 
 RUN npm install
 
-COPY ./ /inception_nestjs/
+COPY ./ /trancendence_nestjs/
 
 RUN npm run build
 
