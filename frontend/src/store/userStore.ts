@@ -26,8 +26,6 @@ const useUserStore = create<UserState>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-      // ...(typeof window !== "undefined" &&
-      //   JSON.parse(localStorage.getItem("user") ?? "{}")),
       login: () => {
         // axios
         //   .get("/auth/login")
