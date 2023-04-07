@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgresdb:
     container_name: postgresdb
-    image: postgres:14.7-bullseye
+    image: postgres:14.7-alpine3.17
     restart: unless-stopped
     configs:
       - source: postgres_initsql
@@ -13,7 +13,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis:7.2-rc-bullseye
+    image: redis:7.2-rc1-alpine3.17
     restart: unless-stopped
     configs:
       - source: redis_config

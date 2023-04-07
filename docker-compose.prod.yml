@@ -18,10 +18,12 @@ services:
       retries: 3
     expose:
       - ${DB_PORT}
+    user: postgres
 
   redis:
     volumes:
       - redis_volume:/data
+    user: redis
 
   nestjs:
     environment:
@@ -34,9 +36,11 @@ services:
       ENV: ${ENV}
     expose:
       - ${NEST_LISTEN_PORT}
+    user: node
     entrypoint: ["node", "dist/main"]
 
   nextjs:
+    user: node
     entrypoint: ["npx", "next", "start"]
 
 volumes:
