@@ -7,7 +7,7 @@ specifiers:
   '@emotion/styled': ^11.10.6
   '@mui/icons-material': ^5.11.11
   '@mui/material': ^5.11.15
-  '@react-three/drei': ^9.62.2
+  '@react-three/drei': ^9.64.0
   '@react-three/fiber': ^8.12.0
   '@react-three/rapier': ^0.14.0
   '@types/node': 18.15.10
@@ -31,6 +31,7 @@ specifiers:
   r3f-perf: ^7.1.2
   react: 18.2.0
   react-dom: 18.2.0
+  react-hot-toast: ^2.4.0
   three: ^0.151.1
   typescript: 5.0.2
   zustand: ^4.3.7
@@ -42,7 +43,7 @@ dependencies:
   '@emotion/styled': 11.10.6_zor2bu4ftuliqy4oeppgoopsea
   '@mui/icons-material': 5.11.11_6y4lxz4llianr3r7lqxjnd25v4
   '@mui/material': 5.11.15_fnqbmkzq76f7s3wszy2zei75o4
-  '@react-three/drei': 9.62.2_7rsvady53aiqdbvfjcqkigezju
+  '@react-three/drei': 9.64.0_7rsvady53aiqdbvfjcqkigezju
   '@react-three/fiber': 8.12.0_f2uoqogjpbknsundf4l666ktve
   '@react-three/rapier': 0.14.0_xcccmivlewmwnxdkxlahfpiwj4
   axios: 1.3.4
@@ -51,6 +52,7 @@ dependencies:
   r3f-perf: 7.1.2_7rsvady53aiqdbvfjcqkigezju
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-hot-toast: 2.4.0_biqbaboplfbrettd7655fr4n2y
   three: 0.151.1
   zustand: 4.3.7_react@18.2.0
 
@@ -981,8 +983,8 @@ packages:
     resolution: {integrity: sha512-POu8Mk0hIU3lRXB3bGIGe4VHIwwDsQyoD1F394OK7STTiX9w4dG3cTLljjYswkQN+hDSHRrj4O36kuVa7KPU8Q==}
     dev: false
 
-  /@react-three/drei/9.62.2_7rsvady53aiqdbvfjcqkigezju:
-    resolution: {integrity: sha512-qGbR56CqG1Gg8gv8eWNc2aJYcXOrFQ4p+iIpUvq4iqA1iezn2BekwZsWoGZt+qUltd0zCgXX16FKd9NWhL60sQ==}
+  /@react-three/drei/9.64.0_7rsvady53aiqdbvfjcqkigezju:
+    resolution: {integrity: sha512-xkdc26PcNQlp3lXKBV+FUEAbC4zuBugfhkuptJa1Mb2yoDNmsGnIApgWCRR/Wd2zZqU7W9yw/a7derZa1oPQxg==}
     peerDependencies:
       '@react-three/fiber': '>=8.0'
       react: '>=18.0'
@@ -2440,6 +2442,12 @@ packages:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
     dev: false
 
+  /goober/2.1.12:
+    resolution: {integrity: sha512-yXHAvO08FU1JgTXX6Zn6sYCUFfB/OJSX8HHjDSgerZHZmFKAb08cykp5LBw5QnmyMcZyPRMqkdyHUSSzge788Q==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dev: false
+
   /gopd/1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
     dependencies:
@@ -3279,7 +3287,7 @@ packages:
         optional: true
     dependencies:
       '@radix-ui/react-icons': 1.3.0_react@18.2.0
-      '@react-three/drei': 9.62.2_7rsvady53aiqdbvfjcqkigezju
+      '@react-three/drei': 9.64.0_7rsvady53aiqdbvfjcqkigezju
       '@react-three/fiber': 8.12.0_f2uoqogjpbknsundf4l666ktve
       '@stitches/react': 1.2.8_react@18.2.0
       '@utsubo/events': 0.1.7_react@18.2.0
@@ -3331,6 +3339,20 @@ packages:
       file-selector: 0.5.0
       prop-types: 15.8.1
       react: 18.2.0
+    dev: false
+
+  /react-hot-toast/2.4.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-qnnVbXropKuwUpriVVosgo8QrB+IaPJCpL8oBI6Ov84uvHZ5QQcTp2qg6ku2wNfgJl6rlQXJIQU5q+5lmPOutA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.12
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - csstype
     dev: false
 
   /react-is/16.13.1:
