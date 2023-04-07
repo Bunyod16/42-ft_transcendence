@@ -1,6 +1,6 @@
-FROM node:18.15-bullseye
+FROM node:18.15-alpine3.17
 
-RUN apt update -y && apt upgrade -y
+RUN apk update && apk upgrade
 
 RUN npm i -g pnpm
 
