@@ -9,7 +9,7 @@ export class RedisService {
 
   constructor() {
     console.log('attempting to create client');
-    this.client = new Redis();
+    this.client = new Redis(6379, 'redis');
   }
 
   async setGameState(gameId: number, gameState: GameState) {

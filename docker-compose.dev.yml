@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgresdb:
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./backend:/trancendence_nestjs
     ports:
-      - "3005:${DEV_NEST_LISTEN_PORT}"
+      - "3000:${DEV_NEST_LISTEN_PORT}"
     expose:
       - ${DEV_NEST_LISTEN_PORT}
     entrypoint: ["npx", "nest", "start", "--watch"]

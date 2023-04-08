@@ -5,6 +5,11 @@ import { CustomExceptionFilter } from './utils/app.exception-filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
+    credentials: true,
+  });
   const config = new DocumentBuilder()
     .setTitle('42 ft_transendence')
     .setDescription('The ft_transendence API description')
