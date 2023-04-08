@@ -1,12 +1,10 @@
-import axios from "axios";
-import { useRouter } from "next/router";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
 interface UserState {
   isLoggedIn: boolean;
   name: string;
-  login: () => void;
+  login: (name: string) => void;
   logout: () => void;
 }
 
@@ -26,43 +24,13 @@ const useUserStore = create<UserState>()(
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
 
-      login: () => {
-        axios
-          .get("/auth/login")
-          .then((res) => {
-            console.log(res);
-            // const { name } = res.data;
-            // set(() => ({
-            //   isLoggedIn: true,
-            //   name,
-            // }));
-          })
-          .catch((err) => console.log(err));
-        // set(() => ({
-        //   isLoggedIn: true,
-        //   name: "jatan",
-        // }));
-        console.log("logged in");
+      login: (name: string) => {
+        set(() => ({
+          isLoggedIn: true,
+          name,
+        }));
       },
-      logout: async () => {
-        // try {
-        //   // Send a request to your backend server to invalidate the user's JWT cookie
-        //   const response = await fetch("/api/logout", {
-        //     method: "POST",
-        //     credentials: "include", // Send cookies with the request
-        //   });
-
-        //   if (response.ok) {
-        //     // The user is logged out, clear their information from the store
-        //     set(() => ({
-        //       isLoggedIn: false,
-        //       name: "",
-        //       email: "",
-        //     }));
-        //   }
-        // } catch (error) {
-        //   console.error(error);
-        // }
+      logout: () => {
         set(() => ({
           isLoggedIn: false,
           name: "",

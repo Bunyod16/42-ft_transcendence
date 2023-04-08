@@ -1,21 +1,9 @@
 import React from "react";
 
-import useUserStore from "@/store/userStore";
 import { Box, Button, Typography } from "@mui/material";
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function LoginPanel() {
-  const { login, isLoggedIn } = useUserStore();
-  const router = useRouter();
-  const [pushCalled, setPushCalled] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   if (isLoggedIn === false && pushCalled === false) {
-  //     router.push("/");
-  //     setPushCalled(true);
-  //   }
-  // }, [isLoggedIn, pushCalled, router]);
-
   return (
     <Box
       component={"div"}
@@ -43,20 +31,22 @@ export default function LoginPanel() {
       >
         RGM PONG
       </Typography>
-      <Button
-        variant="contained"
-        sx={{
-          padding: "10px 40px",
-          backgroundColor: "accent.main",
-          transition: "0.3s",
-          "&:hover": { backgroundColor: "accent.hover" },
-        }}
-        onClick={() =>
-          window.open(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`)
-        }
+      <Link
+        href={`${process.env.NEXT_PUBLIC_API_URL}/auth/login`}
+        style={{ textDecoration: "none" }}
       >
-        <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography>
-      </Button>
+        <Button
+          variant="contained"
+          sx={{
+            padding: "10px 40px",
+            backgroundColor: "accent.main",
+            transition: "0.3s",
+            "&:hover": { backgroundColor: "accent.hover" },
+          }}
+        >
+          <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography>
+        </Button>
+      </Link>
     </Box>
   );
 }

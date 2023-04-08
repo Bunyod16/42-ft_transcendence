@@ -2,8 +2,12 @@ import { Box } from "@mui/material";
 import React from "react";
 import Navbar from "./Navbar";
 
+interface IDefaultLayoutProps {
+  children: React.ReactNode;
+}
+
 // ! side panel should add to here too
-function DefaultLayout({ children }: { children: React.ReactNode }) {
+function DefaultLayout({ children }: IDefaultLayoutProps) {
   return (
     <Box
       component={"div"}
@@ -16,7 +20,7 @@ function DefaultLayout({ children }: { children: React.ReactNode }) {
     >
       {/* sidepanel */}
       <Navbar />
-      <Box component={"div"} sx={{ height: "100%", width: "100%" }}>
+      <Box component={"div"} sx={{ height: "100%", width: "100%", p: 4 }}>
         {children}
       </Box>
     </Box>

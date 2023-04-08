@@ -3,41 +3,17 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import useUserStore from "@/store/userStore";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import axios from "axios";
+import IconButton from "@mui/material/IconButton";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
-  const { name, logout } = useUserStore();
-  // const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [tmpname, setName] = React.useState("");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setAuth(event.target.checked);
-    console.log("meow");
-  };
-
-  React.useEffect(() => {
-    axios
-      .get("/auth/profile")
-      .then((res) => {
-        setName(res.data.nickName);
-      })
-      .catch((err) => console.log(err));
-  });
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const { name, isLoggedIn, logout, login } = useUserStore();
+  const router = useRouter();
 
   const handleLogout = () => {
     axios
@@ -46,6 +22,18 @@ export default function Navbar() {
       .catch((err) => console.log(err));
   };
 
+  React.useEffect(() => {
+    axios
+      .get("auth/profile")
+      .then((res) => {
+        login(res.data.nickName);
+      })
+      .catch(() => {
+        router.push("/login");
+      });
+  }, [isLoggedIn]);
+
+  if (!isLoggedIn) return <></>;
   return (
     <Box component={"div"} sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: "accent.main" }}>
@@ -64,37 +52,21 @@ export default function Navbar() {
           <div>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "rgba(0, 0, 0, 0.3)", width: "240px" }}
-              onClick={handleMenu}
+              sx={{
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                width: "200px",
+                mr: 2,
+              }}
+              onClick={() => router.push("/profile")}
             >
               <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
-                {tmpname}
+                {name}
               </Typography>
-              <Avatar src="/static/images/avatar/1.jpg" variant="rounded" />
+              <Avatar src="" variant="rounded" />
             </Button>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              // sx={{
-              //   "& .MuiPaper-root": {
-              //     backgroundColor: "pink",
-              //   },
-              // }}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
+            <IconButton onClick={handleLogout}>
+              <LogoutSharpIcon />
+            </IconButton>
           </div>
         </Toolbar>
       </AppBar>
