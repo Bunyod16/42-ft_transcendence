@@ -1,46 +1,27 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import { io } from "socket.io-client";
+import React from "react";
 
-import Game from "@/components/game/Game";
 import DefaultLayout from "@/components/layout/DefaultLayout";
+import useUserStore from "@/store/userStore";
+import { Typography } from "@mui/material";
 
 export default function Home() {
-  const [start, setStart] = React.useState(false);
+  const { isLoggedIn } = useUserStore();
+  const [isHydrated, setIsHydrated] = React.useState(false);
 
-  const startGame = () => {
-    // queue for a game here
-    socketInitializer();
-  };
+  React.useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
-  const socketInitializer = () => {
-    // We just call it because we don't need anything else out of it
-    // await fetch("/api/socket");
-
-    // const socket = io();
-    const socket = io({
-      transports: ["websocket"],
-      upgrade: false,
-    });
-
-    socket.on("connect", () => {
-      console.log(socket.id);
-    });
-
-    socket.on("match-found", () => {
-      console.log("match found!");
-      setStart(true);
-    });
-  };
+  if (!isHydrated) return <></>;
 
   return (
     <DefaultLayout>
-      {start ? (
-        <Game />
+      {isLoggedIn ? (
+        <>
+          <Typography>Welcome to RGM</Typography>
+        </>
       ) : (
-        <Button variant="contained" onClick={startGame}>
-          Start
-        </Button>
+        <div>Loading...</div>
       )}
     </DefaultLayout>
   );

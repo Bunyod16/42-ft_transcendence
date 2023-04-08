@@ -1,20 +1,40 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class MatchService {
   constructor(
-    @Inject('MATCH_REPOSITORY')
+    @InjectRepository(Match)
     private matchRepository: Repository<Match>,
+    private readonly userService: UserService,
   ) {}
 
   async create(
     createMatchDto: CreateMatchDto,
   ): Promise<CreateMatchDto & Match> {
     return this.matchRepository.save(createMatchDto);
+  }
+
+  async create_with_id(userId1: number, userId2: number) {
+    const user1: User = await this.userService.findOne(userId1);
+    const user2: User = await this.userService.findOne(userId2);
+
+    console.log(`user1.id = ${user1.id}`);
+    console.log(`user2.id = ${user2.id}`);
+
+    if (user1 && user2) {
+      const newMatch = new CreateMatchDto();
+      newMatch.playerOne = user1;
+      newMatch.playerTwo = user2;
+      return this.matchRepository.save(newMatch);
+    }
+    //throw some error
   }
 
   async findAll(): Promise<Match[]> {

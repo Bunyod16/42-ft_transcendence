@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { TwoFactorService } from './two_factor.service';
 import { TwoFactorController } from './two_factor.controller';
 import { ConfigModule } from '@nestjs/config';
-import { twoFactorProviders } from './two_factor.providers';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TwoFactor } from './entities/two_factor.entity';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [TypeOrmModule.forFeature([TwoFactor]), ConfigModule],
   controllers: [TwoFactorController],
-  providers: [...twoFactorProviders, TwoFactorService],
+  providers: [TwoFactorService],
+  exports: [TwoFactorService, TypeOrmModule],
 })
 export class TwoFactorModule {}

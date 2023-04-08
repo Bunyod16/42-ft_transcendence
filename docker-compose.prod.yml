@@ -12,12 +12,18 @@ services:
       - trancendence_posgresdb:/var/lib/postgresql/data
     # to ensure database is alive before starting every other service
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
       interval: 10s
       timeout: 5s
       retries: 3
     expose:
       - ${DB_PORT}
+    user: postgres
+
+  redis:
+    volumes:
+      - redis_volume:/data
+    user: redis
 
   nestjs:
     environment:
@@ -30,10 +36,13 @@ services:
       ENV: ${ENV}
     expose:
       - ${NEST_LISTEN_PORT}
+    user: node
     entrypoint: ["node", "dist/main"]
 
   nextjs:
+    user: node
     entrypoint: ["npx", "next", "start"]
 
 volumes:
+  redis_volume:
   trancendence_posgresdb:
