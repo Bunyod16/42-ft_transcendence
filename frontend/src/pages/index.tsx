@@ -12,11 +12,11 @@ export default function Home() {
   // const [pushCalled, setPushCalled] = React.useState(false);
   const [isHydrated, setIsHydrated] = React.useState(false);
 
-  React.useEffect(() => {
-    if (isLoggedIn === false) {
-      router.push("/login");
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   if (isLoggedIn === false) {
+  //     router.push("/login");
+  //   }
+  // }, []);
 
   React.useEffect(() => {
     setIsHydrated(true);

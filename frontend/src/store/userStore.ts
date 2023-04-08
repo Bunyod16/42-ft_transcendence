@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -46,24 +47,29 @@ const useUserStore = create<UserState>()(
         console.log("logged in");
       },
       logout: async () => {
-        try {
-          // Send a request to your backend server to invalidate the user's JWT cookie
-          const response = await fetch("/api/logout", {
-            method: "POST",
-            credentials: "include", // Send cookies with the request
-          });
+        // try {
+        //   // Send a request to your backend server to invalidate the user's JWT cookie
+        //   const response = await fetch("/api/logout", {
+        //     method: "POST",
+        //     credentials: "include", // Send cookies with the request
+        //   });
 
-          if (response.ok) {
-            // The user is logged out, clear their information from the store
-            set(() => ({
-              isLoggedIn: false,
-              name: "",
-              email: "",
-            }));
-          }
-        } catch (error) {
-          console.error(error);
-        }
+        //   if (response.ok) {
+        //     // The user is logged out, clear their information from the store
+        //     set(() => ({
+        //       isLoggedIn: false,
+        //       name: "",
+        //       email: "",
+        //     }));
+        //   }
+        // } catch (error) {
+        //   console.error(error);
+        // }
+        set(() => ({
+          isLoggedIn: false,
+          name: "",
+          email: "",
+        }));
       },
     }),
     {

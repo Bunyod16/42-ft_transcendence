@@ -16,7 +16,7 @@ export const inconsolata = Inconsolata({
 // https://stackoverflow.com/questions/59145165/change-root-background-color-with-material-ui-theme
 
 // Create a theme instance.
-const theme = createTheme({
+const colorTheme = createTheme({
   palette: {
     background: {
       default: "#26333A",
@@ -32,8 +32,8 @@ const theme = createTheme({
     },
     accent: {
       main: "#93032E",
-      text: "#FFF",
-      hover:"#AC0436",
+      contrastText: "#FFF",
+      // hover: "#AC0436",
     },
   },
   typography: {
@@ -49,6 +49,12 @@ const theme = createTheme({
     h3: {
       fontFamily: oswald.style.fontFamily,
     },
+  },
+});
+
+const theme = createTheme({
+  components: {
+    MuiMe,
   },
 });
 
