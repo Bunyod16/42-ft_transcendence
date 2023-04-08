@@ -52,10 +52,4 @@ const theme = createTheme({
   },
 });
 
-// const theme = createTheme({
-//   components: {
-//     MuiMe,
-//   },
-// });
-
 export default theme;
