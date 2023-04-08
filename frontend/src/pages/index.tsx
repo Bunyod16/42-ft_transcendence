@@ -23,19 +23,23 @@ export default function Home() {
   }, []);
 
   return (
-    <DefaultLayout>
-      {isLoggedIn && isHydrated && (
-        // {/* <Game /> */}
-        <>
-          <Typography>Welcome to RGM</Typography>
-          <Button variant="contained" onClick={() => router.push("/profile")}>
-            Profile
-          </Button>
-          <Button variant="contained" onClick={() => router.push("/side")}>
-            Side
-          </Button>
-        </>
+    <>
+      {isLoggedIn && isHydrated ? (
+        <DefaultLayout>
+          {/* <Game /> */}
+          <>
+            <Typography>Welcome to RGM</Typography>
+            <Button variant="contained" onClick={() => router.push("/profile")}>
+              Profile
+            </Button>
+            <Button variant="contained" onClick={() => router.push("/side")}>
+              Side
+            </Button>
+          </>
+        </DefaultLayout>
+      ) : (
+        <div>Loading...</div>
       )}
-    </DefaultLayout>
+    </>
   );
 }

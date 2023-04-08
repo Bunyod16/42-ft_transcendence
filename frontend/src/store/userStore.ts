@@ -6,7 +6,6 @@ import { persist } from "zustand/middleware";
 interface UserState {
   isLoggedIn: boolean;
   name: string;
-  email: string;
   login: () => void;
   logout: () => void;
 }
@@ -16,7 +15,6 @@ const useUserStore = create<UserState>()(
     (set) => ({
       isLoggedIn: false,
       name: "",
-      email: "",
       // Persist state to localStorage
       // This will allow the state to be restored even if the user leaves the site
       // or refreshes the page
@@ -27,23 +25,23 @@ const useUserStore = create<UserState>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
+
       login: () => {
-        // axios
-        //   .get("/auth/login")
-        //   .then((res) => {
-        //     const { name, email } = res.data;
-        //     set(() => ({
-        //       isLoggedIn: true,
-        //       name,
-        //       email,
-        //     }));
-        //   })
-        //   .catch((err) => console.log(err));
-        set(() => ({
-          isLoggedIn: true,
-          name: "jatan",
-          email: "jatan@email.com",
-        }));
+        axios
+          .get("/auth/login")
+          .then((res) => {
+            console.log(res);
+            // const { name } = res.data;
+            // set(() => ({
+            //   isLoggedIn: true,
+            //   name,
+            // }));
+          })
+          .catch((err) => console.log(err));
+        // set(() => ({
+        //   isLoggedIn: true,
+        //   name: "jatan",
+        // }));
         console.log("logged in");
       },
       logout: async () => {

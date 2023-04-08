@@ -32,7 +32,7 @@ const theme = createTheme({
     },
     accent: {
       main: "#93032E",
-      contrastText: "#FFF",
+      // contrastText: "#FFF",
       // hover: "#AC0436",
     },
   },
@@ -48,6 +48,16 @@ const theme = createTheme({
     },
     h3: {
       fontFamily: oswald.style.fontFamily,
+    },
+  },
+  components: {
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "palette.primary.main",
+          color: "red",
+        },
+      },
     },
   },
 });
