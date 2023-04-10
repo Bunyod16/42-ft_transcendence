@@ -21,10 +21,10 @@ export class AchievementController {
   constructor(private readonly achievementService: AchievementService) {}
 
   @Post()
-  async create(@Body() body: any) {
-    const achievemnt_name: string = body.name;
-    const achievemnt_des: string = body.description;
-
+  async create(
+    @Body('name') achievemnt_name: string,
+    @Body('description') achievemnt_des: string,
+  ) {
     if (
       typeof achievemnt_name === 'undefined' ||
       typeof achievemnt_des === 'undefined'
