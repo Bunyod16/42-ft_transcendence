@@ -10,6 +10,7 @@ import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
+import { socket } from "../socket/socket";
 
 export default function Navbar() {
   const { name, isLoggedIn, logout, login } = useUserStore();
@@ -23,15 +24,29 @@ export default function Navbar() {
   };
 
   React.useEffect(() => {
+    login("jatan");
     axios
       .get("auth/profile")
       .then((res) => {
         login(res.data.nickName);
+        socket.connect();
       })
       .catch(() => {
-        router.push("/login");
+        axios
+          .get("auth/refresh")
+          .then(() => {
+            console.log("refreshed token");
+            axios.get("auth/profile").then((res) => {
+              login(res.data.nickName);
+              socket.connect();
+            });
+          })
+          .catch(() => {
+            logout();
+            router.push("/login");
+          });
       });
-  }, [isLoggedIn]);
+  }, []);
 
   if (!isLoggedIn) return <></>;
   return (

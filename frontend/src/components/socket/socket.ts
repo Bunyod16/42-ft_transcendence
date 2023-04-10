@@ -7,10 +7,12 @@ const URL = "http://localhost:3000";
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   URL,
   {
+    withCredentials: true,
     autoConnect: false,
   },
 );
-export const gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> =
-  io(`${URL}/game`, {
-    autoConnect: false,
-  });
+// export const gameSocket: Socket<ServerToClientEvents, ClientToServerEvents> =
+//   io(`${URL}/game`, {
+//     autoConnect: false,
+//   });
+// Probably just use one socket

@@ -1,5 +1,5 @@
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
-import { gameSocket } from "./socket";
+import { socket } from "./socket/socket";
 import React from "react";
 import { useRouter } from "next/router";
 
@@ -9,23 +9,38 @@ const Lobby = () => {
 
   // *start queue here
   const handleQueue = () => {
-  //   gameSocket.connect();
-  // };
+    // socket.emit("queueEnter");
+    setIsQueueing(true);
+  };
+
+  //! queue leave function
+  const handleQueueLeave = () => {
+    // emit something here
+    setIsQueueing(false);
+  };
 
   React.useEffect(() => {
     function onMatchFound() {
-      router.push("/game");
+      alert("match found");
+      // router.push("/game");
     }
 
-    function onConnect() {
+    function onQueueEnterSuccess() {
       setIsQueueing(true);
     }
 
-    gameSocket.on("connect", onConnect);
-    gameSocket.on("matchFound", onMatchFound);
+    function onQueueLeave() {
+      console.log("Quit queue");
+    }
+
+    socket.on("queueEnterSuccess", onQueueEnterSuccess);
+    socket.on("matchFound", onMatchFound);
+    // socket.on("matchFound", onMatchFound);
+    // socket.on("matchFound", onMatchFound);
 
     return () => {
-      gameSocket.off("matchFound", onMatchFound);
+      socket.off("matchFound", onMatchFound);
+      socket.off("queueEnterSuccess", onQueueEnterSuccess);
     };
   }, [router]);
 
@@ -46,9 +61,9 @@ const Lobby = () => {
             width: "300px",
             padding: 2,
           }}
-          onClick={handleQueue}
+          onClick={isQueueing ? handleQueueLeave : handleQueue}
         >
-          {isQueueing ? "Queueing" : "Quick Play"}
+          {isQueueing ? "Cancel" : "Quick Play"}
         </Button>
       </Grid>
     </Grid>
