@@ -13,10 +13,11 @@ export class UserAuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtRefreshService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('starting');
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-
+    const token = this.extractTokenFromHeader(request, context);
     if (!token) {
+      console.log('unauthrozied request');
       throw new UnauthorizedException();
     }
     try {
@@ -30,12 +31,26 @@ export class UserAuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const cookieHeader = request.headers.cookie;
-    if (!cookieHeader) {
-      return undefined;
+  extractTokenFromHeader(
+    request: Request,
+    context: any,
+  ): string | undefined {
+    try {
+      var cookieHeader = request.headers.cookie;
+      const cookies = parse(cookieHeader);
+      return cookies.Refresh;
+    } catch {
+      console.log('Request did not have http cookie');
     }
-    const cookies = parse(cookieHeader);
-    return cookies.Refresh;
+
+    try {
+      cookieHeader = context.getArgs()[0].handshake.headers.cookie;
+      const cookies = parse(cookieHeader);
+      return cookies.Refresh;
+    } catch {
+      console.log('Request did not have websocket cookie');
+    }
+
+    return undefined;
   }
 }

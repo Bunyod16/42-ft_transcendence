@@ -9,12 +9,12 @@ import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 export class QueueController {
   constructor(private readonly queueService: QueueService) {}
 
-  @Post()
-  @UseGuards(UserAuthGuard)
-  @ApiCookieAuth()
-  async queueUser(@Request() req) {
-    this.queueService.addUserToQueue(req.user);
-  }
+  // @Post()
+  // @UseGuards(UserAuthGuard)
+  // @ApiCookieAuth()
+  // async queueUser(@Request() req) {
+  //   this.queueService.addUserToQueue(req.user);
+  // }
 
   @Get()
   @UseGuards(UserAuthGuard)
