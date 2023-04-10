@@ -37,7 +37,7 @@ export class UserAchievementController {
 
     Logger.log(
       `Created UserAchievement with id = [${userAchievement.id}]`,
-      'UserAchivement => create()',
+      'UserAchievement => create()',
     );
 
     return userAchievement;
@@ -47,7 +47,10 @@ export class UserAchievementController {
   async findAll() {
     const achievement = this.userAchievementService.findAll();
 
-    Logger.log(`Trying to get all achievements`, 'UserAchivement => findAll()');
+    Logger.log(
+      `Trying to get all achievements`,
+      'UserAchievement => findAll()',
+    );
 
     return achievement;
   }
@@ -57,8 +60,8 @@ export class UserAchievementController {
     const userAchievement = await this.userAchievementService.findOne(id);
 
     Logger.log(
-      `Trying to get userAchievement with id = [${id}]`,
-      'UserAchivement => findOne()',
+      `Trying to get UserAchievement with id = [${id}]`,
+      'UserAchievement => findOne()',
     );
 
     return userAchievement;

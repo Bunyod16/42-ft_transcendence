@@ -12,7 +12,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { ChatLineService } from './chat_line.service';
-import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { Logger } from '@nestjs/common';
 import { CustomException } from 'src/utils/app.exception-filter';
