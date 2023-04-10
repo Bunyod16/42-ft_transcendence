@@ -34,7 +34,6 @@ const useUserStore = create<UserState>()(
         set(() => ({
           isLoggedIn: false,
           name: "",
-          email: "",
         }));
       },
     }),
