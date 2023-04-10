@@ -69,6 +69,7 @@ export class AuthController {
         tokens.accessToken,
         tokens.refreshToken,
       ]);
+      request.res.redirect(process.env.AUTH_REDIRECT_URI);
       return user;
     } catch (error) {
       console.log(error);
