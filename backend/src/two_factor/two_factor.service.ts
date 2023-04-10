@@ -3,11 +3,12 @@ import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 // import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { TwoFactor } from './entities/two_factor.entity';
 import { DeleteResult, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TwoFactorService {
   constructor(
-    @Inject('TWOFACTOR_REPOSITORY')
+    @InjectRepository(TwoFactor)
     private twoFactorRepository: Repository<TwoFactor>,
   ) {}
 

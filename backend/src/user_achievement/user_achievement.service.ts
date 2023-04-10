@@ -3,11 +3,12 @@ import { Repository } from 'typeorm';
 import { CreateUserAchievementDto } from './dto/create-user_achievement.dto';
 import { UpdateUserAchievementDto } from './dto/update-user_achievement.dto';
 import { UserAchievement } from './entities/user_achievement.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserAchievementService {
   constructor(
-    @Inject('USER_ACHIEVEMENT_REPOSITORY')
+    @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
   ) {}
 

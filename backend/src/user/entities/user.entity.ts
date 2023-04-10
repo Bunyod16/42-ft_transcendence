@@ -1,3 +1,4 @@
+import { FriendRequest } from 'src/friend_request/entities/friend_request.entity';
 import { Match } from 'src/match/entities/match.entity';
 import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
 import {
@@ -10,6 +11,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { ChatLine } from 'src/chat_line/entities/chat_line.entity';
 
 @Entity()
 export class User {
@@ -25,18 +27,20 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at' })
   'updated_at': Date;
 
-  @Column({default: 0})
-  wins: number
+  @Column({ default: 0 })
+  wins: number;
 
   @Column({ default: 0 })
   losses: number;
 
-  @OneToMany(() => UserAchievement, (userAchivements) => userAchivements.user)
-  achievements: UserAchievement[];
-
   @Column({ default: false })
   online: boolean;
 
+  //Achievements
+  @OneToMany(() => UserAchievement, (userAchivements) => userAchivements.user)
+  achievements: UserAchievement[];
+
+  //Matches Correlation
   @OneToMany(() => Match, (match) => match.playerOne)
   @JoinColumn({ name: 'playerOne' })
   matchesAsPlayerOne: Match[];
@@ -45,7 +49,20 @@ export class User {
   @JoinColumn({ name: 'playerTwo' })
   matchesAsPlayerTwo: Match[];
 
+  //FriendRequest
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.requester)
+  @JoinColumn({ name: 'requester' })
+  requests: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.responder)
+  @JoinColumn({ name: 'responder' })
+  responses: FriendRequest[];
+
   @Column({ nullable: true })
   @Exclude()
   public currentHashedRefreshToken?: string;
+
+  @OneToMany(() => ChatLine, (chatLine) => chatLine.sender)
+  @JoinColumn({ name: 'sender' })
+  sentMessages: ChatLine[];
 }

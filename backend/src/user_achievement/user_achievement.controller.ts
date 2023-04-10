@@ -21,7 +21,9 @@ import { AchievementService } from 'src/achievement/achievement.service';
 import { Achievement } from 'src/achievement/entities/achievement.entity';
 import { UpdateUserAchievementDto } from './dto/update-user_achievement.dto';
 import { UserAchievement } from './entities/user_achievement.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user-achievement')
 @Controller('user-achievement')
 export class UserAchievementController {
   constructor(
