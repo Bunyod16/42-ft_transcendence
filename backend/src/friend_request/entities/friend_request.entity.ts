@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 export enum FriendStatus {
@@ -16,6 +17,7 @@ export enum FriendStatus {
 }
 
 @Entity()
+@Unique(['requester', 'responder'])
 export class FriendRequest {
   @PrimaryGeneratedColumn()
   id: number;

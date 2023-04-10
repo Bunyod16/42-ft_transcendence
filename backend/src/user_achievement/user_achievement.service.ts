@@ -41,14 +41,14 @@ export class UserAchievementService {
         throw new CustomException(
           `${error.response.message}`,
           HttpStatus.NOT_FOUND,
-          'UserAchievement => findOne()',
+          'UserAchievement => create()',
         );
       } else {
         //if user already has achievement
         throw new CustomException(
           `User already has achievement.`,
           HttpStatus.NOT_FOUND,
-          'UserAchievement => findOne()',
+          'UserAchievement => create()',
         );
       }
     }
@@ -114,7 +114,7 @@ export class UserAchievementService {
 
     if (userAchievement.affected === 0) {
       throw new CustomException(
-        `UserAchievement with id = [${id}] doesn't exist test`,
+        `UserAchievement with id = [${id}] doesn't exist`,
         HttpStatus.NOT_FOUND,
         'UserAchievement => remove()',
       );
@@ -134,7 +134,7 @@ export class UserAchievementService {
 
     if (userAchievement.affected === 0) {
       throw new CustomException(
-        `UserAchievement with id = [${id}] doesn't exist test`,
+        `UserAchievement with id = [${id}] doesn't exist`,
         HttpStatus.NOT_FOUND,
         'UserAchievement => remove()',
       );
