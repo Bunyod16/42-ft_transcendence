@@ -85,6 +85,18 @@ export class MatchController {
     return match;
   }
 
+  @Get(':userId/findUserMatches')
+  async findMatchesForUser(@Param('userId', ParseIntPipe) userId: number) {
+    const matchesForUser = await this.matchService.findMatchesForUser(userId);
+
+    Logger.log(
+      `Trying to get all matches for User with id = [${userId}]`,
+      'Match => findOne()',
+    );
+
+    return matchesForUser;
+  }
+
   //Using Query Builder Method
   // @Patch(':id/update_score')
   // async update(

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { Match } from './entities/match.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @Injectable()
 export class MatchService {
@@ -79,6 +80,25 @@ export class MatchService {
     // return this.matchRepository.findOneBy({
     //   id: id,
     // });
+  }
+
+  async findMatchesForUser(id: number) {
+    const matchesForUser = await this.matchRepository
+      .createQueryBuilder('match')
+      .leftJoinAndSelect('match.playerOne', 'playerOne')
+      .leftJoinAndSelect('match.playerTwo', 'playerTwo')
+      .where('playerOne.id = :id OR playerTwo.id = :id', { id: id })
+      .getMany();
+
+    if (matchesForUser === null) {
+      throw new CustomException(
+        `User with id = [${id}] doesn't have any matches`,
+        HttpStatus.NOT_FOUND,
+        'Match => findMatchesForUser()',
+      );
+    }
+
+    return matchesForUser;
   }
 
   // async update_scores(
