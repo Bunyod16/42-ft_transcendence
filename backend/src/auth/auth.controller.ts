@@ -13,6 +13,7 @@ import {
   Res,
   Req,
   UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import RequestWithUser from './requestWithUser.interace';
@@ -84,7 +85,7 @@ export class AuthController {
   }
 
   @Get('refresh')
-  async refresh(@Req() req: RequestWithUser) {
+  async refresh(@Req() req: RequestWithUser, @Res() res) {
     try {
       const cookies = parse(req.headers.cookie);
       const refresh = cookies.Refresh;
@@ -94,7 +95,8 @@ export class AuthController {
       return req.user;
     } catch (error) {
       console.log(error);
-      throw new UnauthorizedException();
+      req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
+      return res.redirect('http://localhost:8080');
     }
   }
 
