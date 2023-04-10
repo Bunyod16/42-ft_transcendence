@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Logger,
-  HttpException,
   HttpStatus,
   ParseIntPipe,
   Query,
@@ -15,20 +14,13 @@ import {
   Req,
 } from '@nestjs/common';
 import { FriendRequestService } from './friend_request.service';
-import { CreateFriendRequestDto } from './dto/create-friend_request.dto';
-import { UpdateFriendRequestDto } from './dto/update-friend_request.dto';
-import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/entities/user.entity';
-import { FriendRequest, FriendStatus } from './entities/friend_request.entity';
+import { FriendStatus } from './entities/friend_request.entity';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { CustomException } from 'src/utils/app.exception-filter';
 
 @Controller('friend-request')
 export class FriendRequestController {
-  constructor(
-    private readonly friendRequestService: FriendRequestService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly friendRequestService: FriendRequestService) {}
 
   @Post()
   @UseGuards(UserAuthGuard)
@@ -37,6 +29,24 @@ export class FriendRequestController {
     @Body('responderId', ParseIntPipe) responderId: any,
   ) {
     const requesterId: number = req.user.id;
+    const friendRequest = await this.friendRequestService.create(
+      requesterId,
+      responderId,
+    );
+
+    Logger.log(
+      `Created FriendRequest with id = [${friendRequest.id}]`,
+      'FriendRequest => create()',
+    );
+
+    return friendRequest;
+  }
+
+  @Post('/manual')
+  async createManual(
+    @Body('requesterId', ParseIntPipe) requesterId: any,
+    @Body('responderId', ParseIntPipe) responderId: any,
+  ) {
     const friendRequest = await this.friendRequestService.create(
       requesterId,
       responderId,
@@ -69,6 +79,13 @@ export class FriendRequestController {
     );
 
     return friendRequest;
+  }
+
+  @Get(':userId/findUserFriends')
+  async findUserFriends(@Param('userId', ParseIntPipe) userId: number) {
+    const friends = await this.friendRequestService.findUserFriends(userId);
+
+    return friends;
   }
 
   @Patch(':id')
