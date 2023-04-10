@@ -20,4 +20,13 @@ export class RedisService {
     const gameStateString = await this.client.get(`game:${gameId}:state`);
     return JSON.parse(gameStateString);
   }
+
+  async deletGameState(gameId: number) {
+    const gameStateString = await this.client.del(`game:${gameId}:state`);
+  }
+
+  async getAllGames() {
+    const allGames = await this.client.keys(`game:*`);
+    return allGames;
+  }
 }
