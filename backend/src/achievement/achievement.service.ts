@@ -39,12 +39,13 @@ export class AchievementService {
       .select(['Achievement'])
       .getOne();
 
-    if (achievement === null)
+    if (achievement === null) {
       throw new CustomException(
         `Achievement with id = [${id}] doesn't exist`,
         HttpStatus.NOT_FOUND,
         'Achievement => findOne()',
       );
+    }
 
     return achievement;
   }
