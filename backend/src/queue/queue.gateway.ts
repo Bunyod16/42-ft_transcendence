@@ -21,7 +21,7 @@ import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
 import { parse } from 'cookie';
 import { CreateMatchDto } from 'src/match/dto/create-match.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class QueueGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

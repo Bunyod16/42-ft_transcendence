@@ -14,7 +14,7 @@ import { Socket } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
 import { GameStateService } from 'src/game_state/gameState.service';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
   @WebSocketServer()
   server: Server;
