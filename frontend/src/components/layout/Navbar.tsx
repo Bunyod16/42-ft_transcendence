@@ -42,6 +42,7 @@ export default function Navbar() {
             });
           })
           .catch(() => {
+            socket.disconnect();
             logout();
             router.push("/login");
           });
