@@ -4,9 +4,10 @@ import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
 import { Typography } from "@mui/material";
 import Lobby from "@/components/Lobby";
+import Game from "@/components/game/Game";
 
 export default function Home() {
-  const { isLoggedIn } = useUserStore();
+  const { isLoggedIn, state } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   React.useEffect(() => {
@@ -16,8 +17,16 @@ export default function Home() {
   if (!isHydrated) return <></>;
 
   return (
-    <DefaultLayout>
-      {isLoggedIn ? <Lobby /> : <div>Loading...</div>}
-    </DefaultLayout>
+    <>
+      {state == "InGame" ? (
+        <Game />
+      ) : (
+        <DefaultLayout>
+          {isLoggedIn ? <Lobby /> : <div>Loading...</div>}
+        </DefaultLayout>
+      )}
+    </>
   );
 }
+
+// move game and lobby to render here

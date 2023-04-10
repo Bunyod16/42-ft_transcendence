@@ -1,11 +1,15 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
 
+type States = "Matching" | "InGame" | "Idle";
+
 interface UserState {
   isLoggedIn: boolean;
   name: string;
+  state: States;
   login: (name: string) => void;
   logout: () => void;
+  updateState: (state: States) => void;
 }
 
 const useUserStore = create<UserState>()(
@@ -13,6 +17,7 @@ const useUserStore = create<UserState>()(
     (set) => ({
       isLoggedIn: false,
       name: "",
+      state: "Idle",
       // Persist state to localStorage
       // This will allow the state to be restored even if the user leaves the site
       // or refreshes the page
@@ -34,6 +39,11 @@ const useUserStore = create<UserState>()(
         set(() => ({
           isLoggedIn: false,
           name: "",
+        }));
+      },
+      updateState: (state: States) => {
+        set(() => ({
+          state,
         }));
       },
     }),

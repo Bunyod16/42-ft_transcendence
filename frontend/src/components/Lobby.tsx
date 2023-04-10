@@ -1,15 +1,16 @@
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { socket } from "./socket/socket";
 import React from "react";
-import { useRouter } from "next/router";
+import useUserStore from "@/store/userStore";
 
 const Lobby = () => {
+  const { updateState } = useUserStore();
   const [isQueueing, setIsQueueing] = React.useState(false);
-  const router = useRouter();
+  const [matchFound, setMatchFound] = React.useState(false);
 
   // *start queue here
   const handleQueue = () => {
-    // socket.emit("queueEnter");
+    socket.emit("queueEnter");
     setIsQueueing(true);
   };
 
@@ -20,9 +21,11 @@ const Lobby = () => {
   };
 
   React.useEffect(() => {
-    function onMatchFound() {
+    function onMatchFound(data: any) {
       alert("match found");
-      // router.push("/game");
+      console.log(data);
+      setMatchFound(true);
+      updateState("InGame");
     }
 
     function onQueueEnterSuccess() {
@@ -42,7 +45,7 @@ const Lobby = () => {
       socket.off("matchFound", onMatchFound);
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
     };
-  }, [router]);
+  }, []);
 
   return (
     <Grid
