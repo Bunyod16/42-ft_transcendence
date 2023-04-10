@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { RedisClientType, createClient } from 'redis';
 import { GameState } from './gameState.class';
 import { Redis } from 'ioredis';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisService {
   private client: Redis; // creates a new Redis client with default options
 
-  constructor() {
-    console.log('attempting to create client');
-    this.client = new Redis('redis');
+  constructor(private configService: ConfigService) {
+    this.client = new Redis(configService.get('REDIS_CONNECTION'));
   }
 
   async setGameState(gameId: number, gameState: GameState) {
