@@ -7,25 +7,26 @@ import { User } from 'src/user/entities/user.entity';
 @Injectable()
 export class QueueService {
   constructor(private readonly matchService: MatchService) {}
-  private queue: User[] = [];
+  private queue: {user: User, socket_id: string}[] = [];
 
-  addUserToQueue(user: User) {
+  addUserToQueue(user: User, socket_id: string) {
     const index = this.queue.findIndex((u) => {
-      return u.id === user.id;
+      return u.user.id === user.id;
     });
     if (index !== -1) {
-      throw new HttpException(
-        'Error: user already in queue',
-        HttpStatusCode.BadRequest,
-      );
+      return
+      // throw new HttpException(
+      //   'Error: user already in queue',
+      //   HttpStatusCode.BadRequest,
+      // );
     }
-    this.queue.push(user);
+    this.queue.push({user, socket_id});
   }
 
   removePlayerFromQueue(user: User) {
     console.log(user);
     const index = this.queue.findIndex((u) => {
-      return u.id === user.id;
+      return u.user.id === user.id;
     });
     if (index !== -1) {
       this.queue.splice(index, 1);
@@ -34,9 +35,9 @@ export class QueueService {
 
   findMatchForPlayer(user: User) {
     console.log(`QUEUE: ${this.queue}`);
-    console.log(`QUEUE: ${this.queue[0].id}`);
+    console.log(`QUEUE: ${this.queue[0].user.id}`);
     if (this.queue.length >= 2) {
-      this.matchService.create_with_id(this.queue[0].id, this.queue[1].id);
+      this.matchService.create_with_id(this.queue[0].user.id, this.queue[1].user.id);
       this.queue.pop();
       this.queue.pop();
     }
