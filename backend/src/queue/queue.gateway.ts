@@ -22,6 +22,7 @@ import { parse } from 'cookie';
 import { CreateMatchDto } from 'src/match/dto/create-match.dto';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { GameStreamService } from 'src/game_stream/game_stream.service';
+import { GameStreamGateway } from 'src/game_stream/game_stream.gateway';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -33,6 +34,7 @@ export class QueueGateway implements OnGatewayDisconnect {
     private jwtService: JwtAccessService,
     private matchService: MatchService,
     private gameStreamService: GameStreamService,
+    private gameStreamGateway: GameStreamGateway,
   ) {
     console.log('12312313123');
     console.log(this.server);
@@ -77,7 +79,7 @@ export class QueueGateway implements OnGatewayDisconnect {
       // this.server.to(`${match.id}`).emit('fuck');
       queue[1].socket.join(`${match.id}`);
       console.log(queue[0].socket.rooms);
-      await this.gameStreamService.add(match);
+      await this.gameStreamGateway.add(match);
       this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
       this.queueService.removePlayerFromQueue(queue[0].user);
