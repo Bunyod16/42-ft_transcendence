@@ -26,28 +26,36 @@ export default function Navbar() {
 
   React.useEffect(() => {
     login("not login");
-    axios
-      .get("auth/profile")
-      .then((res) => {
-        login(res.data.nickName);
-        socket.connect();
-      })
-      .catch(() => {
-        axios
-          .get("auth/refresh")
-          .then(() => {
-            console.log("refreshed token");
-            axios.get("auth/profile").then((res) => {
-              login(res.data.nickName);
-              socket.connect();
-            });
-          })
-          .catch(() => {
-            socket.disconnect();
-            logout();
-            router.push("/login");
+
+    function refreshToken() {
+      axios
+        .get("auth/refresh")
+        .then(() => {
+          console.log("refreshed token");
+          axios.get("auth/profile").then((res) => {
+            login(res.data.nickName);
+            socket.connect();
           });
-      });
+        })
+        .catch(() => {
+          socket.disconnect();
+          logout();
+          router.push("/login");
+        });
+    }
+
+    if (!isLoggedIn) {
+      axios
+        .get("auth/profile")
+        .then((res) => {
+          login(res.data.nickName);
+          socket.connect();
+        })
+        .catch(() => {
+          refreshToken();
+        });
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
