@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  Logger,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ChatChannelsService } from './chat_channels.service';
 import { CreateChatChannelDto } from './dto/create-chat_channel.dto';
@@ -23,24 +25,30 @@ export class ChatChannelsController {
   constructor(private readonly chatChannelsService: ChatChannelsService) {}
 
   @Post()
-  create(
-    @Body() createChatChannelDto: CreateChatChannelDto,
-    @Req() request: RequestWithUser,
-  ) {
-    return this.chatChannelsService.create(
-      createChatChannelDto,
-      request.user.id,
-    );
+  @UseGuards(UserAuthGuard)
+  create(@Body('name') channelName: string, @Req() request) {
+    return this.chatChannelsService.create(channelName, request.user.id);
   }
 
   @Get()
-  findAll() {
-    return this.chatChannelsService.findAll();
+  async findAll() {
+    const chatChannel = await this.chatChannelsService.findAll();
+
+    Logger.log(`Trying to get all chatChannel`, 'chatChannel => findAll()');
+
+    return chatChannel;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatChannelsService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const chatChannel = await this.chatChannelsService.findOne(id);
+
+    Logger.log(
+      `Trying to get ChatChannel with id = [${id}]`,
+      'ChatChannel => findOne()',
+    );
+
+    return chatChannel;
   }
 
   @Patch(':id')
