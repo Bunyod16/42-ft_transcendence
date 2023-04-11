@@ -1,4 +1,3 @@
-
 import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
 import { SchedulerRegistry } from '@nestjs/schedule';
@@ -14,12 +13,17 @@ export class GameStreamService {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     private gameStateService: GameStateService,
-  ) {}
+  ) {
+    console.log('12312313123');
+    console.log(this.server);
+  }
 
   add(match: Match) {
+    console.log(match);
+    console.log(match.id);
     const callback = async () => {
       this.server
-        .in(`${match.id}`)
+        .to(`${match.id}`)
         .emit('updateGame', await this.gameStateService.getGame(match.id));
     };
 

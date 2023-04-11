@@ -31,9 +31,7 @@ export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  constructor(
-    private gameStateService: GameStateService,
-  ) {}
+  constructor(private gameStateService: GameStateService) {}
 
   // @UseGuards(UserAuthGuard)
   // @SubscribeMessage('connectGame')
@@ -95,4 +93,3 @@ export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
   //   return this.gameStreamService.remove(id);
   // }
 }
-

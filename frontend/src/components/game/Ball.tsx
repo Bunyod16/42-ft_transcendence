@@ -1,7 +1,7 @@
 import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { ballMaterial, boxGeometry } from "./resource";
 import { ISize } from "./types";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { button, useControls } from "leva";
 
 interface IBallProps {
@@ -27,15 +27,6 @@ function Ball({ tableSize }: IBallProps) {
       }
     }),
   });
-
-  // useEffect(() => {
-  //   if (body.current) {
-  //     console.log(body.current.mass());
-  //     // body.current.setAdditionalMass(5, true);
-  //     body.current.applyImpulse({ x: 0, y: 20, z: 0 }, true);
-  //     console.log("apply impulse");
-  //   }
-  // }, [body]);
 
   return (
     <RigidBody

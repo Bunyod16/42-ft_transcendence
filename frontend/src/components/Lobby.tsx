@@ -37,6 +37,9 @@ const Lobby = () => {
 
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);
+    // socket.on("fuck", () => {
+    //   console.log("fuck");
+    // });
     // socket.on("matchFound", onMatchFound);
     // socket.on("matchFound", onMatchFound);
 

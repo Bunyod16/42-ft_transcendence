@@ -35,14 +35,18 @@ export class MatchService {
     const newMatch = new CreateMatchDto();
     newMatch.playerOne = user_one;
     newMatch.playerTwo = user_two;
+    newMatch.isPrivate = false;
+    await this.matchRepository.save(newMatch);
     const match = await this.findCurrentByUser(user_one);
-    this.gameStateService.createGameIfNotExist(
+    console.log('-----');
+    console.log(match);
+    console.log('-----');
+    await this.gameStateService.createGameIfNotExist(
       match.id,
       user_one.id,
       user_two.id,
     );
-    this.gameStreamService.add(match.id);
-    return this.matchRepository.save(newMatch);
+    return match;
   }
 
   async findAll(): Promise<Match[]> {
@@ -62,7 +66,7 @@ export class MatchService {
     // });
   }
 
-  async findCurrentByUser(user: User): Promise<any> {
+  async findCurrentByUser(user: User): Promise<Match> {
     return await this.matchRepository
       .createQueryBuilder('Match')
       .where([

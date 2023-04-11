@@ -3,7 +3,8 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import { useState } from "react";
+import React, { useState } from "react";
+import { socket } from "../socket/socket";
 
 THREE.ColorManagement.enabled = true;
 
@@ -32,6 +33,20 @@ function Pong() {
   const [player] = useState(() => Math.round(Math.random()));
 
   console.log(player);
+
+  React.useEffect(() => {
+    function onUpdateGame(data: unknown) {
+      console.log("Update game...");
+      console.log(data);
+    }
+
+    socket.on("updateGame", onUpdateGame);
+
+    return () => {
+      socket.off("updateGame", onUpdateGame);
+    };
+  }, []);
+
   return (
     <>
       <Table tableSize={tableSize} />

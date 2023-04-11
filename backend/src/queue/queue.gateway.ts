@@ -21,6 +21,7 @@ import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
 import { parse } from 'cookie';
 import { CreateMatchDto } from 'src/match/dto/create-match.dto';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
+import { GameStreamService } from 'src/game_stream/game_stream.service';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -31,7 +32,11 @@ export class QueueGateway implements OnGatewayDisconnect {
     private queueService: QueueService,
     private jwtService: JwtAccessService,
     private matchService: MatchService,
-  ) {}
+    private gameStreamService: GameStreamService,
+  ) {
+    console.log('12312313123');
+    console.log(this.server);
+  }
 
   @UseGuards(UserAuthGuard)
   handleConnection(client: any, ...args: any[]) {
@@ -64,9 +69,15 @@ export class QueueGateway implements OnGatewayDisconnect {
     }
     const queue = await this.queueService.getQueue();
     if (queue.length >= 2) {
-      const match = await this.matchService.create_with_user(queue[0].user, queue[1].user);
+      const match = await this.matchService.create_with_user(
+        queue[0].user,
+        queue[1].user,
+      );
       queue[0].socket.join(`${match.id}`);
+      // this.server.to(`${match.id}`).emit('fuck');
       queue[1].socket.join(`${match.id}`);
+      console.log(queue[0].socket.rooms);
+      await this.gameStreamService.add(match);
       this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
       this.queueService.removePlayerFromQueue(queue[0].user);
