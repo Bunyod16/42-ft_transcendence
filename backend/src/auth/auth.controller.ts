@@ -12,8 +12,6 @@ import {
   Query,
   Res,
   Req,
-  UnauthorizedException,
-  HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import RequestWithUser from './requestWithUser.interace';

@@ -18,8 +18,8 @@ import { DataSource } from 'typeorm';
 import { QueueModule } from './queue/queue.module';
 import { GameStateModule } from './game_state/gameState.module';
 import { GameStreamModule } from './game_stream/game_stream.module';
-import { GameStreamGateway } from './game_stream/game_stream.gateway';
-import { QueueGateway } from './queue/queue.gateway';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -55,6 +55,8 @@ import { QueueGateway } from './queue/queue.gateway';
     QueueModule,
     GameStateModule,
     GameStreamModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

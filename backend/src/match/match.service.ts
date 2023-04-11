@@ -6,6 +6,8 @@ import { Match } from './entities/match.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
+import { GameStateService } from 'src/game_state/gameState.service';
+import { GameStreamService } from 'src/game_stream/game_stream.service';
 
 @Injectable()
 export class MatchService {
@@ -13,6 +15,8 @@ export class MatchService {
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
     private readonly userService: UserService,
+    private gameStateService: GameStateService,
+    private gameStreamService: GameStreamService,
   ) {}
 
   async create(
@@ -21,20 +25,24 @@ export class MatchService {
     return this.matchRepository.save(createMatchDto);
   }
 
-  async create_with_id(userId1: number, userId2: number) {
-    const user1: User = await this.userService.findOne(userId1);
-    const user2: User = await this.userService.findOne(userId2);
-
-    console.log(`user1.id = ${user1.id}`);
-    console.log(`user2.id = ${user2.id}`);
-
-    if (user1 && user2) {
-      const newMatch = new CreateMatchDto();
-      newMatch.playerOne = user1;
-      newMatch.playerTwo = user2;
-      return this.matchRepository.save(newMatch);
+  async create_with_user(user_one: User, user_two: User) {
+    if (!user_one || !user_two) {
+      throw new HttpException(
+        "One of the users doesn't exist",
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    //throw some error
+    const newMatch = new CreateMatchDto();
+    newMatch.playerOne = user_one;
+    newMatch.playerTwo = user_two;
+    const match = await this.findCurrentByUser(user_one);
+    this.gameStateService.createGameIfNotExist(
+      match.id,
+      user_one.id,
+      user_two.id,
+    );
+    this.gameStreamService.add(match.id);
+    return this.matchRepository.save(newMatch);
   }
 
   async findAll(): Promise<Match[]> {
