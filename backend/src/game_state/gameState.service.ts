@@ -51,4 +51,17 @@ export class GameStateService {
   async getAllGames() {
     await this.redisService.getAllGames();
   }
+
+  async playerUp(user: User, game_id: number) {
+    const game = await this.redisService.getGameState(game_id);
+    if (user.id == game.playerOne.id)
+    {
+      game.playerOne.y += 10;
+    }
+    if (user.id == game.playerTwo.id)
+    {
+      game.playerTwo.y += 10;
+    }
+    this.updateGame(game_id, game);
+  }
 }

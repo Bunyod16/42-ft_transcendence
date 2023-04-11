@@ -74,6 +74,18 @@ export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
     return game;
   }
 
+  @UseGuards(UserAuthGuard)
+  @SubscribeMessage('playerUp')
+  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: Socket, @Req() req: RequestWithUser,) {
+    this.gameStateService.playerUp(req.user, body.gameId);
+  }
+
+  // @UseGuards(UserAuthGuard)
+  // @SubscribeMessage('playerDown')
+  // playerDown(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+  //   this.gameStateService.playerMoveDown(11);
+  // }
+
   @SubscribeMessage('deleteGame')
   delete(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
     this.gameStateService.deleteGame(11);
