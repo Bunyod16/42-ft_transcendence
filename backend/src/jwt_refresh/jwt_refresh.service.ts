@@ -9,8 +9,8 @@ export class JwtRefreshService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly configService: ConfigService) {}
-
+    private readonly configService: ConfigService,
+  ) {}
 
   generateRefreshToken(user: User) {
     const payload = { sub: user.id };
@@ -18,11 +18,13 @@ export class JwtRefreshService {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
       expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRY'),
     });
-    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_REFRESH_TOKEN_EXPIRY')}`; 
+    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRY',
+    )}`;
     return {
       cookie,
-      token
-    }
+      token,
+    };
   }
 
   async verifyRefreshToken(token: string): Promise<User> {
@@ -31,18 +33,14 @@ export class JwtRefreshService {
         secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
       });
       const userId = payload.sub;
-      const user = await this.userService.getUserIfRefreshTokenMatches(token, userId);
-      if (user)
-        return user;
+      const user = await this.userService.getUserIfRefreshTokenMatches(
+        token,
+        userId,
+      );
+      if (user) return user;
       throw new Error('Invalid refresh token');
     } catch (error) {
       throw new Error('Invalid refresh token');
     }
   }
-
 }
-
-
-
-
-

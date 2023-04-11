@@ -12,12 +12,16 @@ import {
   ParseIntPipe,
   Query,
   ParseBoolPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Match } from './entities/match.entity';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { UserAuthGuard } from 'src/auth/auth.guard';
+import RequestWithUser from 'src/auth/requestWithUser.interace';
 
 @ApiTags('match')
 @Controller('match')
@@ -65,6 +69,15 @@ export class MatchController {
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
 
+    return match;
+  }
+
+  @Get('current')
+  @UseGuards(UserAuthGuard)
+  async currentMatch(@Req() req: RequestWithUser) {
+    const match = await this.matchService.findCurrentByUser(req.user);
+    if (!match)
+      throw new HttpException('No Current Match', HttpStatus.NO_CONTENT);
     return match;
   }
 

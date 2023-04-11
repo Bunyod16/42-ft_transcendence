@@ -12,12 +12,16 @@ import {
   Query,
   Res,
   Req,
+  UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import RequestWithUser from './requestWithUser.interace';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { UserService } from 'src/user/user.service';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
+import { parse } from 'cookie';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,6 +32,7 @@ export class AuthController {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     private readonly jwtAccessService: JwtAccessService,
+    private readonly jwtRefreshService: JwtRefreshService,
   ) {}
 
   @Get('login')
@@ -50,7 +55,7 @@ export class AuthController {
       code: `${query.code}`,
     };
 
-    var headers: {
+    let headers: {
       'Content-Type': 'application/json';
     };
     try {
@@ -69,7 +74,8 @@ export class AuthController {
         tokens.accessToken,
         tokens.refreshToken,
       ]);
-      request.res.redirect(process.env.AUTH_REDIRECT_URI);
+      console.log(this.configService.get('AUTH_REDIRECT_URI'));
+      request.res.redirect(this.configService.get('AUTH_REDIRECT_URI'));
       return user;
     } catch (error) {
       console.log(error);
@@ -78,15 +84,20 @@ export class AuthController {
     }
   }
 
-  @UseGuards(UserAuthGuard)
   @Get('refresh')
-  refresh(@Req() req: RequestWithUser) {
-    const accessTokenCookie = this.jwtAccessService.generateAccessToken(
-      req.user,
-    );
-
-    req.res.setHeader('Set-Cookie', accessTokenCookie);
-    return req.user;
+  async refresh(@Req() req: RequestWithUser, @Res() res) {
+    try {
+      const cookies = parse(req.headers.cookie);
+      const refresh = cookies.Refresh;
+      const user = await this.jwtRefreshService.verifyRefreshToken(refresh);
+      const accessTokenCookie = this.jwtAccessService.generateAccessToken(user);
+      req.res.setHeader('Set-Cookie', accessTokenCookie);
+      return req.user;
+    } catch (error) {
+      console.log(error);
+      req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
+      return res.redirect('http://localhost:8080');
+    }
   }
 
   @UseGuards(UserAuthGuard)

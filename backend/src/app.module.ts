@@ -17,6 +17,9 @@ import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { QueueModule } from './queue/queue.module';
 import { GameStateModule } from './game_state/gameState.module';
+import { GameStreamModule } from './game_stream/game_stream.module';
+import { GameStreamGateway } from './game_stream/game_stream.gateway';
+import { QueueGateway } from './queue/queue.gateway';
 
 @Module({
   imports: [
@@ -51,6 +54,7 @@ import { GameStateModule } from './game_state/gameState.module';
     ChatChannelsModule,
     QueueModule,
     GameStateModule,
+    GameStreamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
