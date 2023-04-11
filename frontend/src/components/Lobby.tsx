@@ -33,6 +33,7 @@ const Lobby = () => {
       playerOne: data.playerOne,
       playerTwo: data.playerTwo,
       state: "start",
+      gameId: data.id,
     };
     setGameState(state);
     updateState("InGame");

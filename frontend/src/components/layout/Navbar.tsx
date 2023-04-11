@@ -25,7 +25,7 @@ export default function Navbar() {
   };
 
   React.useEffect(() => {
-    login("not login");
+    // login("not login");
 
     function refreshToken() {
       axios

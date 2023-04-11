@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import React, { useRef } from "react";
 import { socket } from "../socket/socket";
+import useGameStore from "@/store/gameStore";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -16,6 +17,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const [, getKeys] = useKeyboardControls<Controls>();
   const body = useRef<RapierRigidBody>(null);
   console.log(isPlayer);
+  const { gameState } = useGameStore();
 
   useFrame((state, delta) => {
     if (body.current) {
@@ -26,7 +28,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       const bodyPosition = body.current.translation();
       if (isPlayer) {
         if (keys.up) {
-          socket.emit("playerUp");
+          socket.emit("playerUp", { gameId: gameState.gameId });
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
             y: bodyPosition.y + steps,
@@ -34,7 +36,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
           });
         }
         if (keys.down) {
-          socket.emit("playerDown");
+          socket.emit("playerDown", { gameId: gameState.gameId });
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
             y: bodyPosition.y - steps,

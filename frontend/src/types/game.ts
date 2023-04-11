@@ -7,4 +7,5 @@ export interface GameState {
   playerOne: Player | undefined;
   playerTwo: Player | undefined;
   state: string | undefined;
+  gameId: string | undefined;
 }

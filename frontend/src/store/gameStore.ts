@@ -11,6 +11,7 @@ const useGameStore = create<GameStore>()((set) => ({
     playerOne: undefined,
     playerTwo: undefined,
     state: undefined,
+    gameId: undefined,
   },
   setGameState: (state: GameState) =>
     set(() => ({

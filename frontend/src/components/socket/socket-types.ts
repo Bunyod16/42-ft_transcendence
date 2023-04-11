@@ -11,7 +11,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   queueEnter: () => void;
   queueLeave: () => void;
-  playerUp: () => void;
-  playerDown: () => void;
+  playerUp: (gameId: string) => void;
+  playerDown: (gameId: string) => void;
   leaveGame: () => void;
 }
