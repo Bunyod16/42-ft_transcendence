@@ -9,7 +9,6 @@ import { Server } from 'socket.io';
 import { OnModuleDestroy, OnModuleInit, Req, UseGuards } from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
-import { MatchService } from 'src/match/match.service';
 import { Socket } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
 import { GameStateService } from 'src/game_state/gameState.service';
@@ -33,38 +32,29 @@ export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
   }
 
   constructor(
-    private matchService: MatchService,
     private gameStateService: GameStateService,
   ) {}
 
-  @UseGuards(UserAuthGuard)
-  @SubscribeMessage('connectGame')
-  async connectGame(
-    @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
-  ) {
-    this.server.emit('message', { wtf: 'hello' });
-    console.log('user attempting to connect to game');
-    const match = await this.matchService.findCurrentByUser(req.user);
-    if (!match) {
-      socket.emit(`connect`, {
-        msg: 'No on going game',
-      });
-      return;
-    }
-    await this.gameStateService.createGameIfNotExist(
-      match.id,
-      match.playerOne.id,
-      match.playerTwo.id,
-    );
-    socket.join(`${match.id}`);
-    const game = await this.gameStateService.connectUser(match.id, req.user);
-    socket.emit(`connectedToRoom`, {
-      user: req.user.nickName,
-      game: game,
-    });
-    return game;
-  }
+  // @UseGuards(UserAuthGuard)
+  // @SubscribeMessage('connectGame')
+  // async connectGame(
+  //   @ConnectedSocket() socket: Socket,
+  //   @Req() req: RequestWithUser,
+  // ) {
+  //   this.server.emit('message', { wtf: 'hello' });
+  //   console.log('user attempting to connect to game');
+  //   const match = await this.matchService.findCurrentByUser(req.user);
+  //   if (!match) {
+  //     socket.emit(`connect`, {match: null});
+  //     return;
+  //   }
+  //   const game = await this.gameStateService.connectUser(match.id, req.user);
+  //   socket.emit(`connectedToRoom`, {
+  //     user: req.user.nickName,
+  //     game: game,
+  //   });
+  //   return game;
+  // }
 
   @UseGuards(UserAuthGuard)
   @SubscribeMessage('gameInfo')
@@ -105,3 +95,4 @@ export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
   //   return this.gameStreamService.remove(id);
   // }
 }
+
