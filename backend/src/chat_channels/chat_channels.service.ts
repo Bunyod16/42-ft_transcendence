@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateChatChannelDto } from './dto/create-chat_channel.dto';
 import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { Repository } from 'typeorm';
 import { ChannelType, ChatChannel } from './entities/chat_channel.entity';
@@ -15,27 +14,26 @@ export class ChatChannelsService {
   ) {}
 
   async create(channelName: string, ownerId: number) {
-    const createChatChannelDto = new CreateChatChannelDto();
     const channel = new ChatChannel();
 
-    channel.channel_type = createChatChannelDto.channel_type;
-    channel.channel_type = ChannelType.PUBLIC;
+    //default chatChannel settings
+    channel.channel_type = ChannelType.PROTECTED;
     channel.ownerId = ownerId;
     channel.name = channelName;
-
-    console.log(channel);
-
-    // createChatChannelDto.channel_type = ChannelType.PROTECTED;
-    // createChatChannelDto.ownerId = ownerId;
-    // createChatChannelDto.name = channelName;
+    channel.password = undefined;
 
     const errors = await validate(channel);
     if (errors.length > 0) {
       console.log('Validation errors:', errors);
-    } else {
-      const savedChannel = await this.chatChannelRepository.save(channel);
-      return savedChannel;
+      throw new CustomException(
+        `Some Bad Shit Happened`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        `ChatChannel => create()`,
+      );
     }
+
+    const savedChannel = await this.chatChannelRepository.save(channel);
+    return savedChannel;
   }
 
   async findAll() {

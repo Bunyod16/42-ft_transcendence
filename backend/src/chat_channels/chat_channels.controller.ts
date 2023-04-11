@@ -12,10 +12,8 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ChatChannelsService } from './chat_channels.service';
-import { CreateChatChannelDto } from './dto/create-chat_channel.dto';
 import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { ApiTags } from '@nestjs/swagger';
-import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('chat-channels')
@@ -26,7 +24,7 @@ export class ChatChannelsController {
 
   @Post()
   @UseGuards(UserAuthGuard)
-  create(@Body('name') channelName: string, @Req() request) {
+  create(@Body('name') channelName: string, @Req() request: any) {
     return this.chatChannelsService.create(channelName, request.user.id);
   }
 

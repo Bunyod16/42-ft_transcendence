@@ -34,10 +34,11 @@ export class ChatChannel {
   @Column({ type: 'enum', enum: ChannelType, default: ChannelType.PUBLIC })
   channel_type: ChannelType;
 
-  @ValidateIf((entity) => entity.channel_type !== ChannelType.PROTECTED)
-  @IsOptional()
+  @ValidateIf((entity) => entity.channel_type === ChannelType.PROTECTED)
   @IsString()
-  password?: string;
+  @Column({ nullable: true })
+  // @IsOptional()
+  password: string;
 
   @OneToMany(() => ChatLine, (chatLine) => chatLine.chatChannel)
   chatLines: ChatLine[];

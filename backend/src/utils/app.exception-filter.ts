@@ -22,13 +22,17 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     const statusCode = exception.getStatus();
     let message: string;
+
     switch (statusCode) {
       case 500:
         message = `Internal Server Error: `;
+        break;
       case 404:
         message = `Not Found: `;
+        break;
       case 400:
         message = `Bad Request: `;
+        break;
     }
     message += `${exception.message}`;
 
