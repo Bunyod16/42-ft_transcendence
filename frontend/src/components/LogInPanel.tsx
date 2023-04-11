@@ -2,8 +2,17 @@ import React from "react";
 
 import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
+import useUserStore from "@/store/userStore";
+import { useRouter } from "next/router";
 
 export default function LoginPanel() {
+  const { isLoggedIn } = useUserStore();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (isLoggedIn) router.push("/");
+  }, []);
+
   return (
     <Box
       component={"div"}
