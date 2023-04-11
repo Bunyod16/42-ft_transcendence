@@ -10,39 +10,72 @@ import {
   HttpStatus,
   Logger,
   ParseIntPipe,
+  UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { TwoFactorService } from './two_factor.service';
-import { CreateTwoFactorDto } from './dto/create-two_factor.dto';
 // import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { UserAuthGuard } from 'src/auth/auth.guard';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @ApiTags('two-factor')
 @Controller('two-factor')
 export class TwoFactorController {
   constructor(private readonly twoFactorService: TwoFactorService) {}
 
-  @Post()
-  async create(@Body() createTwoFactorDto: CreateTwoFactorDto) {
-    try {
-      const twoFactor = await this.twoFactorService.create(createTwoFactorDto);
-      if (!twoFactor) {
-        Logger.log(`[twoFactor] Couldnt create twoFactor`);
-        throw new HttpException(
-          'Internal Server Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      Logger.log(`[twoFactor] Created twoFactor with id = [${twoFactor.id}]`);
-      return twoFactor;
-    } catch (error) {
-      Logger.error(
-        `[twoFactor] twoFactor for user with id = [${createTwoFactorDto.user.id}] already exists`,
-      );
-      throw new HttpException(
-        'Internal Server Error: twoFactor for user already exists',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  @Post(':userId')
+  @UseGuards(UserAuthGuard)
+  async create(@Req() req: any) {
+    const userId = req.user.id;
+    const twoFactor = await this.twoFactorService.create(userId);
+
+    Logger.log(
+      `Created TwoFactor for user with id = [${userId}]`,
+      'TwoFactor => create()',
+    );
+
+    console.log(twoFactor);
+    return twoFactor;
+  }
+
+  @Post(':userId/verify')
+  @UseGuards(UserAuthGuard)
+  async verify(
+    @Req() req: any,
+    @Query('twoFactorToken') twoFactorToken: string,
+  ) {
+    const userId = req.user.id;
+    const verification = await this.twoFactorService.verifyTwoFactor(
+      userId,
+      twoFactorToken,
+    );
+
+    Logger.log(
+      `Trying to get verify TwoFactor for user with id = [${userId}]`,
+      'TwoFactor => verify()',
+    );
+
+    return verification;
+  }
+
+  @Post(':userId/verify-testing')
+  async verifyTesting(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query('twoFactorToken') twoFactorToken: string,
+  ) {
+    const verification = await this.twoFactorService.verifyTwoFactor(
+      userId,
+      twoFactorToken,
+    );
+
+    Logger.log(
+      `Trying to get verify-testing TwoFactor for user with id = [${userId}]`,
+      'TwoFactor => verify()',
+    );
+
+    return verification;
   }
 
   @Get()
@@ -64,6 +97,13 @@ export class TwoFactorController {
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
     return twoFactor;
+  }
+
+  @Get(':userId/user-two-factor')
+  async findUserTwoFactor(@Param('userId', ParseIntPipe) userId: number) {
+    const twoFactor = await this.twoFactorService.findOneWithUserId(userId);
+
+    if (twoFactor) return true;
   }
 
   // @Patch(':id')
