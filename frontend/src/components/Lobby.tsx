@@ -15,7 +15,6 @@ const Lobby = () => {
   // *start queue here
   const handleQueue = () => {
     socket.emit("queueEnter");
-    setIsQueueing(true);
     // setTimeout(() => onMatchFound(null), 3000); // for development
   };
 
