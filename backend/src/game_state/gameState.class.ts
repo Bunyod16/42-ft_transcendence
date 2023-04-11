@@ -1,9 +1,13 @@
-export class Coords {
+export class PlayerData {
+    id: number;
+    isConnected: boolean;
     x: number;
     y: number;
-    constructor(x: number, y: number) {
+    constructor(id: number, x: number, y: number) {
+        this.id = id;
         this.x = x;
         this.y = y;
+        this.isConnected = false;
     }
 }
 
@@ -23,13 +27,13 @@ export class BallProperties {
 
 export class GameState {
     id: number;
-    playerOneCoords: Coords;
-    playerTwoCoords: Coords;
+    playerOne: PlayerData;
+    playerTwo: PlayerData;
     ballProperties: BallProperties;
-    constructor(id: number) {
+    constructor(id: number, playerOneId: number, playerTwoId: number) {
         this.id = id;
-        this.playerOneCoords = new Coords(0, 100);
-        this.playerTwoCoords = new Coords(0, -100);
+        this.playerOne = new PlayerData(playerOneId, 0, 100);
+        this.playerTwo = new PlayerData(playerTwoId, 0, -100);
         this.ballProperties = new BallProperties(0, 0);
     }
 }

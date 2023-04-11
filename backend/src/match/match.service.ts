@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, IsNull, Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
@@ -52,6 +52,25 @@ export class MatchService {
     //     playerTwo: true,
     //   },
     // });
+  }
+
+  async findCurrentByUser(user: User): Promise<any> {
+    return await this.matchRepository
+      .createQueryBuilder('Match')
+      .where([
+        { endedAt: IsNull(), playerOne: user },
+        { endedAt: IsNull(), playerTwo: user },
+      ])
+      .select([
+        'Match',
+        'playerOne.id',
+        'playerOne.nickName',
+        'playerTwo.id',
+        'playerTwo.nickName',
+      ])
+      .leftJoin('Match.playerOne', 'playerOne')
+      .leftJoin('Match.playerTwo', 'playerTwo')
+      .getOne();
   }
 
   async findOne(id: number): Promise<Match> {
