@@ -37,7 +37,7 @@ function Pong() {
   React.useEffect(() => {
     function onUpdateGame(data: unknown) {
       console.log("Update game...");
-      console.log(data);
+      // console.log(data);
     }
 
     socket.on("updateGame", onUpdateGame);

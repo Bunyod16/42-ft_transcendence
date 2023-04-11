@@ -28,6 +28,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       const bodyPosition = body.current.translation();
       if (isPlayer) {
         if (keys.up) {
+          console.log("gameId: ", gameState.gameId);
           socket.emit("playerUp", { gameId: gameState.gameId });
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
@@ -36,6 +37,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
           });
         }
         if (keys.down) {
+          console.log("gameId: ", gameState.gameId);
           socket.emit("playerDown", { gameId: gameState.gameId });
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
