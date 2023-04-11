@@ -20,7 +20,7 @@ const Lobby = () => {
     setIsQueueing(false);
   };
 
-  function onMatchFound(data: any) {
+  function onMatchFound(data: unknown) {
     alert("match found");
     console.log(data);
     updateState("InGame");

@@ -48,6 +48,7 @@ export default function Navbar() {
             router.push("/login");
           });
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isLoggedIn) return <></>;
