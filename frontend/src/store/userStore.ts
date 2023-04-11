@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 type States = "Matching" | "InGame" | "Idle";
 
-interface UserState {
+interface UserStore {
   isLoggedIn: boolean;
   name: string;
   state: States;
@@ -12,7 +12,7 @@ interface UserState {
   updateState: (state: States) => void;
 }
 
-const useUserStore = create<UserState>()(
+const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       isLoggedIn: false,
