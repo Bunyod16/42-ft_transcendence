@@ -43,7 +43,7 @@ export class ChatLineService {
       throw new CustomException(
         `ChatLine with id = [${id}] doesn't exist test`,
         HttpStatus.NOT_FOUND,
-        'ChatLine => remove()',
+        'ChatLine => findOne()',
       );
     }
 

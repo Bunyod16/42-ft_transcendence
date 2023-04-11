@@ -12,7 +12,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { ChatLineService } from './chat_line.service';
-import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
 import { Logger } from '@nestjs/common';
 import { CustomException } from 'src/utils/app.exception-filter';
@@ -37,10 +36,6 @@ export class ChatLineController {
         `ChatLine => create()`,
       );
     }
-
-    const createChatLineDto: CreateChatLineDto = new CreateChatLineDto();
-
-    createChatLineDto.text = text;
 
     try {
       const chat_line = await this.chatLineService.create(
@@ -73,14 +68,6 @@ export class ChatLineController {
       `Trying to get chat_line with id = [${id}]`,
       'ChatLine => findOne()',
     );
-
-    if (!chat_line) {
-      throw new CustomException(
-        `chat_line with id = [${id}] doeesn't exist`,
-        HttpStatus.NOT_FOUND,
-        `ChatLine => findOne()`,
-      );
-    }
 
     return chat_line;
   }
