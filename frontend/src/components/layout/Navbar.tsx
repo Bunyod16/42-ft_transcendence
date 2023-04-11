@@ -19,12 +19,13 @@ export default function Navbar() {
   const handleLogout = () => {
     axios
       .post("/auth/log-out")
-      .then(() => logout())
+      .then()
       .catch((err) => console.log(err));
+    logout();
   };
 
   React.useEffect(() => {
-    login("jatan");
+    login("not login");
     axios
       .get("auth/profile")
       .then((res) => {
