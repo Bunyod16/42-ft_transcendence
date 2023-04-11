@@ -44,17 +44,16 @@ export default function Navbar() {
         });
     }
 
-    if (!isLoggedIn) {
-      axios
-        .get("auth/profile")
-        .then((res) => {
-          login(res.data.nickName);
-          socket.connect();
-        })
-        .catch(() => {
-          refreshToken();
-        });
-    }
+    axios
+      .get("auth/profile")
+      .then((res) => {
+        login(res.data.nickName);
+        console.log("user authenticated");
+        socket.connect();
+      })
+      .catch(() => {
+        refreshToken();
+      });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
