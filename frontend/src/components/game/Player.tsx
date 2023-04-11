@@ -3,7 +3,8 @@ import { Controls, ISize } from "./types";
 import { boxGeometry, playerMaterial } from "./resource";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { useRef } from "react";
+import React, { useRef } from "react";
+import { socket } from "../socket/socket";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -12,7 +13,7 @@ interface IPlayerProps {
 }
 
 function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
-  const [sub, getKeys] = useKeyboardControls<Controls>();
+  const [, getKeys] = useKeyboardControls<Controls>();
   const body = useRef<RapierRigidBody>(null);
   console.log(isPlayer);
 
@@ -22,19 +23,18 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       // if (keys.up) console.log("up");
       // if (keys.down) console.log("down");
       const steps = 2 * delta;
-
       const bodyPosition = body.current.translation();
-
       if (isPlayer) {
         if (keys.up) {
+          socket.emit("playerUp");
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
             y: bodyPosition.y + steps,
             z: bodyPosition.z,
           });
         }
-
         if (keys.down) {
+          socket.emit("playerDown");
           body.current.setNextKinematicTranslation({
             x: bodyPosition.x,
             y: bodyPosition.y - steps,
