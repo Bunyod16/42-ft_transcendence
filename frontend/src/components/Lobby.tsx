@@ -6,12 +6,12 @@ import useUserStore from "@/store/userStore";
 const Lobby = () => {
   const { updateState } = useUserStore();
   const [isQueueing, setIsQueueing] = React.useState(false);
-  const [matchFound, setMatchFound] = React.useState(false);
 
   // *start queue here
   const handleQueue = () => {
     socket.emit("queueEnter");
     setIsQueueing(true);
+    // setTimeout(() => onMatchFound(null), 3000); // for development
   };
 
   //! queue leave function
@@ -20,21 +20,20 @@ const Lobby = () => {
     setIsQueueing(false);
   };
 
-  React.useEffect(() => {
-    function onMatchFound(data: any) {
-      alert("match found");
-      console.log(data);
-      setMatchFound(true);
-      updateState("InGame");
-    }
+  function onMatchFound(data: any) {
+    alert("match found");
+    console.log(data);
+    updateState("InGame");
+  }
 
+  React.useEffect(() => {
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }
 
-    function onQueueLeave() {
-      console.log("Quit queue");
-    }
+    // function onQueueLeave() {
+    //   console.log("Quit queue");
+    // }
 
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);
@@ -42,8 +41,8 @@ const Lobby = () => {
     // socket.on("matchFound", onMatchFound);
 
     return () => {
-      socket.off("matchFound", onMatchFound);
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
+      socket.off("matchFound", onMatchFound);
     };
   }, []);
 

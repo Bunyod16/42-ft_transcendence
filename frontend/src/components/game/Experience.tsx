@@ -1,13 +1,10 @@
 import { Debug, Physics } from "@react-three/rapier";
 import Pong from "./Pong";
-import { OrbitControls } from "@react-three/drei";
 
 function Experience() {
   return (
     <>
       <color args={["#252731"]} attach="background" />
-
-      <OrbitControls />
 
       <Physics gravity={[0, 0, 0]}>
         <Debug />
