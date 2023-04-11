@@ -1,11 +1,5 @@
+import { GameState } from "@/types/game";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-
-interface GameState {
-  playerNum: string | undefined;
-  opponentName: string | undefined;
-  opponentNum: string | undefined;
-}
 
 interface GameStore {
   gameState: GameState;
@@ -14,9 +8,9 @@ interface GameStore {
 
 const useGameStore = create<GameStore>()((set) => ({
   gameState: {
-    playerNum: undefined,
-    opponentName: undefined,
-    opponentNum: undefined,
+    playerOne: undefined,
+    playerTwo: undefined,
+    state: undefined,
   },
   setGameState: (state: GameState) =>
     set(() => ({
