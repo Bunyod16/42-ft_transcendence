@@ -6,6 +6,6 @@ import { GameStreamService } from './game_stream.service';
 @Module({
   imports: [GameStateModule],
   providers: [GameStreamGateway, GameStreamService],
-  exports: [GameStreamService]
+  exports: [GameStreamGateway, GameStreamService]
 })
 export class GameStreamModule {}
