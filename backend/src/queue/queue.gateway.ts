@@ -62,6 +62,7 @@ export class QueueGateway implements OnGatewayDisconnect {
     @Req() req: RequestWithUser,
     @MessageBody() body: any,
   ) {
+    // console.log('entered queue');
     try {
       const game = await this.queueService.addUserToQueue(req.user, socket);
       socket.emit('queueEnterSuccess', game);

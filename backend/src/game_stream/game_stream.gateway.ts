@@ -3,6 +3,7 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { GameStreamService } from './game_stream.service';
 import { Server } from 'socket.io';
@@ -14,28 +15,36 @@ import { ConnectedSocket } from '@nestjs/websockets';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Match } from 'src/match/entities/match.entity';
 import { GameStateService } from 'src/game_state/gameState.service';
+import { parse } from 'cookie';
+import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
+import { MatchService } from 'src/match/match.service';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
-export class GameStreamGateway implements OnModuleInit, OnModuleDestroy {
+export class GameStreamGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     private gameStateService: GameStateService,
+    private jwtAccessService: JwtAccessService,
+    private matchService: MatchService,
   ) {}
 
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log(`Socket connected ${socket.id}`);
-    });
-  }
+  @UseGuards(UserAuthGuard)
+  async handleDisconnect(socket) {
+    console.log(socket.handshake.headers.cookie);
 
-  onModuleDestroy() {
-    this.server.on('connection', (socket) => {
-      console.log(`Socket disconnected ${socket.id}`);
-      // this.disconnectGame(socket);
-    });
+    const cookie = parse(socket.handshake.headers.cookie);
+    const user = await this.jwtAccessService.verifyAccessToken(
+      cookie.Authentication,
+    );
+    const match = await this.matchService.findCurrentByUser(user);
+    if (!match) return;
+
+    await this.matchService.updateGameEnded(match.id, match);
+    await this.gameStateService.deleteGame(match.id);
+    console.log('user has disconnected, game ended');
   }
 
   add(match: Match) {

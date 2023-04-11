@@ -4,19 +4,15 @@ import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, IsNull, Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { GameStateService } from 'src/game_state/gameState.service';
-import { GameStreamService } from 'src/game_stream/game_stream.service';
 
 @Injectable()
 export class MatchService {
   constructor(
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
-    private readonly userService: UserService,
     private gameStateService: GameStateService,
-    private gameStreamService: GameStreamService,
   ) {}
 
   async create(
@@ -146,6 +142,7 @@ export class MatchService {
   }
 
   async updateGameEnded(id: number, updateMatchDto: UpdateMatchDto) {
+    updateMatchDto.endedAt = new Date();
     return this.matchRepository.update(id, updateMatchDto);
   }
 

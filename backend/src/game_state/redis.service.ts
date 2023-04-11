@@ -29,4 +29,8 @@ export class RedisService {
     const allGames = await this.client.keys(`game:*`);
     return allGames;
   }
+  
+  async deleteAllGames(gameId: number) {
+    const gameStateString = await this.client.del(`game:*`);
+  }
 }
