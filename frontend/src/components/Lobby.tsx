@@ -1,9 +1,9 @@
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { socket } from "./socket/socket";
 import React from "react";
 import useUserStore from "@/store/userStore";
-import { useRouter } from "next/router";
 import useGameStore from "@/store/gameStore";
+import { useRouter } from "next/router";
 import { GameState } from "@/types/game";
 
 const Lobby = () => {
