@@ -1,28 +1,39 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { Repository } from 'typeorm';
 import { ChannelType, ChatChannel } from './entities/chat_channel.entity';
 import { validate } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 
 @Injectable()
 export class ChatChannelsService {
   constructor(
     @InjectRepository(ChatChannel)
     private chatChannelRepository: Repository<ChatChannel>,
+
+    @Inject(forwardRef(() => ChatChannelMemberService)) //for circular dependency
+    private readonly chatChannelsMembersService: ChatChannelMemberService,
   ) {}
 
   async create(channelName: string, ownerId: number) {
     const channel = new ChatChannel();
 
     //default chatChannel settings
-    channel.channel_type = ChannelType.PROTECTED;
+    channel.channel_type = ChannelType.PUBLIC;
     channel.ownerId = ownerId;
     channel.name = channelName;
     channel.password = undefined;
 
     const errors = await validate(channel);
+
     if (errors.length > 0) {
       console.log('Validation errors:', errors);
       throw new CustomException(
@@ -33,6 +44,9 @@ export class ChatChannelsService {
     }
 
     const savedChannel = await this.chatChannelRepository.save(channel);
+
+    //immeadiately add owner to channelmembers
+    await this.chatChannelsMembersService.create(ownerId, savedChannel.id);
     return savedChannel;
   }
 

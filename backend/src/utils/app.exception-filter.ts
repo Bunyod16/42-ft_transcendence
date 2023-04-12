@@ -8,8 +8,13 @@ import {
 } from '@nestjs/common';
 
 export class CustomException extends HttpException {
-  constructor(message: string, status: HttpStatus, location?: string) {
-    super({ message, location }, status);
+  constructor(
+    message: string,
+    status: HttpStatus,
+    location?: string,
+    error?: any,
+  ) {
+    super({ message, location, error }, status);
   }
 }
 
@@ -36,9 +41,10 @@ export class CustomExceptionFilter implements ExceptionFilter {
     }
     message += `${exception.message}`;
 
-    if (statusCode === 500)
-      Logger.error(exception_obj.message, exception_obj.location);
-    else Logger.log(exception_obj.message, exception_obj.location);
+    if (statusCode === 500) {
+      Logger.error(exception_obj.error, exception_obj.location);
+      Logger.error(exception_obj.error.detail, exception_obj.location);
+    } else Logger.log(exception_obj.message, exception_obj.location);
 
     response.status(statusCode).json({
       statusCode,
