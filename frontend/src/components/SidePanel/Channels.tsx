@@ -8,6 +8,7 @@ import {
   ToggleButton,
 } from "@mui/material";
 
+import ChatBox from "./ChatBox";
 /**
  * Chat Data Array of =
  * {
@@ -70,7 +71,6 @@ export default function Channels() {
         >
           Add Channel
         </Button>
-
         <ToggleButtonGroup
           exclusive
           value={curChannel}
@@ -103,56 +103,7 @@ export default function Channels() {
           ))}
         </ToggleButtonGroup>
       </Box>
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "end",
-          height: "50%",
-          borderTop: "2px solid pink",
-        }}
-      >
-        <Box
-          component="div"
-          sx={{
-            overflow: "scroll",
-            overflowX: "hidden",
-          }}
-        >
-          {chats.map((x, i) => (
-            <Typography
-              sx={{
-                padding: "10px",
-                border: "2px solid #11AAAA",
-                borderRadius: "8px",
-                margin: "10px",
-                wordWrap: "break-word",
-              }}
-              key={i}
-            >
-              {x}
-            </Typography>
-          ))}
-        </Box>
-        <Box component="div" sx={{ width: "100%", height: "56px" }}>
-          <form onSubmit={handleMessageSubmit}>
-            <TextField
-              variant="outlined"
-              placeholder="Type Here Bishhh..."
-              autoComplete="off"
-              onChange={(event) => setMessage(event.target.value)}
-              value={message}
-              sx={{
-                width: "100%",
-                color: "#FEFEFE",
-                "&::placeholder": { color: "#FEFEFE" },
-                border: "1px solid #FEFEFE",
-              }}
-            />
-          </form>
-        </Box>
-      </Box>
+      <ChatBox height="50%" />
     </Box>
   );
 }

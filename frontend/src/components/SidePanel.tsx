@@ -12,6 +12,8 @@ import Channels from "./SidePanel/Channels";
 import Friends from "./SidePanel/Friends";
 import Image from "next/image";
 import CircleIcon from "@mui/icons-material/Circle";
+import ChatBox from "./SidePanel/ChatBox";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 /**
  * State to track
  * - Whether in chat room or not
@@ -26,6 +28,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 interface generalTabProps {
   tabs: TabTypes;
   setTabs: React.Dispatch<React.SetStateAction<TabTypes>>;
+  setPanel: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type TabTypes = "friends" | "channels";
@@ -35,7 +38,7 @@ const StyleImage = {
   margin: "0 25px",
 };
 
-function GeneralTab({ tabs, setTabs }: generalTabProps) {
+function GeneralTab({ tabs, setTabs, setPanel }: generalTabProps) {
   return (
     <>
       <Box
@@ -78,24 +81,39 @@ function GeneralTab({ tabs, setTabs }: generalTabProps) {
           border: "2px solid red",
         }}
       >
-        {tabs === "channels" ? <Channels /> : <Friends />}
+        {tabs === "channels" ? <Channels /> : <Friends setPanel={setPanel} />}
       </Box>
     </>
   );
 }
 
-function FriendTab() {
+function FriendTab({
+  setPanel,
+}: {
+  setPanel: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <Box
       component="div"
-      sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}
+      sx={{
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        height: "100%",
+      }}
     >
       <Box
         component="div"
         sx={{
           display: "flex",
+          padding: "10px",
+          flexDirection: "row",
         }}
       >
+        <Button
+          sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
+          onClick={() => setPanel("")}
+        >
+          <ArrowBackIcon sx={{ m: 0, p: 0, fill: "white" }} />
+        </Button>
         <Image
           src="/jakoh_smol.jpg"
           width="80"
@@ -103,13 +121,8 @@ function FriendTab() {
           style={StyleImage}
           alt="profile pic"
         />
-        <Box
-          component="div"
-          sx={{
-            ml: "25px",
-          }}
-        >
-          <Typography variant="h4">Boyeeeeee</Typography>
+        <Box component="div">
+          <Typography variant="h4">Jakohhhhhh</Typography>
           <Box component="div">
             <Button
               variant="outlined"
@@ -144,20 +157,34 @@ function FriendTab() {
           <Typography sx={{ color: "white" }}>Online</Typography>
         </Button>
       </Box>
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "end",
+          gap: "10px",
+          width: "100%",
+          height: "calc(100vh - 140px)",
+          border: "1px solid #048BA8",
+        }}
+      >
+        <ChatBox height="100%" />
+      </Box>
     </Box>
   );
 }
 
 export default function SidePanel(sx: SxProps) {
   const [tabs, setTabs] = useState<TabTypes>("friends");
-  const [chat, setChat] = useState<string>("a");
+  const [panel, setPanel] = useState<string>("");
 
   return (
     <Box component="div" sx={{ minWidth: "350px", width: "25%", ...sx }}>
-      {chat === "" ? (
-        <GeneralTab tabs={tabs} setTabs={setTabs} />
+      {panel === "" ? (
+        <GeneralTab tabs={tabs} setTabs={setTabs} setPanel={setPanel} />
       ) : (
-        <FriendTab />
+        <FriendTab setPanel={setPanel} />
       )}
     </Box>
   );

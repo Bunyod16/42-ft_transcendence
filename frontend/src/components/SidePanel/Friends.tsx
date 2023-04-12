@@ -21,7 +21,7 @@ const inlineStyle = {
  * Convert Friends list into array of =
  * {
  * img: .jpg,
- * name: string,
+ * username: string,
  * status: online | offline
  * }
  *
@@ -61,7 +61,11 @@ const sampleData = [
   },
 ];
 
-function friendBox() {
+function FriendBox({
+  setPanel,
+}: {
+  setPanel: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <List
       sx={{
@@ -84,7 +88,7 @@ function friendBox() {
             borderRadius: "8px",
           }}
         >
-          <ListItemButton>
+          <ListItemButton onClick={() => setPanel(friend.username)}>
             <Image
               src={friend.img}
               alt={friend.alt}
@@ -108,7 +112,11 @@ function friendBox() {
   );
 }
 
-export default function Friends() {
+export default function Friends({
+  setPanel,
+}: {
+  setPanel: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [friend, setFriend] = useState<string>("");
   function handleFriend() {
     const promptFriend: string = prompt("Enter friend Name") || "";
@@ -137,7 +145,7 @@ export default function Friends() {
       >
         <Typography variant="h6">ADD FRIENDS</Typography>
       </Button>
-      {friendBox()}
+      <FriendBox setPanel={setPanel} />
     </Box>
   );
 }
