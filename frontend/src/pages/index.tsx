@@ -3,6 +3,7 @@ import React from "react";
 import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
 import { Typography } from "@mui/material";
+import Navbar from "@/components/layout/Navbar";
 
 export default function Home() {
   const { isLoggedIn } = useUserStore();
@@ -18,6 +19,7 @@ export default function Home() {
     <DefaultLayout>
       {isLoggedIn ? (
         <>
+          <Navbar sx={{}} />
           <Typography>Welcome to RGM</Typography>
         </>
       ) : (

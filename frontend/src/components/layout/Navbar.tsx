@@ -7,35 +7,37 @@ import useUserStore from "@/store/userStore";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
-import axios from "axios";
+// import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
+import { SxProps } from "@mui/material";
 
-export default function Navbar() {
+export default function Navbar({ sx }: { sx: SxProps }) {
   const { name, isLoggedIn, logout, login } = useUserStore();
   const router = useRouter();
-
   const handleLogout = () => {
-    axios
-      .post("/auth/log-out")
-      .then(() => logout())
-      .catch((err) => console.log(err));
+    // axios
+    //   .post("/auth/log-out")
+    //   .then(() => logout())
+    //   .catch((err) => console.log(err));
+    logout();
   };
 
   React.useEffect(() => {
-    axios
-      .get("auth/profile")
-      .then((res) => {
-        login(res.data.nickName);
-      })
-      .catch(() => {
-        router.push("/login");
-      });
+    // axios
+    //   .get("auth/profile")
+    //   .then((res) => {
+    //     login(res.data.nickName);
+    //   })
+    //   .catch(() => {
+    //     router.push("/login");
+    //   });
+    login("falsy");
   }, [isLoggedIn]);
 
   if (!isLoggedIn) return <></>;
   return (
-    <Box component={"div"} sx={{ flexGrow: 1 }}>
+    <Box component={"div"} sx={{ ...sx }}>
       <AppBar position="static" sx={{ backgroundColor: "accent.main" }}>
         <Toolbar>
           <Typography
