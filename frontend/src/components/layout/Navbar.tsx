@@ -56,6 +56,13 @@ export default function Navbar() {
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
+
+  React.useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Socket connected....");
+      socket.emit("authenticateUser");
+    });
   }, []);
 
   if (!isLoggedIn) return <></>;
