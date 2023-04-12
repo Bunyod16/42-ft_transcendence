@@ -69,22 +69,20 @@ export class QueueGateway implements OnGatewayDisconnect {
       // this.server.to(`${match.id}`).emit('fuck');
       queue[1].socket.join(`${match.id}`);
       console.log(queue[0].socket.rooms);
-      await this.gameStreamGateway.addInterval(match);
+      // await this.gameStreamGateway.addInterval(match);
       this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
       this.queueService.removePlayerFromQueue(queue[0].user);
     }
   }
 
-  @UseGuards(UserAuthGuard)
   @SubscribeMessage('queueLeave')
   async queueLeave(
     @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
     @MessageBody() body: any,
   ) {
     try {
-      const game = await this.queueService.removePlayerFromQueue(req.user);
+      const game = await this.queueService.removePlayerFromQueue(socket.data.user);
       socket.emit('queueLeaveSuccess', game);
     } catch (error) {
       console.log(error);

@@ -17,6 +17,7 @@ import { GameStateService } from 'src/game_state/gameState.service';
 import { parse } from 'cookie';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
+import { GameStream } from './entities/game_stream.entity';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class GameStreamGateway implements OnGatewayDisconnect {
@@ -26,12 +27,14 @@ export class GameStreamGateway implements OnGatewayDisconnect {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     private gameStateService: GameStateService,
-    private jwtAccessService: JwtAccessService,
     private matchService: MatchService,
   ) {}
 
   @UseGuards(UserAuthGuard)
   async handleDisconnect(socket: Socket) {
+    const match = await this.matchService.findCurrentByUser(socket.data.user);
+    if (!match) return;
+    console.log(match);
     await this.stop_game(socket);
   }
 
@@ -40,7 +43,7 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     const match = await this.matchService.findCurrentByUser(user);
     if (!match) return;
 
-    await this.server.to(`${match.id}`).emit("userDisconnected", user.nickName);
+    await this.server.to(`${match.id}`).emit('userDisconnected', user.nickName);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     await this.removeInterval(match);
@@ -48,7 +51,7 @@ export class GameStreamGateway implements OnGatewayDisconnect {
 
   async end_game(match: Match) {
     const game = await this.gameStateService.getGame(match.id);
-    await this.server.to(`${match.id}`).emit("gameEnded", game);
+    await this.server.to(`${match.id}`).emit('gameEnded', game);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     await this.removeInterval(match);
@@ -60,10 +63,8 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     const callback = async () => {
       const state = await this.gameStateService.getGame(match.id);
       console.log(`sending game state`);
-      console.log(state)
-      this.server
-        .to(`${match.id}`)
-        .emit('updateGame', state);
+      console.log(state);
+      this.server.to(`${match.id}`).emit('updateGame', state);
     };
 
     const interval = setInterval(callback, 1000);
@@ -92,51 +93,37 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     return game;
   }
 
-  @UseGuards(UserAuthGuard)
   @SubscribeMessage('playerUp')
-  playerUp(
-    @MessageBody() body: any,
-    @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
-  ) {
-    this.gameStateService.playerUp(req.user, body.gameId);
+  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+    this.gameStateService.playerUp(socket.data.user, body.gameId);
   }
 
-  // @UseGuards(UserAuthGuard)
-  // @SubscribeMessage('playerDown')
-  // playerDown(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-  //   this.gameStateService.playerMoveDown(11);
-  // }
+  @SubscribeMessage('playerDown')
+  playerDown(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+    this.gameStateService.playerDown(socket.data.user, body.gameId);
+  }
 
-  @UseGuards(UserAuthGuard)
   @SubscribeMessage('leaveGame')
-  async leaveGame(
-    @MessageBody() body: any,
-    @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
-  ) {
+  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
     await this.stop_game(socket);
   }
-  // @UseGuards(UserAuthGuard)
-  // @SubscribeMessage('connectGame')
-  // async connectGame(
-  //   @ConnectedSocket() socket: Socket,
-  //   @Req() req: RequestWithUser,
-  // ) {
-  //   this.server.emit('message', { wtf: 'hello' });
-  //   console.log('user attempting to connect to game');
-  //   const match = await this.matchService.findCurrentByUser(req.user);
-  //   if (!match) {
-  //     socket.emit(`connect`, {match: null});
-  //     return;
-  //   }
-  //   const game = await this.gameStateService.connectUser(match.id, req.user);
-  //   socket.emit(`connectedToRoom`, {
-  //     user: req.user.nickName,
-  //     game: game,
-  //   });
-  //   return game;
-  // }
+
+  @SubscribeMessage('userConnected')
+  async userConnected(@ConnectedSocket() socket: Socket) {
+    var match = await this.matchService.findCurrentByUser(socket.data.user);
+    if (!match) {
+      return;
+    }
+    await this.gameStateService.connectUser(
+      match.id,
+      socket.data.user,
+    );
+    const game = await this.gameStateService.getGame(match.id);
+    if (game.playerOne.isConnected && game.playerTwo.isConnected) {
+      await this.addInterval(match);
+    }
+    return game;
+  }
 
   // @SubscribeMessage('updateGameStream')
   // update(@MessageBody() updateGameStreamDto: UpdateGameStreamDto) {
