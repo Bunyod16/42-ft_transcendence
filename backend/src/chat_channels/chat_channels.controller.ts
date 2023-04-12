@@ -28,6 +28,14 @@ export class ChatChannelsController {
     return this.chatChannelsService.create(channelName, request.user.id);
   }
 
+  @Post('/addUser_testing')
+  create_testing(
+    @Body('name') channelName: string,
+    @Body('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.chatChannelsService.create(channelName, userId);
+  }
+
   @Get()
   async findAll() {
     const chatChannel = await this.chatChannelsService.findAll();

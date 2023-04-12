@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ChatChannelMemberService } from './chat_channel_member.service';
 import { ChatChannelMemberController } from './chat_channel_member.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
     TypeOrmModule.forFeature([ChatChannelMember]),
     ConfigModule,
     UserModule,
-    ChatChannelsModule,
+    forwardRef(() => ChatChannelsModule), //for circular dependency
   ],
   controllers: [ChatChannelMemberController],
   providers: [ChatChannelMemberService, UserService, ChatChannelsService],

@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -16,6 +16,8 @@ export class ChatChannelMemberService {
     @InjectRepository(ChatChannelMember)
     private chatChannelMemberRepository: Repository<ChatChannelMember>,
     private readonly userService: UserService,
+
+    @Inject(forwardRef(() => ChatChannelsService)) //for circular dependency
     private readonly chatChannelService: ChatChannelsService,
   ) {}
 
@@ -120,7 +122,7 @@ export class ChatChannelMemberService {
   async findAllUsersInChatChannel(chatChannelId: number) {
     const chatChannelMember = await this.chatChannelMemberRepository
       .createQueryBuilder('chatChannelMember')
-      .select(['chatChannelMember', 'chatChannel'])
+      .select(['chatChannelMember', 'user'])
       .leftJoin('chatChannelMember.user', 'user')
       .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
       .where('chatChannel.id = :chatChannelId', {

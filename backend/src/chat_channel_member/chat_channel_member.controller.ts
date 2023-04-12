@@ -30,9 +30,6 @@ export class ChatChannelMemberController {
     @Body('userId', ParseIntPipe) userId: number,
     @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
-    console.log(userId);
-    console.log(chatChannelId);
-
     const chatChannelMember = await this.chatChannelMemberService.create(
       userId,
       chatChannelId,
@@ -165,9 +162,6 @@ export class ChatChannelMemberController {
         'ChatChannelMember => update_muted()',
       );
     }
-
-    console.log(id);
-    console.log(date);
 
     const chatChannelMember = await this.chatChannelMemberService.update_muted(
       id,
