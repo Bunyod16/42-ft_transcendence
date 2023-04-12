@@ -9,9 +9,14 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
+  authenticateUser: () => void;
   queueEnter: () => void;
   queueLeave: () => void;
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;
 }
+
+// export interface MatchFoundData {
+
+// }

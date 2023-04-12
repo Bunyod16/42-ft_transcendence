@@ -59,10 +59,16 @@ export default function Navbar() {
   }, [isLoggedIn]);
 
   React.useEffect(() => {
-    socket.on("connect", () => {
+    function onConnect() {
       console.log("Socket connected....");
       socket.emit("authenticateUser");
-    });
+    }
+
+    socket.on("connect", onConnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+    };
   }, []);
 
   if (!isLoggedIn) return <></>;
