@@ -11,11 +11,13 @@ import {
   ParseBoolPipe,
   Query,
   HttpStatus,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatChannelMemberService } from './chat_channel_member.service';
-import { CreateChatChannelMemberDto } from './dto/create-chat_channel_member.dto';
 import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { UserAuthGuard } from 'src/auth/auth.guard';
 
 @Controller('chat-channel-member')
 export class ChatChannelMemberController {
@@ -56,12 +58,59 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
+  @UseGuards(UserAuthGuard)
+  @Get('/userChatChannels')
+  async findAllUserChatChannel(@Req() req: any) {
+    const userId = req.user.id;
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUserChatChannel(userId);
+
+    Logger.log(
+      `Trying to get ChatChannelMember with userId = [${userId}]`,
+      'ChatChannelMember => findOne()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @Get(':chatChannelId/usersInChatChannel')
+  async findAllUsersInChatChannel(
+    @Param('chatChannelId', ParseIntPipe) chatChannelId: number,
+  ) {
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUsersInChatChannel(
+        chatChannelId,
+      );
+
+    Logger.log(
+      `Trying to get all Users in ChatChannel with Id = [${chatChannelId}]`,
+      'ChatChannelMember => findOne()',
+    );
+
+    return chatChannelMember;
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const chatChannelMember = await this.chatChannelMemberService.findOne(id);
 
     Logger.log(
       `Trying to get ChatChannelMember with id = [${id}]`,
+      'ChatChannelMember => findOne()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @Get(':userId/userChatChannels_testing/')
+  async findAllUserChatChannel_testing(
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUserChatChannel(userId);
+
+    Logger.log(
+      `Trying to get ChatChannelMember with userId = [${userId}]`,
       'ChatChannelMember => findOne()',
     );
 
@@ -143,6 +192,6 @@ export class ChatChannelMemberController {
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.chatChannelMemberService.remove(+id);
+    return this.chatChannelMemberService.remove(id);
   }
 }

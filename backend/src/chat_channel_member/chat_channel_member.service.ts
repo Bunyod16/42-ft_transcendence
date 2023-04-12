@@ -97,6 +97,48 @@ export class ChatChannelMemberService {
     return chatChannelMember;
   }
 
+  async findAllUserChatChannel(userId: number) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember', 'chatChannel'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where('user.id = :userId', { userId: userId })
+      .getMany();
+
+    if (chatChannelMember === null) {
+      throw new CustomException(
+        `User with id = [${userId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => findAllUserChatChannel()',
+      );
+    }
+
+    return chatChannelMember;
+  }
+
+  async findAllUsersInChatChannel(chatChannelId: number) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember', 'chatChannel'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where('chatChannel.id = :chatChannelId', {
+        chatChannelId: chatChannelId,
+      })
+      .getMany();
+
+    if (chatChannelMember === null) {
+      throw new CustomException(
+        `ChatChannel with id = [${chatChannelId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => findAllUsersInChatChannel()',
+      );
+    }
+
+    return chatChannelMember;
+  }
+
   async update(
     id: number,
     updateChatChannelMemberDto: UpdateChatChannelMemberDto,
