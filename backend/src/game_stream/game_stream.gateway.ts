@@ -6,11 +6,10 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { GameStreamService } from './game_stream.service';
-import { Server } from 'socket.io';
 import { OnModuleDestroy, OnModuleInit, Req, UseGuards } from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Match } from 'src/match/entities/match.entity';
@@ -32,22 +31,30 @@ export class GameStreamGateway implements OnGatewayDisconnect {
   ) {}
 
   @UseGuards(UserAuthGuard)
-  async handleDisconnect(socket) {
-    console.log(socket.handshake.headers.cookie);
+  async handleDisconnect(socket: Socket) {
+    await this.stop_game(socket);
+  }
 
-    const cookie = parse(socket.handshake.headers.cookie);
-    const user = await this.jwtAccessService.verifyAccessToken(
-      cookie.Authentication,
-    );
+  async stop_game(socket: Socket) {
+    const user = socket.data.user;
     const match = await this.matchService.findCurrentByUser(user);
     if (!match) return;
 
+    await this.server.to(`${match.id}`).emit("userDisconnected", user.nickName);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
-    console.log('user has disconnected, game ended');
+    await this.removeInterval(match);
   }
 
-  add(match: Match) {
+  async end_game(match: Match) {
+    const game = await this.gameStateService.getGame(match.id);
+    await this.server.to(`${match.id}`).emit("gameEnded", game);
+    await this.matchService.updateGameEnded(match.id, match);
+    await this.gameStateService.deleteGame(match.id);
+    await this.removeInterval(match);
+  }
+
+  addInterval(match: Match) {
     console.log(match);
     console.log(match.id);
     const callback = async () => {
@@ -57,12 +64,12 @@ export class GameStreamGateway implements OnGatewayDisconnect {
         .emit('updateGame', await this.gameStateService.getGame(match.id));
     };
 
-    const interval = setInterval(callback, 1000); //TODO CHANGE SECONDS HERE
+    const interval = setInterval(callback, 1000);
     this.schedulerRegistry.addInterval(`${match.id}`, interval);
     console.log(`match stream ${match.id} created!`);
   }
 
-  remove(match: Match) {
+  removeInterval(match: Match) {
     this.schedulerRegistry.deleteInterval(`${match.id}`);
     console.log(`match stream ${match.id} deleted!`);
   }
@@ -85,7 +92,11 @@ export class GameStreamGateway implements OnGatewayDisconnect {
 
   @UseGuards(UserAuthGuard)
   @SubscribeMessage('playerUp')
-  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: Socket, @Req() req: RequestWithUser,) {
+  playerUp(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: Socket,
+    @Req() req: RequestWithUser,
+  ) {
     this.gameStateService.playerUp(req.user, body.gameId);
   }
 
@@ -95,16 +106,15 @@ export class GameStreamGateway implements OnGatewayDisconnect {
   //   this.gameStateService.playerMoveDown(11);
   // }
 
-  @SubscribeMessage('deleteGame')
-  delete(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-    this.gameStateService.deleteGame(11);
+  @UseGuards(UserAuthGuard)
+  @SubscribeMessage('leaveGame')
+  async leaveGame(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: Socket,
+    @Req() req: RequestWithUser,
+  ) {
+    await this.stop_game(socket);
   }
-
-  @SubscribeMessage('getAllGames')
-  findAll(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-    socket.emit('message', this.gameStateService.getAllGames());
-  }
-
   // @UseGuards(UserAuthGuard)
   // @SubscribeMessage('connectGame')
   // async connectGame(

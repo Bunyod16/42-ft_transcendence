@@ -80,7 +80,7 @@ export class QueueGateway implements OnGatewayDisconnect {
       // this.server.to(`${match.id}`).emit('fuck');
       queue[1].socket.join(`${match.id}`);
       console.log(queue[0].socket.rooms);
-      await this.gameStreamGateway.add(match);
+      await this.gameStreamGateway.addInterval(match);
       this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
       this.queueService.removePlayerFromQueue(queue[0].user);
