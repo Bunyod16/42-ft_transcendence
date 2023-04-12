@@ -58,10 +58,12 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     console.log(match);
     console.log(match.id);
     const callback = async () => {
+      const state = await this.gameStateService.getGame(match.id);
       console.log(`sending game state`);
+      console.log(state)
       this.server
         .to(`${match.id}`)
-        .emit('updateGame', await this.gameStateService.getGame(match.id));
+        .emit('updateGame', state);
     };
 
     const interval = setInterval(callback, 1000);

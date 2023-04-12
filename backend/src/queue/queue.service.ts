@@ -25,12 +25,12 @@ export class QueueService {
   }
 
   removePlayerFromQueue(user: User) {
-    console.log(user);
     const index = this.queue.findIndex((u) => {
       return u.user.id === user.id;
     });
     if (index !== -1) {
       this.queue.splice(index, 1);
+      console.log(`${user.nickName} has disconnected from queue`);
     }
   }
 

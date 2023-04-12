@@ -35,24 +35,13 @@ export class QueueGateway implements OnGatewayDisconnect {
     private matchService: MatchService,
     private gameStreamService: GameStreamService,
     private gameStreamGateway: GameStreamGateway,
-  ) {
-    console.log('12312313123');
-    console.log(this.server);
-  }
-
-  @UseGuards(UserAuthGuard)
-  handleConnection(client: any, ...args: any[]) {
-    console.log(`${client.req} has connected`);
-  }
+  ) {}
 
   @UseGuards(UserAuthGuard)
   async handleDisconnect(socket) {
     console.log(socket.handshake.headers.cookie);
 
-    const cookie = parse(socket.handshake.headers.cookie);
-    const user = await this.jwtService.verifyAccessToken(cookie.Authentication);
-    console.log(`${user.nickName} has disconnected`);
-    await this.queueService.removePlayerFromQueue(user); //TODO: find by socketid
+    await this.queueService.removePlayerFromQueue(socket.data.user); //TODO: find by socketid
   }
 
   @UseGuards(UserAuthGuard)
