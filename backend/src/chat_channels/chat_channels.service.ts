@@ -17,7 +17,7 @@ export class ChatChannelsService {
     const channel = new ChatChannel();
 
     //default chatChannel settings
-    channel.channel_type = ChannelType.PROTECTED;
+    channel.channel_type = ChannelType.PUBLIC;
     channel.ownerId = ownerId;
     channel.name = channelName;
     channel.password = undefined;
