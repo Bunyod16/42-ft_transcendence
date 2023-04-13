@@ -21,6 +21,7 @@ export interface GameState {
 }
 
 export interface MatchInfo {
+  gameId: string;
   playerOne: Player | undefined;
   playerTwo: Player | undefined;
 }

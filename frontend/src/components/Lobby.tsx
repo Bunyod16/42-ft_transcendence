@@ -4,11 +4,11 @@ import React from "react";
 import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
 import { useRouter } from "next/router";
-import { GameState } from "@/types/game";
+import { MatchInfo } from "@/types/game-types";
 
 const Lobby = () => {
-  const { updateState } = useUserStore();
-  const { setGameState } = useGameStore();
+  const { updateView } = useUserStore();
+  const { setMatchInfo } = useGameStore();
   const [isQueueing, setIsQueueing] = React.useState(false);
   const router = useRouter();
 
@@ -20,22 +20,21 @@ const Lobby = () => {
 
   //! queue leave function
   const handleQueueLeave = () => {
-    // emit something here
+    socket.emit("queueLeave");
     setIsQueueing(false);
   };
 
   function onMatchFound(data: any) {
     alert("match found");
-    console.log(data);
 
-    const state: GameState = {
+    const state: MatchInfo = {
       playerOne: data.playerOne,
       playerTwo: data.playerTwo,
-      state: "start",
       gameId: data.id,
     };
-    setGameState(state);
-    updateState("InGame");
+    setMatchInfo(state);
+    // updateState("InGame");
+    updateView("Game");
     router.push("/game");
   }
 
@@ -43,10 +42,6 @@ const Lobby = () => {
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }
-
-    // function onQueueLeave() {
-    //   console.log("Quit queue");
-    // }
 
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);

@@ -36,10 +36,10 @@ function GameComponent() {
           // orthographic
           shadows
           camera={{
-            position: [0, -6, 300],
+            position: [0, -400, 100],
             // zoom: 200,
             // fov: 45,
-            near: 100,
+            near: 0.1,
             far: 1000,
           }}
         >

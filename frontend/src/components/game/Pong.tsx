@@ -32,11 +32,13 @@ function Pong() {
   const tableSize = { x: 600, y: 20, z: 300 };
   const LEFT = -1;
   const RIGHT = 1;
-  const { setGameState, matchInfo } = useGameStore();
+  const matchInfo = useGameStore((state) => state.matchInfo);
+  const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
 
   React.useEffect(() => {
     socket.emit("userConnected");
+    console.log(matchInfo, name);
 
     function onUpdateGame(data: any) {
       console.log("Update game...");

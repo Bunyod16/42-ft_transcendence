@@ -12,6 +12,7 @@ const useGameStore = create<GameStore>()((set) => ({
   matchInfo: {
     playerOne: undefined,
     playerTwo: undefined,
+    gameId: "",
   },
   setMatchInfo: (matchInfo: MatchInfo) =>
     set(() => ({
