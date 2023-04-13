@@ -6,7 +6,7 @@ import { Box, Button } from "@mui/material";
 import useUserStore from "@/store/userStore";
 import { socket } from "../socket/socket";
 
-function Game() {
+function GameComponent() {
   const { updateState } = useUserStore();
 
   const handleQuit = () => {
@@ -36,11 +36,11 @@ function Game() {
           // orthographic
           shadows
           camera={{
-            position: [0, -6, 3],
+            position: [0, -6, 300],
             // zoom: 200,
-            fov: 45,
-            near: 0.1,
-            far: 200,
+            // fov: 45,
+            near: 100,
+            far: 1000,
           }}
         >
           <Perf position="top-left" />
@@ -53,4 +53,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default GameComponent;

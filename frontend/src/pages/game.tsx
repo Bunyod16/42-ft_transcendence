@@ -1,9 +1,9 @@
-import Game from "@/components/game/Game";
+import GameComponent from "@/components/game/GameComponent";
 
 const GamePage = () => {
   return (
     <div>
-      <Game />
+      <GameComponent />
     </div>
   );
 };

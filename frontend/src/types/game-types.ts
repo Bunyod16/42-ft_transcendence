@@ -3,9 +3,24 @@ export interface Player {
   nickName: string;
 }
 
-export interface GameInfo {
+export interface PlayerState {
+  y: number;
+  isConnected: boolean;
+}
+
+export interface GameState {
+  playerOneState: PlayerState;
+  playerTwoState: PlayerState;
+  ballProperties: {
+    dy: number;
+    dx: number;
+    x: number;
+    y: number;
+  };
+  gameId: string;
+}
+
+export interface MatchInfo {
   playerOne: Player | undefined;
   playerTwo: Player | undefined;
-  state: string | undefined;
-  gameId: string | undefined;
 }
