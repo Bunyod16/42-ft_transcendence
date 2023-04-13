@@ -6,7 +6,10 @@ import { CreateChatChannelMemberDto } from './dto/create-chat_channel_member.dto
 import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto';
 import { ChatChannelMember } from './entities/chat_channel_member.entity';
 import { User } from 'src/user/entities/user.entity';
-import { ChatChannel } from 'src/chat_channels/entities/chat_channel.entity';
+import {
+  ChatChannel,
+  ChatType,
+} from 'src/chat_channels/entities/chat_channel.entity';
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { CustomException } from 'src/utils/app.exception-filter';
 
@@ -106,6 +109,7 @@ export class ChatChannelMemberService {
       .leftJoin('chatChannelMember.user', 'user')
       .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
       .where('user.id = :userId', { userId: userId })
+      .orderBy('chatChannel.chatType', 'ASC') //order by directmessages first
       .getMany();
 
     if (chatChannelMember === null) {
@@ -117,6 +121,62 @@ export class ChatChannelMemberService {
     }
 
     return chatChannelMember;
+  }
+
+  async findAllUserDirectMessageChatChannel(userId: number) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember', 'chatChannel'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where('(user.id = :userId) AND (chatChannel.chatType = :chatType)', {
+        userId: userId,
+        chatType: ChatType.DIRECT_MESSAGE,
+      })
+      .getMany();
+
+    if (chatChannelMember === null) {
+      throw new CustomException(
+        `User with id = [${userId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => findAllUserDirectMessageChatChannel()',
+      );
+    }
+
+    return chatChannelMember;
+  }
+
+  async checkIfUserHasChatWithFriend(userId: number, friendId: number) {
+    //check if both users exist
+    await this.userService.findOne(userId);
+    await this.userService.findOne(friendId);
+
+    const userDirectMessages = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember', 'chatChannel'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('chatChannel.id')
+          .from(ChatChannel, 'chatChannel')
+          .leftJoin('chatChannel.chatChannelMembers', 'chatChannelMember')
+          .leftJoin('chatChannelMember.user', 'user')
+          .where('chatChannel.chatType = :chatType AND user.id = :friendId', {
+            chatType: ChatType.DIRECT_MESSAGE,
+            friendId: friendId,
+          })
+          .getQuery();
+        return 'chatChannel.id IN ' + subQuery;
+      })
+      .andWhere('user.id = :userId', { userId: userId })
+      .getMany();
+
+    if (userDirectMessages.length !== 0) {
+      return true;
+    }
+    return false;
   }
 
   async findAllUsersInChatChannel(chatChannelId: number) {
