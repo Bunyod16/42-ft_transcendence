@@ -18,9 +18,10 @@ import { parse } from 'cookie';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
 import { GameStream } from './entities/game_stream.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
-export class GameStreamGateway implements OnGatewayDisconnect {
+export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
   server: Server;
 
@@ -36,6 +37,15 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     if (!match) return;
     console.log(match);
     await this.stop_game(socket);
+  }
+
+  async onModuleDestroy() {
+    const matches = await this.matchService.findAllCurrent();
+    for (var i = 0; i < matches.length; i++) {
+      var m = matches[i];
+      m.endedAt = new Date();
+      await this.matchService.updateGameEnded(m.id, m);
+    }
   }
 
   async stop_game(socket: Socket) {
@@ -63,11 +73,12 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     const callback = async () => {
       const state = await this.gameStateService.getGame(match.id);
       console.log(`sending game state`);
-      console.log(state);
+      console.log(state.playerOne.y);
+      console.log(state.playerTwo.y);
       this.server.to(`${match.id}`).emit('updateGame', state);
     };
 
-    const interval = setInterval(callback, 1000);
+    const interval = setInterval(callback, 10);
     this.schedulerRegistry.addInterval(`${match.id}`, interval);
     console.log(`match stream ${match.id} created!`);
   }

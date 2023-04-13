@@ -45,6 +45,24 @@ export class MatchService {
     return match;
   }
 
+  async findAllCurrent(): Promise<Match[]> {
+    return await this.matchRepository
+      .createQueryBuilder('Match')
+      .where([
+        { endedAt: IsNull()},
+      ])
+      .select([
+        'Match',
+        'playerOne.id',
+        'playerOne.nickName',
+        'playerTwo.id',
+        'playerTwo.nickName',
+      ])
+      .leftJoin('Match.playerOne', 'playerOne')
+      .leftJoin('Match.playerTwo', 'playerTwo')
+      .getMany();
+  }
+
   async findAll(): Promise<Match[]> {
     return await this.matchRepository
       .createQueryBuilder('Match')

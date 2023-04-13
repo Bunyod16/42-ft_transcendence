@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import { GameState } from './gameState.class';
 import { User } from 'src/user/entities/user.entity';
+import { racketMoveDistance } from './gameState.constats';
 
 @Injectable()
 export class GameStateService {
@@ -56,11 +57,11 @@ export class GameStateService {
     const game = await this.redisService.getGameState(game_id);
     if (user.id == game.playerOne.id)
     {
-      game.playerOne.y += 10;
+      game.playerOne.y += racketMoveDistance;
     }
     if (user.id == game.playerTwo.id)
     {
-      game.playerTwo.y += 10;
+      game.playerTwo.y += racketMoveDistance;
     }
     this.updateGame(game_id, game);
   }
@@ -69,11 +70,11 @@ export class GameStateService {
     const game = await this.redisService.getGameState(game_id);
     if (user.id == game.playerOne.id)
     {
-      game.playerOne.y -= 10;
+      game.playerOne.y -= racketMoveDistance;
     }
     if (user.id == game.playerTwo.id)
     {
-      game.playerTwo.y -= 10;
+      game.playerTwo.y -= racketMoveDistance;
     }
     this.updateGame(game_id, game);
   }

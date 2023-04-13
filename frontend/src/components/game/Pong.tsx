@@ -41,8 +41,6 @@ function Pong() {
     console.log(matchInfo, name);
 
     function onUpdateGame(data: any) {
-      console.log("Update game...");
-      console.log(data);
       setGameState({
         playerOneState: data.playerOne,
         playerTwoState: data.playerTwo,
