@@ -77,22 +77,6 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     console.log(`match stream ${match.id} deleted!`);
   }
 
-  @UseGuards(UserAuthGuard)
-  @SubscribeMessage('gameInfo')
-  async gameInfo(
-    @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
-    @MessageBody() body: any,
-  ) {
-    const game = await this.gameStateService.getGame(body.game_id);
-    socket.emit(`gameInfo`, {
-      user: req.user.nickName,
-    });
-    this.server.in(body.game_id).emit('gameInfo', game);
-    this.gameStateService.connectUser(game.id, req.user);
-    return game;
-  }
-
   @SubscribeMessage('playerUp')
   playerUp(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
     this.gameStateService.playerUp(socket.data.user, body.gameId);
@@ -103,26 +87,24 @@ export class GameStreamGateway implements OnGatewayDisconnect {
     this.gameStateService.playerDown(socket.data.user, body.gameId);
   }
 
-  @SubscribeMessage('leaveGame')
-  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-    await this.stop_game(socket);
-  }
-
   @SubscribeMessage('userConnected')
   async userConnected(@ConnectedSocket() socket: Socket) {
     var match = await this.matchService.findCurrentByUser(socket.data.user);
     if (!match) {
       return;
     }
-    await this.gameStateService.connectUser(
-      match.id,
-      socket.data.user,
-    );
+    await this.gameStateService.connectUser(match.id, socket.data.user);
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
+      await this.server.to(`${match.id}`).emit('matchBegin');
       await this.addInterval(match);
     }
     return game;
+  }
+
+  @SubscribeMessage('userDisconnected')
+  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+    await this.stop_game(socket);
   }
 
   // @SubscribeMessage('updateGameStream')
