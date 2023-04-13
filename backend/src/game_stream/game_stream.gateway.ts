@@ -44,6 +44,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     for (var i = 0; i < matches.length; i++) {
       var m = matches[i];
       m.endedAt = new Date();
+      console.log(m);
       await this.matchService.updateGameEnded(m.id, m);
     }
   }
@@ -56,7 +57,13 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     await this.server.to(`${match.id}`).emit('userDisconnected', user.nickName);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
-    await this.removeInterval(match);
+    try{
+      await this.removeInterval(match);
+    }
+    catch (error)
+    {
+      console.log("Tried to remove interval for updateGame but it was already removed");
+    }
   }
 
   async end_game(match: Match) {
@@ -64,7 +71,13 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     await this.server.to(`${match.id}`).emit('gameEnded', game);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
-    await this.removeInterval(match);
+    try{
+      await this.removeInterval(match);
+    }
+    catch (error)
+    {
+      console.log("Tried to remove interval for updateGame but it was already removed");
+    }
   }
 
   addInterval(match: Match) {
@@ -72,6 +85,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     console.log(match.id);
     const callback = async () => {
       const state = await this.gameStateService.getGame(match.id);
+      if (!state) {
+        console.log("game has not been found, cannot send state")
+        return;
+      }
       console.log(`sending game state`);
       console.log(state.playerOne.y);
       console.log(state.playerTwo.y);

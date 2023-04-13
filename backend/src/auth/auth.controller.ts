@@ -35,6 +35,7 @@ export class AuthController {
 
   @Get('login')
   login(@Res() res) {
+    console.log('User attempting to login');
     return res.redirect(
       `https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
         'FORTY_TWO_API_UID',

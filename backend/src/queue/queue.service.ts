@@ -25,6 +25,8 @@ export class QueueService {
   }
 
   removePlayerFromQueue(user: User) {
+    if (!user) return;
+
     const index = this.queue.findIndex((u) => {
       return u.user.id === user.id;
     });
