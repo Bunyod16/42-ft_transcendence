@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ChatLine } from 'src/chat_line/entities/chat_line.entity';
+import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
 
 @Entity()
 export class User {
@@ -62,7 +63,16 @@ export class User {
   @Exclude()
   public currentHashedRefreshToken?: string;
 
+  //chatLine Correlation
   @OneToMany(() => ChatLine, (chatLine) => chatLine.sender)
   @JoinColumn({ name: 'sender' })
   sentMessages: ChatLine[];
+
+  //chatChannelMembers Correlation
+  @OneToMany(
+    () => ChatChannelMember,
+    (chatChannelMember) => chatChannelMember.user,
+  )
+  @JoinColumn({ name: 'user' })
+  chatChannelMembers: ChatChannelMember[];
 }

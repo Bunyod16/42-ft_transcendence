@@ -8,8 +8,13 @@ import {
 } from '@nestjs/common';
 
 export class CustomException extends HttpException {
-  constructor(message: string, status: HttpStatus, location?: string) {
-    super({ message, location }, status);
+  constructor(
+    message: string,
+    status: HttpStatus,
+    location?: string,
+    error?: any,
+  ) {
+    super({ message, location, error }, status);
   }
 }
 
@@ -20,13 +25,26 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const exception_obj = exception.getResponse() as any;
 
-    const statusCode =
-      exception instanceof HttpException ? exception.getStatus() : 500;
-    const message =
-      `Not Found : ${exception.message}` ||
-      'Internal Server Error: Some bad shit happened';
+    const statusCode = exception.getStatus();
+    let message: string;
 
-    Logger.log(exception_obj.message, exception_obj.location);
+    switch (statusCode) {
+      case 500:
+        message = `Internal Server Error: `;
+        break;
+      case 404:
+        message = `Not Found: `;
+        break;
+      case 400:
+        message = `Bad Request: `;
+        break;
+    }
+    message += `${exception.message}`;
+
+    if (statusCode === 500) {
+      Logger.error(exception_obj.error, exception_obj.location);
+      Logger.error(exception_obj.error.detail, exception_obj.location);
+    } else Logger.log(exception_obj.message, exception_obj.location);
 
     response.status(statusCode).json({
       statusCode,
