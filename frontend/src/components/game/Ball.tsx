@@ -3,60 +3,69 @@ import { ballMaterial, boxGeometry } from "./resource";
 import { ISize } from "./types";
 import { useEffect, useRef } from "react";
 import { button, useControls } from "leva";
+import { useFrame } from "@react-three/fiber";
+import { Mesh } from "three";
+import useGameStore from "@/store/gameStore";
 
 interface IBallProps {
   tableSize: ISize;
 }
 
 function Ball({ tableSize }: IBallProps) {
-  const body = useRef<RapierRigidBody>(null);
-  useControls({
-    push: button(() => {
-      if (body.current) {
-        body.current.applyImpulse({ x: 0.05, y: 0, z: 0 }, true);
-        console.log("apply impulse");
-      }
-    }),
-    reset: button(() => {
-      if (body.current) {
-        body.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-        body.current.setTranslation(
-          { x: 0, y: 0, z: tableSize.y + 0.02 },
-          true,
-        );
-      }
-    }),
+  // const body = useRef<RapierRigidBody>(null);
+  const body = useRef<Mesh>(null);
+  const { gameState } = useGameStore();
+  // useControls({
+  //   push: button(() => {
+  //     if (body.current) {
+  //       body.current.applyImpulse({ x: 0.05, y: 0, z: 0 }, true);
+  //       console.log("apply impulse");
+  //     }
+  //   }),
+  //   reset: button(() => {
+  //     if (body.current) {
+  //       body.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+  //       body.current.setTranslation(
+  //         { x: 0, y: 0, z: tableSize.y + 0.02 },
+  //         true,
+  //       );
+  //     }
+  //   }),
+  // });
+
+  useEffect(() => {
+    console.log("ball rendered");
   });
 
-  // useEffect(() => {
-  //   if (body.current) {
-  //     console.log(body.current.mass());
-  //     // body.current.setAdditionalMass(5, true);
-  //     body.current.applyImpulse({ x: 0, y: 20, z: 0 }, true);
-  //     console.log("apply impulse");
-  //   }
-  // }, [body]);
+  useFrame(() => {
+    const x = gameState.ballProperties.x;
+    const y = gameState.ballProperties.y;
+
+    body.current?.position.set(x, y, body.current?.position.z);
+  });
 
   return (
-    <RigidBody
+    // <RigidBody
+    //   ref={body}
+    // colliders="ball"
+    // mass={5}
+    // position={[0, 0, tableSize.y + 0.02]}
+    // linearDamping={0.5}
+    // restitution={1}
+    // lockRotations={true}
+    // >
+    <mesh
       ref={body}
-      // colliders="ball"
-      mass={5}
+      geometry={boxGeometry}
+      material={ballMaterial}
+      scale={tableSize.y}
+      castShadow
       position={[0, 0, tableSize.y + 0.02]}
-      // linearDamping={0.5}
-      restitution={1}
-      lockRotations={true}
     >
-      <mesh
-        geometry={boxGeometry}
-        material={ballMaterial}
-        scale={tableSize.y}
-        castShadow
-      >
-        {/* <sphereGeometry />
+      {/* <sphereGeometry />
         <meshStandardMaterial color="gray" /> */}
-      </mesh>
-    </RigidBody>
+    </mesh>
+    // </RigidBody>
   );
 }
 export default Ball;
