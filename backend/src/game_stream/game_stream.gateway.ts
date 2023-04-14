@@ -92,9 +92,6 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
         console.log('moved_game has not been found, cannot send state');
         return;
       }
-      console.log(`sending game state`);
-      console.log(moved_state.playerOne.y);
-      console.log(moved_state.playerTwo.y);
       this.server.to(`${moved_state.id}`).emit('updateGame', moved_state);
     };
 
