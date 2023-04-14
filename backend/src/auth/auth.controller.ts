@@ -12,8 +12,6 @@ import {
   Query,
   Res,
   Req,
-  UnauthorizedException,
-  HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import RequestWithUser from './requestWithUser.interace';
@@ -37,6 +35,7 @@ export class AuthController {
 
   @Get('login')
   login(@Res() res) {
+    console.log('User attempting to login');
     return res.redirect(
       `https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
         'FORTY_TWO_API_UID',

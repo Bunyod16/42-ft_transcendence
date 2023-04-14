@@ -1,10 +1,12 @@
 import * as THREE from "three";
 import { ISize } from "./types";
-import { useControls } from "leva";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import { useState } from "react";
+import React, { useState } from "react";
+import { socket } from "../socket/socket";
+import useGameStore from "@/store/gameStore";
+import useUserStore from "@/store/userStore";
 
 THREE.ColorManagement.enabled = true;
 
@@ -27,19 +29,48 @@ function Table({ tableSize }: ITableProps) {
 
 // ! zustand save playerNumber
 function Pong() {
-  const tableSize = { x: 6, y: 0.2, z: 3 };
+  const tableSize = { x: 600, y: 20, z: 300 };
   const LEFT = -1;
   const RIGHT = 1;
-  const [player] = useState(() => Math.round(Math.random()));
+  const matchInfo = useGameStore((state) => state.matchInfo);
+  const setGameState = useGameStore((state) => state.setGameState);
+  const { name } = useUserStore();
 
-  console.log(player);
+  React.useEffect(() => {
+    socket.emit("userConnected");
+    console.log(matchInfo, name);
+
+    function onUpdateGame(data: any) {
+      setGameState({
+        playerOneState: data.playerOne,
+        playerTwoState: data.playerTwo,
+        ballProperties: data.ballProperties,
+        gameId: data.id,
+      });
+    }
+
+    socket.on("updateGame", onUpdateGame);
+
+    return () => {
+      socket.off("updateGame", onUpdateGame);
+    };
+  }, []);
+
   return (
     <>
       <Table tableSize={tableSize} />
 
-      <Player tableSize={tableSize} playerLR={LEFT} isPlayer={player == 1} />
+      <Player
+        tableSize={tableSize}
+        playerLR={LEFT}
+        isPlayer={matchInfo.playerOne?.nickName == name}
+      />
 
-      <Player tableSize={tableSize} playerLR={RIGHT} isPlayer={player == 0} />
+      <Player
+        tableSize={tableSize}
+        playerLR={RIGHT}
+        isPlayer={matchInfo.playerTwo?.nickName == name}
+      />
 
       <Ball tableSize={tableSize} />
     </>

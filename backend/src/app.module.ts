@@ -18,6 +18,7 @@ import { DataSource } from 'typeorm';
 import { QueueModule } from './queue/queue.module';
 import { GameStateModule } from './game_state/gameState.module';
 import { GameStreamModule } from './game_stream/game_stream.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { GameStreamGateway } from './game_stream/game_stream.gateway';
 import { QueueGateway } from './queue/queue.gateway';
 import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
@@ -56,6 +57,7 @@ import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_memb
     QueueModule,
     GameStateModule,
     GameStreamModule,
+    ScheduleModule.forRoot(),
     ChatChannelMemberModule,
   ],
   controllers: [AppController],
