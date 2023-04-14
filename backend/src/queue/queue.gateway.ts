@@ -39,8 +39,6 @@ export class QueueGateway implements OnGatewayDisconnect {
 
   @UseGuards(UserAuthGuard)
   async handleDisconnect(socket) {
-    console.log(socket.handshake.headers.cookie);
-
     await this.queueService.removePlayerFromQueue(socket.data.user); //TODO: find by socketid
   }
 

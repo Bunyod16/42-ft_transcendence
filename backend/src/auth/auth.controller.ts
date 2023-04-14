@@ -73,7 +73,6 @@ export class AuthController {
         tokens.accessToken,
         tokens.refreshToken,
       ]);
-      console.log(this.configService.get('AUTH_REDIRECT_URI'));
       request.res.redirect(this.configService.get('AUTH_REDIRECT_URI'));
       return user;
     } catch (error) {

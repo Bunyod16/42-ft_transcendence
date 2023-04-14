@@ -15,18 +15,23 @@ import { Match } from 'src/match/entities/match.entity';
 import { GameStateService } from 'src/game_state/gameState.service';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
-import { Req, UseGuards } from '@nestjs/common';
+import { OnModuleInit, Req, UseGuards } from '@nestjs/common';
 import { parse } from 'cookie';
 import { exec } from 'child_process';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
-export class AuthGateway implements OnGatewayConnection {
+export class AuthGateway implements OnGatewayConnection, OnModuleInit {
   @WebSocketServer()
   server: Server;
 
+  init: boolean = false;
+
   constructor(private readonly jwtAccessService: JwtAccessService) {}
 
+  onModuleInit() {}
   async handleConnection(socket: Socket) {
+    if (this.init) return;
+
     await this.server.use(async (socket, next) => {
       console.log('socket connected, authenticating it');
       try {
@@ -40,5 +45,7 @@ export class AuthGateway implements OnGatewayConnection {
         next(new Error('fuck off'));
       }
     });
+
+    this.init = true;
   }
 }
