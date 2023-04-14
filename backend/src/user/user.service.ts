@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @Injectable()
 export class UserService {
@@ -21,16 +22,35 @@ export class UserService {
     return this.userRepository.save(createUserDto);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find({
-      relations: {
-        matchesAsPlayerOne: true,
-        matchesAsPlayerTwo: true,
-        achievements: {
-          achievement: true,
-        },
-      },
-    });
+  async findAll() {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.achievements', 'achievements')
+      .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchesAsPlayerOne')
+      .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchesAsPlayerTwo')
+      .leftJoinAndSelect('user.requests', 'requests')
+      .leftJoinAndSelect('user.responses', 'responses')
+      .leftJoinAndSelect('user.sentMessages', 'sentMessages')
+      .getMany();
+
+    if (user === null) {
+      throw new CustomException(
+        `User table doesn't exist`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        'User => findOne()',
+      );
+    }
+
+    return user;
+    // return this.userRepository.find({
+    //   relations: {
+    //     matchesAsPlayerOne: true,
+    //     matchesAsPlayerTwo: true,
+    //     achievements: {
+    //       achievement: true,
+    //     },
+    //   },
+    // });
   }
 
   async findMany(ids: number[]): Promise<User[]> {
@@ -49,20 +69,31 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    if (id == null)
-      throw new HttpException(
-        'Not found: UserId cannot be undefined',
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where({ id: id })
+      .leftJoinAndSelect('user.achievements', 'achievements')
+      .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchesAsPlayerOne')
+      .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchesAsPlayerTwo')
+      .leftJoinAndSelect('user.requests', 'requests')
+      .leftJoinAndSelect('user.responses', 'responses')
+      .leftJoinAndSelect('user.sentMessages', 'sentMessages')
+      .getOne();
+
+    if (user === null) {
+      throw new CustomException(
+        `User with id = [${id}] doesn't exist`,
         HttpStatus.NOT_FOUND,
+        'User => findOne()',
       );
-    return this.userRepository.findOne({
-      where: { id: id },
-      relations: [
-        'matchesAsPlayerOne',
-        'matchesAsPlayerTwo',
-        'achievements',
-        'achievements.achievement',
-      ],
-    });
+    }
+
+    return user;
+    // if (id == null)
+    //   throw new HttpException(
+    //     'Not found: UserId cannot be undefined',
+    //     HttpStatus.NOT_FOUND,
+    //   );
   }
 
   async findOneByUsername(nickName: string): Promise<User> {
@@ -70,6 +101,20 @@ export class UserService {
     return this.userRepository.findOneBy({
       nickName: nickName,
     });
+  }
+
+  //im not sure if this should be a user service or a match service
+  async getMatches(id: number) {
+    const userMatches = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchAsPlayerOne')
+      .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchAsPlayerTwo')
+      .where('user.id = :id', { id: id })
+      .getOne();
+    return [
+      ...userMatches.matchesAsPlayerOne,
+      ...userMatches.matchesAsPlayerTwo,
+    ];
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

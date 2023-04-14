@@ -55,7 +55,7 @@ export class AuthController {
       code: `${query.code}`,
     };
 
-    var headers: {
+    let headers: {
       'Content-Type': 'application/json';
     };
     try {

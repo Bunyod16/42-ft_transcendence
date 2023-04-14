@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -20,6 +20,7 @@ import { GameStateModule } from './game_state/gameState.module';
 import { GameStreamModule } from './game_stream/game_stream.module';
 import { GameStreamGateway } from './game_stream/game_stream.gateway';
 import { QueueGateway } from './queue/queue.gateway';
+import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { QueueGateway } from './queue/queue.gateway';
     QueueModule,
     GameStateModule,
     GameStreamModule,
+    ChatChannelMemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],

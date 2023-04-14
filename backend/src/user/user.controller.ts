@@ -8,6 +8,8 @@ import {
   Delete,
   ForbiddenException,
   HttpStatus,
+  ParseIntPipe,
+  Logger,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,8 +30,12 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    const users = await this.userService.findAll();
+
+    Logger.log(`Trying to get all Users`, 'Users => findAll()');
+
+    return users;
   }
 
   @Get('/many')
@@ -39,10 +45,26 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const user = await this.userService.findOne(+id);
-    if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.findOne(id);
+
+    Logger.log(`Trying to get User with id = [${id}]`, 'User => findOne()');
+
     return user;
+    // if (!user) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    // return user;
+  }
+
+  @Get(':id/matches')
+  async getMatches(@Param('id', ParseIntPipe) id: number) {
+    const userMatches = await this.userService.getMatches(id);
+
+    Logger.log(
+      `Trying to get all matches for User with id = [${id}]`,
+      'User => findOne()',
+    );
+
+    return userMatches;
   }
 
   @Patch(':id')
