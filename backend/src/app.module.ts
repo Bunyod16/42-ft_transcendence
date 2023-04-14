@@ -21,6 +21,7 @@ import { GameStreamModule } from './game_stream/game_stream.module';
 import { GameStreamGateway } from './game_stream/game_stream.gateway';
 import { QueueGateway } from './queue/queue.gateway';
 import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
+import { ChatSocketsModule } from './chat-sockets/chat-sockets.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_memb
     GameStateModule,
     GameStreamModule,
     ChatChannelMemberModule,
+    ChatSocketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
