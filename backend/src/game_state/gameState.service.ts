@@ -108,19 +108,37 @@ export class GameStateService {
   }
 
   checkBallOutOfBounds(gameState: GameState) {
-    if (
-      gameState.ballProperties.x < (planeSize.x / 2) * -1 ||
-      gameState.ballProperties.x > planeSize.x / 2
-    ) {
-      gameState.ballProperties.x = 0;
-      gameState.ballProperties.y = 0;
+    if (gameState.ballProperties.x < (planeSize.x / 2) * -1) {
+      const min = Math.ceil(3);
+      const max = Math.floor(1);
+      gameState.ballProperties.dx = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.ballProperties.dy = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.playerOne.score += 1;
+    } else if (gameState.ballProperties.x > planeSize.x / 2) {
+      const min = Math.ceil(-1);
+      const max = Math.floor(-3);
+      gameState.ballProperties.dx = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.ballProperties.dy = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.playerTwo.score += 1;
+    } else {
+      return gameState;
     }
+    gameState.ballProperties.x = 0;
+    gameState.ballProperties.y = 0;
     return gameState;
   }
 
   checkPlayerOutOfBounds(gameState: GameState) {
     const upperBound = planeSize.y / 2 - racketSize.y / 2;
-    const lowerBound = (planeSize.y / 2 * -1) + racketSize.y / 2;
+    const lowerBound = (planeSize.y / 2) * -1 + racketSize.y / 2;
     if (gameState.playerOne.y > upperBound) {
       gameState.playerOne.y = upperBound;
     }

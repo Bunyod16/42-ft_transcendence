@@ -147,17 +147,4 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
     await this.stop_game(socket);
   }
-
-  // @SubscribeMessage('updateGameStream')
-  // update(@MessageBody() updateGameStreamDto: UpdateGameStreamDto) {
-  //   return this.gameStreamService.update(
-  //     updateGameStreamDto.id,
-  //     updateGameStreamDto,
-  //   );
-  // }
-
-  // @SubscribeMessage('removeGameStream')
-  // remove(@MessageBody() id: number) {
-  //   return this.gameStreamService.remove(id);
-  // }
 }
