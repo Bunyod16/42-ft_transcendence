@@ -32,7 +32,7 @@ export class ChatService {
     return chatArray;
   }
 
-  async findLast(userId: number, channelId: number, num: number, offset?: number) {
+  async findLastNum(userId: number, channelId: number, num: number, offset?: number) {
     const chatArray = await this.chatLineRepository.find({
       order: {
         createdAt: "DESC",
