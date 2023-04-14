@@ -1,8 +1,8 @@
 import { Logger, INestApplicationContext, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
-import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import { Server, ServerOptions } from 'socket.io';
+import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { SocketWithAuthData } from 'src/utils/types';
 
 export class SocketIOAdapter extends IoAdapter {
@@ -35,21 +35,21 @@ export class SocketIOAdapter extends IoAdapter {
       cors,
     }
 
-    const jwtService = this.app.get(JwtService);
+    const jwtService = this.app.get(JwtAccessService);
 
 		const server: Server = super.createIOServer(port, allOptions);
 
     // Socket.io middleware
     // middleware must be namespaced if gateway is namespaced!
-    server.of('chat').use(createSocketTokenAuthMiddleware(jwtService, this.logger, this.configService))
+    server.of('chat').use(createSocketTokenAuthMiddleware(jwtService, this.logger));
 
     return server;
 	}
 }
 
 const createSocketTokenAuthMiddleware =
-(jwtService: JwtService, logger: Logger, configService: ConfigService) =>
-(socket: SocketWithAuthData, next) => {
+(jwtAccessService: JwtAccessService, logger: Logger) =>
+async (socket: SocketWithAuthData, next) => {
 
   // socket.handshake.headers['token'] is for postman compatibility
   // Postman provides no way to append this field (socket.handshake.auth.token). Therefore, we'll pass a token header, and fall back to that.
@@ -58,8 +58,8 @@ const createSocketTokenAuthMiddleware =
   logger.debug(`Validating token before connection: ${token}`)
 
   try {
-    const payload = jwtService.verify(token, configService.get('JWT_ACCESS_TOKEN_SECRET'));
-    socket.userId = payload.sub;
+    const payload = await jwtAccessService.verifyAccessToken(token);
+    socket.userId = payload.id;
     next();
   }
   catch {
