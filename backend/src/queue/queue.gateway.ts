@@ -60,6 +60,7 @@ export class QueueGateway implements OnGatewayDisconnect {
       socket.emit('queueEnterFail');
     }
     const queue = await this.queueService.getQueue();
+    console.log(`QUEUE: ${queue.length}`);
     if (queue.length >= 2) {
       const match = await this.matchService.create_with_user(
         queue[0].user,
@@ -68,7 +69,7 @@ export class QueueGateway implements OnGatewayDisconnect {
       queue[0].socket.join(`${match.id}`);
       // this.server.to(`${match.id}`).emit('fuck');
       queue[1].socket.join(`${match.id}`);
-      console.log(queue[0].socket.rooms);
+      console.log(`Socket rooms of queue[0]: ${queue[0].socket.rooms}`);
       // await this.gameStreamGateway.addInterval(match);
       this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
@@ -82,7 +83,9 @@ export class QueueGateway implements OnGatewayDisconnect {
     @MessageBody() body: any,
   ) {
     try {
-      const game = await this.queueService.removePlayerFromQueue(socket.data.user);
+      const game = await this.queueService.removePlayerFromQueue(
+        socket.data.user,
+      );
       socket.emit('queueLeaveSuccess', game);
     } catch (error) {
       console.log(error);

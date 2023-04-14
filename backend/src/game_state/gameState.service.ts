@@ -3,6 +3,8 @@ import { RedisService } from './redis.service';
 import { GameState } from './gameState.class';
 import { User } from 'src/user/entities/user.entity';
 import { racketMoveDistance } from './gameState.constats';
+import { match } from 'assert';
+import { planeSize } from './gameState.constats';
 
 @Injectable()
 export class GameStateService {
@@ -25,8 +27,8 @@ export class GameStateService {
     return this.createGame(id, playerOneId, playerTwoId);
   }
 
-  async connectUser(game_id: number, user: User) {
-    const game = await this.getGame(game_id);
+  async connectUser(gameId: number, user: User) {
+    const game = await this.getGame(gameId);
     console.log(game.playerOne.id);
     // console.log(user, game.playerOne);
     if (user.id == game.playerOne.id) {
@@ -34,7 +36,7 @@ export class GameStateService {
     } else if (user.id == game.playerTwo.id) {
       game.playerTwo.isConnected = true;
     }
-    return this.updateGame(game_id, game);
+    return this.updateGame(gameId, game);
   }
 
   async getGame(id: number): Promise<GameState> {
@@ -53,8 +55,8 @@ export class GameStateService {
     await this.redisService.getAllGames();
   }
 
-  async playerUp(user: User, game_id: number) {
-    const game = await this.redisService.getGameState(game_id);
+  async playerUp(user: User, gameId: number) {
+    const game = await this.redisService.getGameState(gameId);
     if (user.id == game.playerOne.id)
     {
       game.playerOne.y += racketMoveDistance;
@@ -63,11 +65,11 @@ export class GameStateService {
     {
       game.playerTwo.y += racketMoveDistance;
     }
-    this.updateGame(game_id, game);
+    this.updateGame(gameId, game);
   }
 
-  async playerDown(user: User, game_id: number) {
-    const game = await this.redisService.getGameState(game_id);
+  async playerDown(user: User, gameId: number) {
+    const game = await this.redisService.getGameState(gameId);
     if (user.id == game.playerOne.id)
     {
       game.playerOne.y -= racketMoveDistance;
@@ -76,6 +78,28 @@ export class GameStateService {
     {
       game.playerTwo.y -= racketMoveDistance;
     }
-    this.updateGame(game_id, game);
+    this.updateGame(gameId, game);
+  }
+
+  async setRandomBallDirection(matchId: number) {
+    const game = await this.getGame(matchId);
+    const min = Math.ceil(-3);
+    const max = Math.floor(3);
+    game.ballProperties.dx = Math.floor(Math.random() * (max - min) + min);
+    game.ballProperties.dy = Math.floor(Math.random() * (max - min) + min);
+    await this.updateGame(matchId, game);
+  }
+
+  async moveBall(gameState: GameState, matchId: number) {
+    gameState.ballProperties.x += gameState.ballProperties.dx;
+    gameState.ballProperties.y += gameState.ballProperties.dy;
+    if (gameState.ballProperties.x >= planeSize.x || gameState.ballProperties.x <= planeSize.x * -1) {
+      gameState.ballProperties.dx *= -1;
+    }
+    if (gameState.ballProperties.y >= planeSize.y || gameState.ballProperties.y <= planeSize.y * -1) {
+      gameState.ballProperties.dy *= -1;
+    }
+    await this.updateGame(matchId, gameState);
+    return this.getGame(matchId);
   }
 }

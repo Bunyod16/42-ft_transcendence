@@ -21,26 +21,31 @@ export class MatchService {
     return this.matchRepository.save(createMatchDto);
   }
 
-  async create_with_user(user_one: User, user_two: User) {
-    if (!user_one || !user_two) {
+  async create_with_user(userOne: User, userTwo: User) {
+    if (!userOne || !userTwo) {
       throw new HttpException(
         "One of the users doesn't exist",
         HttpStatus.BAD_REQUEST,
       );
     }
+    const userOneCheck = await this.findCurrentByUser(userOne);
+    const userTwoCheck = await this.findCurrentByUser(userTwo);
+    if (userOneCheck || userTwoCheck) {
+      throw new HttpException(
+        "One or both of the users is already in a match",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const newMatch = new CreateMatchDto();
-    newMatch.playerOne = user_one;
-    newMatch.playerTwo = user_two;
+    newMatch.playerOne = userOne;
+    newMatch.playerTwo = userTwo;
     newMatch.isPrivate = false;
-    await this.matchRepository.save(newMatch);
-    const match = await this.findCurrentByUser(user_one);
-    console.log('-----');
-    console.log(match);
-    console.log('-----');
+    await this.matchRepository.save(newMatch); // TODO: only create if match does not exist?
+    const match = await this.findCurrentByUser(userOne);
     await this.gameStateService.createGameIfNotExist(
       match.id,
-      user_one.id,
-      user_two.id,
+      userOne.id,
+      userTwo.id,
     );
     return match;
   }
