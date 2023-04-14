@@ -42,6 +42,8 @@ export class SocketIOAdapter extends IoAdapter {
     // Socket.io middleware
     // middleware must be namespaced if gateway is namespaced!
     server.of('chat').use(createSocketTokenAuthMiddleware(jwtService, this.logger));
+    // line below for game-stream since it has no defined namespace
+    // server.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
 
     return server;
 	}
