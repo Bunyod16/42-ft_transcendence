@@ -30,28 +30,32 @@ export default function ChatBox({ height }: { height: string }) {
       <Box
         component="div"
         sx={{
-          overflow: "scroll",
+          display: "flex",
+          flexDirection: "column-reverse",
+          overflow: "auto",
           overflowX: "hidden",
         }}
       >
-        {chats.map((x, i) => (
-          <Box
-            component="div"
-            sx={{
-              padding: "10px",
-              border: "2px solid #11AAAA",
-              borderRadius: "8px",
-              margin: "10px",
-              wordWrap: "break-word",
-            }}
-            key={i}
-          >
-            <Typography sx={{ fontSize: "14px" }}>{`${x.user}:`}</Typography>
-            <Typography sx={{ fontSize: "14px", ml: "4px" }}>
-              {x.message}
-            </Typography>
-          </Box>
-        ))}
+        {chats
+          .map((x, i) => (
+            <Box
+              component="div"
+              sx={{
+                padding: "10px",
+                border: "2px solid #11AAAA",
+                borderRadius: "8px",
+                margin: "10px",
+                wordWrap: "break-word",
+              }}
+              key={i}
+            >
+              <Typography sx={{ fontSize: "14px" }}>{`${x.user}:`}</Typography>
+              <Typography sx={{ fontSize: "14px", ml: "4px" }}>
+                {x.message}
+              </Typography>
+            </Box>
+          ))
+          .reverse()}
       </Box>
       <Box component="div" sx={{ width: "100%", height: "56px" }}>
         <form onSubmit={handleMessageSubmit}>
