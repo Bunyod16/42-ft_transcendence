@@ -7,6 +7,7 @@ import React, { useRef } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import { Mesh } from "three";
+import { stat } from "fs";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -20,37 +21,21 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const body = useRef<Mesh>(null);
   console.log(isPlayer);
   const { matchInfo, gameState } = useGameStore();
+  const lastEmit = useRef<number>(0);
 
   React.useEffect(() => {
     console.log("player rendered");
-  });
+  }, []);
 
   useFrame((state, delta) => {
     if (body.current) {
       const keys = getKeys();
-      // if (keys.up) console.log("up");
-      // if (keys.down) console.log("down");
-      // const steps = 2 * delta;
-      // const bodyPosition = body.current.translation();
-      if (isPlayer) {
-        if (keys.up) {
-          console.log("emit [playerUp] : ", matchInfo.gameId);
-          socket.emit("playerUp", { gameId: matchInfo.gameId });
-          // body.current.setNextKinematicTranslation({
-          //   x: bodyPosition.x,
-          //   y: bodyPosition.y + steps,
-          //   z: bodyPosition.z,
-          // });
-        }
-        if (keys.down) {
-          console.log("emit [playerDown] : ", matchInfo.gameId);
-          socket.emit("playerDown", { gameId: matchInfo.gameId });
-          // body.current.setNextKinematicTranslation({
-          //   x: bodyPosition.x,
-          //   y: bodyPosition.y - steps,
-          //   z: bodyPosition.z,
-          // });
-        }
+      lastEmit.current += delta;
+      if (isPlayer && (keys.up || keys.down) && lastEmit.current >= 1 / 60) {
+        lastEmit.current = 0;
+        const event = keys.up ? "playerUp" : "playerDown";
+        console.log(`emit [${event}]: `, matchInfo.gameId);
+        socket.emit(event, { gameId: matchInfo.gameId });
       }
       const targetPosition =
         playerLR == 1 ? gameState.playerOneState.y : gameState.playerTwoState.y;
