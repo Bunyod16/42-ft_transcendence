@@ -91,6 +91,12 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
         console.log('moved_game has not been found, cannot send state');
         return;
       }
+      if (
+        moved_state.playerOne.score >= 5 ||
+        moved_state.playerTwo.score >= 5
+      ) {
+        this.endGame(match);
+      }
       this.server.to(`${moved_state.id}`).emit('updateGame', moved_state);
     };
 
@@ -135,7 +141,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     await this.gameStateService.connectUser(match.id, socket.data.user);
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
-      console.log("both players have connected to the game");
+      console.log('both players have connected to the game');
       await this.server.to(`${match.id}`).emit('matchBegin');
       await this.addInterval(match);
       await this.gameStateService.setRandomBallDirection(match.id);
