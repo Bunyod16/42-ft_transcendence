@@ -16,6 +16,9 @@ prod :
 down :
 	docker compose down
 
+dev_down:
+	docker compose down --volumes
+
 rm_dev_volume :
 	docker volume rm $(NAME)_$(DEV_REDIS_VOLUME)
 	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
@@ -28,11 +31,11 @@ rm_img :
 	docker rmi $(NAME)-nestjs
 	docker rmi $(NAME)-nextjs
 
-re_dev : down rm_dev_volume dev
+re_dev : dev_down rm_dev_volume dev
 
 re_prod : down rm_dev_volume prod
 
-rm_everything_dev: down rm_dev_volume rm_img
+rm_everything_dev: dev_down down rm_dev_volume rm_img
 
 rm_everything_prod: down rm_prod_volume rm_img
 

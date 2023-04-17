@@ -30,7 +30,7 @@ services:
     entrypoint: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
   nestjs:
-    container_name: nestjs
+    container_name: backend
     image: 42-ft_transendence-nestjs
     build:
       context: ./backend
@@ -44,7 +44,7 @@ services:
       - ft_trancendence
 
   nextjs:
-    container_name: nextjs
+    container_name: frontend
     image: 42-ft_transendence-nextjs
     build:
       context: ./frontend
