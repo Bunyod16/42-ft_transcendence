@@ -3,10 +3,11 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
+import { GameState } from "@/types/game-types";
 
 THREE.ColorManagement.enabled = true;
 
@@ -33,20 +34,26 @@ function Pong() {
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
-  const setGameState = useGameStore((state) => state.setGameState);
+  // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
+  const gameState = useRef<GameState>({
+    playerOneState: { y: 0, isConnected: false },
+    playerTwoState: { y: 0, isConnected: false },
+    ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
+    gameId: "",
+  });
 
   React.useEffect(() => {
     socket.emit("userConnected");
     console.log(matchInfo, name);
 
     function onUpdateGame(data: any) {
-      setGameState({
+      gameState.current = {
         playerOneState: data.playerOne,
         playerTwoState: data.playerTwo,
         ballProperties: data.ballProperties,
         gameId: data.id,
-      });
+      };
     }
 
     socket.on("updateGame", onUpdateGame);
@@ -64,12 +71,14 @@ function Pong() {
         tableSize={tableSize}
         playerLR={LEFT}
         isPlayer={matchInfo.playerOne?.nickName == name}
+        gameState={gameState.current}
       />
 
       <Player
         tableSize={tableSize}
         playerLR={RIGHT}
         isPlayer={matchInfo.playerTwo?.nickName == name}
+        gameState={gameState.current}
       />
 
       <Ball tableSize={tableSize} />

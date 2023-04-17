@@ -7,20 +7,20 @@ import React, { useRef } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import { Mesh } from "three";
-import { stat } from "fs";
+import { GameState } from "@/types/game-types";
 
 interface IPlayerProps {
   tableSize: ISize;
   playerLR: number;
   isPlayer: boolean;
+  gameState: GameState;
 }
 
-function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
+function Player({ tableSize, playerLR, isPlayer, gameState }: IPlayerProps) {
   const [, getKeys] = useKeyboardControls<Controls>();
   // const body = useRef<RapierRigidBody>(null);
   const body = useRef<Mesh>(null);
-  console.log(isPlayer);
-  const { matchInfo, gameState } = useGameStore();
+  const { matchInfo } = useGameStore();
   const lastEmit = useRef<number>(0);
 
   React.useEffect(() => {
@@ -29,13 +29,15 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
 
   useFrame((state, delta) => {
     if (body.current) {
-      const keys = getKeys();
-      lastEmit.current += delta;
-      if (isPlayer && (keys.up || keys.down) && lastEmit.current >= 1 / 60) {
-        lastEmit.current = 0;
-        const event = keys.up ? "playerUp" : "playerDown";
-        console.log(`emit [${event}]: `, matchInfo.gameId);
-        socket.emit(event, { gameId: matchInfo.gameId });
+      if (isPlayer) {
+        const keys = getKeys();
+        lastEmit.current += delta;
+        if ((keys.up || keys.down) && lastEmit.current >= 1 / 60) {
+          lastEmit.current = 0;
+          const event = keys.up ? "playerUp" : "playerDown";
+          console.log(`emit [${event}]: `, matchInfo.gameId);
+          socket.emit(event, { gameId: matchInfo.gameId });
+        }
       }
       const targetPosition =
         playerLR == 1 ? gameState.playerOneState.y : gameState.playerTwoState.y;
