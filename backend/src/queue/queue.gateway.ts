@@ -20,6 +20,9 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
 import { parse } from 'cookie';
 import { CreateMatchDto } from 'src/match/dto/create-match.dto';
+import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
+import { GameStreamService } from 'src/game_stream/game_stream.service';
+import { GameStreamGateway } from 'src/game_stream/game_stream.gateway';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -28,23 +31,15 @@ export class QueueGateway implements OnGatewayDisconnect {
 
   constructor(
     private queueService: QueueService,
-    private jwtService: JwtRefreshService,
+    private jwtService: JwtAccessService,
     private matchService: MatchService,
+    private gameStreamService: GameStreamService,
+    private gameStreamGateway: GameStreamGateway,
   ) {}
 
   @UseGuards(UserAuthGuard)
-  handleConnection(client: any, ...args: any[]) {
-    console.log(`${client.req} has connected`);
-  }
-
-  @UseGuards(UserAuthGuard)
   async handleDisconnect(socket) {
-    console.log(socket.handshake.headers.cookie);
-
-    const cookie = parse(socket.handshake.headers.cookie);
-    const user = await this.jwtService.verifyRefreshToken(cookie.Refresh);
-    console.log(`${user.nickName} has disconnected`);
-    await this.queueService.removePlayerFromQueue(user);
+    await this.queueService.removePlayerFromQueue(socket.data.user); //TODO: find by socketid
   }
 
   @UseGuards(UserAuthGuard)
@@ -54,35 +49,41 @@ export class QueueGateway implements OnGatewayDisconnect {
     @Req() req: RequestWithUser,
     @MessageBody() body: any,
   ) {
+    // console.log('entered queue');
     try {
-      const game = await this.queueService.addUserToQueue(req.user, socket.id);
+      const game = await this.queueService.addUserToQueue(req.user, socket);
       socket.emit('queueEnterSuccess', game);
     } catch (error) {
       console.log(error);
       socket.emit('queueEnterFail');
     }
     const queue = await this.queueService.getQueue();
+    console.log(`QUEUE: ${queue.length}`);
     if (queue.length >= 2) {
-      const match = new CreateMatchDto();
-      match.playerOne = queue[0].user;
-      match.playerTwo = queue[1].user;
-      this.server.to(`${queue[0].socket_id}`).emit('matchFound', match);
-      this.server.to(`${queue[1].socket_id}`).emit('matchFound', match);
+      const match = await this.matchService.create_with_user(
+        queue[0].user,
+        queue[1].user,
+      );
+      queue[0].socket.join(`${match.id}`);
+      // this.server.to(`${match.id}`).emit('fuck');
+      queue[1].socket.join(`${match.id}`);
+      console.log(`Socket rooms of queue[0]: ${queue[0].socket.rooms}`);
+      // await this.gameStreamGateway.addInterval(match);
+      this.server.to(`${match.id}`).emit('matchFound', match);
       this.queueService.removePlayerFromQueue(queue[1].user);
       this.queueService.removePlayerFromQueue(queue[0].user);
-      this.matchService.create(match);
     }
   }
 
-  @UseGuards(UserAuthGuard)
   @SubscribeMessage('queueLeave')
   async queueLeave(
     @ConnectedSocket() socket: Socket,
-    @Req() req: RequestWithUser,
     @MessageBody() body: any,
   ) {
     try {
-      const game = await this.queueService.removePlayerFromQueue(req.user);
+      const game = await this.queueService.removePlayerFromQueue(
+        socket.data.user,
+      );
       socket.emit('queueLeaveSuccess', game);
     } catch (error) {
       console.log(error);
