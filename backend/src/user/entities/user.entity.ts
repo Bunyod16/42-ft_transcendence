@@ -22,6 +22,9 @@ export class User {
   @Column()
   nickName: string;
 
+  @Column({ default: ''})
+  avatar: string;
+
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
