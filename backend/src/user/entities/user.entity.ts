@@ -22,7 +22,7 @@ export class User {
   @Column()
   nickName: string;
 
-  @Column({ default: ''})
+  @Column({ default: 'default-stormtrooper.png'})
   avatar: string;
 
   @CreateDateColumn({ name: 'created_at' })
