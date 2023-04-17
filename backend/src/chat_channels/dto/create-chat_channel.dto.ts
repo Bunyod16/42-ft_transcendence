@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ChannelType } from '../entities/chat_channel.entity';
+import { ChannelType, ChatType } from '../entities/chat_channel.entity';
 
 export class CreateChatChannelDto {
   @ApiProperty()
@@ -14,4 +14,7 @@ export class CreateChatChannelDto {
 
   @ApiProperty()
   channel_type: ChannelType;
+
+  @ApiProperty()
+  chatType: ChatType;
 }

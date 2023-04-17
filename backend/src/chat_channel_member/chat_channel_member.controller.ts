@@ -64,10 +64,29 @@ export class ChatChannelMemberController {
 
     Logger.log(
       `Trying to get ChatChannelMember with userId = [${userId}]`,
-      'ChatChannelMember => findOne()',
+      'ChatChannelMember => findAllUsersInChatChannel()',
     );
 
     return chatChannelMember;
+  }
+
+  @Get('/checkIfUserHasChatWithFriend')
+  async checkIfUserHasChatWithFriend(
+    @Body('userId', ParseIntPipe) userId: number,
+    @Body('friendId', ParseIntPipe) friendId: number,
+  ) {
+    const hasChat =
+      await this.chatChannelMemberService.checkIfUserHasChatWithFriend(
+        userId,
+        friendId,
+      );
+
+    Logger.log(
+      `Trying to see if userId = [${userId}] has chat with friendId = [${friendId}]`,
+      'ChatChannelMember => checkIfUserHasChatWithFriend()',
+    );
+
+    return hasChat;
   }
 
   @Get(':chatChannelId/usersInChatChannel')
@@ -87,19 +106,7 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const chatChannelMember = await this.chatChannelMemberService.findOne(id);
-
-    Logger.log(
-      `Trying to get ChatChannelMember with id = [${id}]`,
-      'ChatChannelMember => findOne()',
-    );
-
-    return chatChannelMember;
-  }
-
-  @Get(':userId/userChatChannels_testing/')
+  @Get(':userId/userChatChannelsTesting')
   async findAllUserChatChannel_testing(
     @Param('userId', ParseIntPipe) userId: number,
   ) {
@@ -108,6 +115,18 @@ export class ChatChannelMemberController {
 
     Logger.log(
       `Trying to get ChatChannelMember with userId = [${userId}]`,
+      'ChatChannelMember => findOne()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const chatChannelMember = await this.chatChannelMemberService.findOne(id);
+
+    Logger.log(
+      `Trying to get ChatChannelMember with id = [${id}]`,
       'ChatChannelMember => findOne()',
     );
 

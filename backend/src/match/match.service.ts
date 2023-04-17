@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, IsNull, Repository } from 'typeorm';
@@ -33,7 +33,7 @@ export class MatchService {
     const userTwoCheck = await this.findCurrentByUser(userTwo);
     if (userOneCheck || userTwoCheck) {
       throw new HttpException(
-        "One or both of the users is already in a match",
+        'One or both of the users is already in a match',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -54,9 +54,7 @@ export class MatchService {
   async findAllCurrent(): Promise<Match[]> {
     return await this.matchRepository
       .createQueryBuilder('Match')
-      .where([
-        { endedAt: IsNull()},
-      ])
+      .where([{ endedAt: IsNull() }])
       .select([
         'Match',
         'playerOne.id',

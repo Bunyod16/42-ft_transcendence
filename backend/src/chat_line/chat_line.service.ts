@@ -50,6 +50,29 @@ export class ChatLineService {
     return chatLine;
   }
 
+  async getNextChatLines(chatChannelId: number, chatLineOffset: number) {
+    const chatLine = await this.chatLineRepository
+      .createQueryBuilder('chatLine')
+      .where('chatLine.chatChannelId = :chatChannelId', {
+        chatChannelId: chatChannelId,
+      })
+      .orderBy('chatLine.createdAt', 'DESC')
+      .offset(chatLineOffset)
+      .limit(5)
+      .select('chatLine')
+      .getMany();
+
+    if (chatLine === null) {
+      throw new CustomException(
+        `ChatChannel with id = [${chatChannelId}] doesn't have any messages`,
+        HttpStatus.BAD_REQUEST,
+        'ChatLine => getNextChatLines()',
+      );
+    }
+
+    return chatLine;
+  }
+
   async update(id: number, updateChatLineDto: UpdateChatLineDto) {
     const chatLine = await this.chatLineRepository.update(
       id,

@@ -10,30 +10,92 @@ import {
   Req,
   Logger,
   ParseIntPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { ChatChannelsService } from './chat_channels.service';
 import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
+import { ChannelType } from './entities/chat_channel.entity';
+import { CustomException } from 'src/utils/app.exception-filter';
 
 @ApiTags('chat-channels')
-@UseGuards(UserAuthGuard)
 @Controller('chat-channels')
 export class ChatChannelsController {
   constructor(private readonly chatChannelsService: ChatChannelsService) {}
 
-  @Post()
+  @Post('/groupMessage')
   @UseGuards(UserAuthGuard)
-  create(@Body('name') channelName: string, @Req() request: any) {
-    return this.chatChannelsService.create(channelName, request.user.id);
+  async create_group_message(
+    @Body('name') channelName: string,
+    @Req() request: any,
+  ) {
+    const chatChannel = await this.chatChannelsService.create_group_message(
+      channelName,
+      request.user.id,
+    );
+
+    Logger.log(
+      `Created ChatChannel with id = [${chatChannel.id}]`,
+      'ChatChannel => create()',
+    );
+
+    return chatChannel;
   }
 
-  @Post('/addUser_testing')
-  create_testing(
+  @Post('/groupMessageTesting')
+  async create_group_message_testing(
     @Body('name') channelName: string,
     @Body('userId', ParseIntPipe) userId: number,
   ) {
-    return this.chatChannelsService.create(channelName, userId);
+    const chatChannel = await this.chatChannelsService.create_group_message(
+      channelName,
+      userId,
+    );
+
+    Logger.log(
+      `Created ChatChannel with id = [${chatChannel.id}]`,
+      'ChatChannel => create()',
+    );
+
+    return chatChannel;
+  }
+
+  @Post('/directMessage')
+  @UseGuards(UserAuthGuard)
+  async create_direct_message(
+    @Req() req: any,
+    @Body('recipientId', ParseIntPipe) recipientId: number,
+  ) {
+    const chatChannel = await this.chatChannelsService.create_direct_message(
+      req.user.id,
+      recipientId,
+    );
+
+    Logger.log(
+      `Created ChatChannel with id = [${chatChannel.id}]`,
+      'ChatChannel => create()',
+    );
+
+    return chatChannel;
+  }
+
+  @Post('/directMessageTesting')
+  async create_direct_message_testing(
+    @Body('userId', ParseIntPipe) userId: number,
+    @Body('recipientId', ParseIntPipe) recipientId: number,
+  ) {
+    const chatChannel = await this.chatChannelsService.create_direct_message(
+      userId,
+      recipientId,
+    );
+
+    Logger.log(
+      `Created ChatChannel with id = [${chatChannel.id}]`,
+      'ChatChannel => create()',
+    );
+
+    return chatChannel;
   }
 
   @Get()
@@ -59,14 +121,37 @@ export class ChatChannelsController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateChatChannelDto: UpdateChatChannelDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body('channelType') channelType?: string,
+    @Body('password') password?: string,
+    @Body('name') name?: string,
   ) {
-    return this.chatChannelsService.update(+id, updateChatChannelDto);
+    //validate channelType is actually a valid enum
+    if (typeof channelType !== 'undefined') {
+      channelType = channelType.toLowerCase();
+      if (
+        !Object.values(ChannelType).includes(
+          channelType as string as ChannelType,
+        )
+      ) {
+        throw new CustomException(
+          `Bad Request: Invalid ChannelType Status`,
+          HttpStatus.BAD_REQUEST,
+          `ChatChannel => update()`,
+        );
+      }
+    }
+
+    return this.chatChannelsService.update(
+      id,
+      channelType as ChannelType,
+      password,
+      name,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatChannelsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.chatChannelsService.remove(id);
   }
 }
