@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { CustomExceptionFilter } from './utils/app.exception-filter';
+import {
+  CustomExceptionFilter,
+  CustomWSExceptionFilter,
+} from './utils/app.exception-filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +27,8 @@ async function bootstrap() {
 
   //adds a global filter so that Catch(CustomException) doesnt need to be called everywhere
   app.useGlobalFilters(new CustomExceptionFilter());
+  //adds a global filter so that Catch(CustomWSException) doesnt need to be called everywhere
+  app.useGlobalFilters(new CustomWSExceptionFilter());
 
   await app.listen(3000);
 }

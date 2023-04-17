@@ -7,16 +7,17 @@ import {
   WebSocketGateway,
   WebSocketServer,
   ConnectedSocket,
-  WsException,
 } from '@nestjs/websockets';
 import { ChatSocketsService } from './chat-sockets.service';
 import { Socket, Namespace } from 'socket.io';
 import {
   Body,
+  HttpStatus,
   Logger,
   ParseIntPipe,
   Query,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
@@ -25,11 +26,29 @@ import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { ChatType } from 'src/chat_channels/entities/chat_channel.entity';
 import { UserService } from 'src/user/user.service';
 import { ChatLineService } from 'src/chat_line/chat_line.service';
+import {
+  CustomExceptionFilter,
+  CustomWSException,
+  CustomWSExceptionFilter,
+} from 'src/utils/app.exception-filter';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
+class ChatMessage {
+  @IsNotEmpty()
+  @IsString()
+  message: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  chatChannelId: number;
+}
 
 @WebSocketGateway({
   namespace: 'chatSockets',
   cors: { origin: true, credentials: true },
 })
+@UseFilters(CustomWSExceptionFilter) //idk why the global filters doesnt work i have to put this here
+@UseFilters(CustomExceptionFilter)
 export class ChatSocketsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -62,29 +81,21 @@ export class ChatSocketsGateway
   }
 
   /*
-   * handleJoinRoom : Join room would mean on click chatChannel
+   * handleJoinRoom : Join room would mean tp click on chatChannel
    * */
 
-  // @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   @SubscribeMessage('joinRoom')
-  async handleJoinRoomTesting(
+  async handleJoinRoom(
     @ConnectedSocket() socket: Socket,
-    // @Req() req: any,
-    // @Query() que: any,
-    @Body() body: any,
-    // @Body('userId', ParseIntPipe) userId: number,
-    // @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+    @Req() req: any,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
-    // const user: User = req.user;
-    const user: User = await this.userService.findOne(body[0].userId);
+    const user: User = req.user;
     console.log(user.nickName);
 
-    // console.log(que); //idk why i cant get query parameters
-
     try {
-      const chatChannel = await this.chatChannelService.findOne(
-        body[0].chatChannelId,
-      );
+      const chatChannel = await this.chatChannelService.findOne(chatChannelId);
       const roomName = `chatChannel/${chatChannel.id}`;
 
       console.log(chatChannel);
@@ -104,19 +115,81 @@ export class ChatSocketsGateway
 
       socket.join(roomName);
     } catch (error) {
-      Logger.log(error, `ChatSockets => handleJoinRoom()`);
-      throw new WsException({ error: `${error}` }); //make custom webexception
+      throw new CustomWSException(
+        error.message,
+        HttpStatus.BAD_REQUEST,
+        `ChatSockets => handleJoinRoomTesting()`,
+      );
     }
   }
 
-  @SubscribeMessage('getRooms')
-  getRooms(client: Socket) {
-    console.log(client.rooms);
-    this.io.emit('serverMessage', { rooms: [...client.rooms] });
+  // @UseGuards(UserAuthGuard)
+  @SubscribeMessage('joinRoomTesting')
+  async handleJoinRoomTesting(
+    @ConnectedSocket() socket: Socket,
+    @Body() body: any,
+  ) {
+    // console.log(que); //idk why i cant get query parameters
+    try {
+      const user: User = await this.userService.findOne(body[0].userId);
+      console.log(user.nickName);
+      const chatChannel = await this.chatChannelService.findOne(
+        body[0].chatChannelId,
+      );
+      const roomName = `chatChannel/${chatChannel.id}`;
+
+      console.log(chatChannel);
+
+      Logger.log(
+        `User ${user.nickName} joined room [${roomName}]`,
+        `ChatSocketsGateway => handleJoinRoomTesting()`,
+      );
+      Logger.log(
+        `chatChannelType = [${chatChannel.chatType} ${
+          chatChannel.chatType === ChatType.GROUP_MESSAGE
+            ? '|' + chatChannel.name
+            : ''
+        }] (ChatChannelId:${chatChannel.id})`,
+        `ChatSocketsGateway => handleJoinRoomTesting()`,
+      );
+
+      socket.join(roomName);
+    } catch (error) {
+      throw new CustomWSException(
+        error.message,
+        HttpStatus.BAD_REQUEST,
+        `ChatSockets => handleJoinRoomTesting()`,
+      );
+    }
+  }
+
+  @UseGuards(UserAuthGuard)
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(
+    @Req() req: any,
+    // client: Socket,
+    @Body() body: ChatMessage,
+    // @Body('message') message: string,
+    // @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+  ) {
+    const userId = req.user.id;
+    const message = body.message;
+    const chatChannelId = body.chatChannelId;
+    const roomName = `chatChannel/${chatChannelId}`;
+
+    console.log(`send ${message} to room = ${roomName}`);
+    this.io.in(`chatChannel/${chatChannelId}`).emit('chatMessage', message);
+
+    //save message
+    await this.chatLineService.create(
+      message,
+      chatChannelId,
+      await this.userService.findOne(userId),
+    );
   }
 
   // @UseGuards(UserAuthGuard)
-  @SubscribeMessage('sendMessage')
+  @SubscribeMessage('sendMessageTesting')
   async handleSendMessageTesting(
     // client: Socket,
     @Body() body: any,
@@ -136,5 +209,11 @@ export class ChatSocketsGateway
       chatChannelId,
       await this.userService.findOne(userId),
     );
+  }
+
+  @SubscribeMessage('getRooms')
+  getRooms(client: Socket) {
+    console.log(client.rooms);
+    this.io.emit('serverMessage', { rooms: [...client.rooms] });
   }
 }

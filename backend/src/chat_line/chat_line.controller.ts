@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ChatLineService } from './chat_line.service';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
@@ -17,13 +18,16 @@ import { Logger } from '@nestjs/common';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/user/entities/user.entity';
+import { ChatChannel } from 'src/chat_channels/entities/chat_channel.entity';
 
 @Controller('chat-line')
-@UseGuards(UserAuthGuard)
 export class ChatLineController {
   constructor(private readonly chatLineService: ChatLineService) {}
 
+  private readonly logger = new Logger(ChatLineController.name);
+
   @Post()
+  @UseGuards(UserAuthGuard)
   async create(@Body() body: any, @Req() req: any) {
     const channel_id: number = parseInt(body.channelId);
     const text: string = body.text;
@@ -55,12 +59,35 @@ export class ChatLineController {
     }
   }
 
+  @Get('/getNextChatLines/:chatChannelId')
+  @UseGuards(UserAuthGuard)
+  async getNextChatLines(
+    @Param('chatChannelId', ParseIntPipe) chatChannelId: number,
+    @Query('chatLineOffset', ParseIntPipe) chatLineOffset: number,
+  ) {
+    // this.logger.debug(
+    //   `Trying to get next ${chatLineOffset} amount of chat_line with chat ChatChannelId = [${chatChannelId}]`,
+    // );
+
+    Logger.log(
+      `Trying to get next ${chatLineOffset} amount of chat_line with chat ChatChannelId = [${chatChannelId}]`,
+      'ChatLine => getNextChatLines()',
+    );
+
+    return await this.chatLineService.getNextChatLines(
+      chatChannelId,
+      chatLineOffset,
+    );
+  }
+
   @Get()
+  @UseGuards(UserAuthGuard)
   async findAll() {
     return await this.chatLineService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(UserAuthGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const chat_line = await this.chatLineService.findOne(id);
 
@@ -73,6 +100,7 @@ export class ChatLineController {
   }
 
   @Patch(':id')
+  @UseGuards(UserAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateChatLineDto: UpdateChatLineDto,
@@ -81,6 +109,7 @@ export class ChatLineController {
   }
 
   @Delete(':id')
+  @UseGuards(UserAuthGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.chatLineService.remove(id);
   }
