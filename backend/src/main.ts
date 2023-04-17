@@ -5,9 +5,12 @@ import {
   CustomExceptionFilter,
   CustomWSExceptionFilter,
 } from './utils/app.exception-filter';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // To be passed to custom socketIO adapter
+  // const configService = app.get(ConfigService);
   app.enableCors({
     origin: ['http://localhost:8080'],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
@@ -29,7 +32,12 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomExceptionFilter());
   //adds a global filter so that Catch(CustomWSException) doesnt need to be called everywhere
   app.useGlobalFilters(new CustomWSExceptionFilter());
+  // prune unnecessary data fields from dto when using validators
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
+  // Commented out for the time being
+  // Custom socketIO adapter for custom cors on all websockets
+  // app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
   await app.listen(3000);
 }
 bootstrap();

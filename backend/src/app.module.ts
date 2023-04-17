@@ -19,10 +19,9 @@ import { QueueModule } from './queue/queue.module';
 import { GameStateModule } from './game_state/gameState.module';
 import { GameStreamModule } from './game_stream/game_stream.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { GameStreamGateway } from './game_stream/game_stream.gateway';
-import { QueueGateway } from './queue/queue.gateway';
 import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
 import { ChatSocketsModule } from './chat-sockets/chat-sockets.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -61,6 +60,7 @@ import { ChatSocketsModule } from './chat-sockets/chat-sockets.module';
     ScheduleModule.forRoot(),
     ChatChannelMemberModule,
     ChatSocketsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
