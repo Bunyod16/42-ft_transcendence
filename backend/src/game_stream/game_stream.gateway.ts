@@ -65,7 +65,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     }
   }
 
-  async end_game(match: Match) {
+  async endGame(match: Match) {
     const game = await this.gameStateService.getGame(match.id);
     await this.server.to(`${match.id}`).emit('gameEnded', game);
     await this.matchService.updateGameEnded(match.id, match);

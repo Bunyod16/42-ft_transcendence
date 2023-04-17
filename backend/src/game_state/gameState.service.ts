@@ -90,17 +90,37 @@ export class GameStateService {
 
   bounceRacket(gameState: GameState) {
     if (
-      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 30 &&
-      gameState.ballProperties.y <= gameState.playerTwo.y + racketSize.y / 2 &&
-      gameState.ballProperties.y >= gameState.playerTwo.y - racketSize.y / 2
+      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 20 &&
+      gameState.ballProperties.x >= (planeSize.x / 2) * -1 + 10 &&
+      gameState.ballProperties.y <= gameState.playerTwo.y + racketSize.y / 2 + 10 &&
+      gameState.ballProperties.y >= gameState.playerTwo.y - racketSize.y / 2 - 10
     ) {
+      if (
+        gameState.ballProperties.y >=
+          gameState.playerTwo.y + racketSize.y / 16 ||
+        gameState.ballProperties.y <= gameState.playerTwo.y - racketSize.y / 16
+      ) {
+        gameState.ballProperties.dy *= -1;
+      } else {
+        gameState.ballProperties.x = (planeSize.x / 2) * -1 + 20;
+      }
       gameState.ballProperties.dx *= -1;
     }
     if (
-      gameState.ballProperties.x >= planeSize.x / 2 - 30 &&
-      gameState.ballProperties.y <= gameState.playerOne.y + racketSize.y / 2 &&
-      gameState.ballProperties.y >= gameState.playerOne.y - racketSize.y / 2
+      gameState.ballProperties.x >= planeSize.x / 2 - 20 &&
+      gameState.ballProperties.x <= planeSize.x / 2 - 10 &&
+      gameState.ballProperties.y <= gameState.playerOne.y + racketSize.y / 2 + 10 &&
+      gameState.ballProperties.y >= gameState.playerOne.y - racketSize.y / 2 - 10
     ) {
+      if (
+        gameState.ballProperties.y >=
+          gameState.playerOne.y + racketSize.y / 16 ||
+        gameState.ballProperties.y <= gameState.playerTwo.y - racketSize.y / 16
+      ) {
+        gameState.ballProperties.dy *= -1;
+      } else {
+        gameState.ballProperties.x = planeSize.x / 2 - 20;
+      }
       gameState.ballProperties.dx *= -1;
     }
 
@@ -157,6 +177,7 @@ export class GameStateService {
   bounceBall(gameState: GameState) {
     var updatedGameState = this.bounceRacket(gameState);
     updatedGameState = this.checkBallOutOfBounds(gameState);
+
     if (
       updatedGameState.ballProperties.y >= planeSize.y / 2 ||
       updatedGameState.ballProperties.y <= (planeSize.y / 2) * -1
