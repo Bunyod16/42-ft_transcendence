@@ -27,7 +27,7 @@ export class ContentController {
     }
     )
   )
-	uploadFile(
+	async uploadFile(
     @Req() req: RequestWithUser,
     @Body() body: Request,
     @UploadedFile(
@@ -38,15 +38,16 @@ export class ContentController {
       ],
       errorHttpStatusCode: HttpStatus.BAD_REQUEST
     })
-  ) file: Express.Multer.File): string {
+  ) file: Express.Multer.File) {
     this.logger.log(`Saving avatar for user ${req.user.nickName} to ${file.destination}`);
     const dateObj = new Date();
     const dateSuffix = dateObj.getFullYear() + dateObj.getMonth() + dateObj.getDay();
     const filename = dateSuffix + '-' + req.user.nickName + '.' + file.originalname.split('.').pop();
 
-    this.userService.update(req.user.id, {
+    await this.userService.update(req.user.id, {
       avatar: filename
     });
+
     return "File successfully uploaded";
 	}
 }
