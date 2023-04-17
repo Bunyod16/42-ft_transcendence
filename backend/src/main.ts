@@ -2,9 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CustomExceptionFilter } from './utils/app.exception-filter';
+import { SocketIOAdapter } from './socket_io_adapter/socket-io-adapter';
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // To be passed to custom socketIO adapter
+  // const configService = app.get(ConfigService);
   app.enableCors({
     origin: ['http://localhost:8080'],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
@@ -25,6 +31,12 @@ async function bootstrap() {
   //adds a global filter so that Catch(CustomException) doesnt need to be called everywhere
   app.useGlobalFilters(new CustomExceptionFilter());
 
+  // prune unnecessary data fields from dto when using validators
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true}));
+
+  // Commented out for the time being
+  // Custom socketIO adapter for custom cors on all websockets
+  // app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
   await app.listen(3000);
 }
 bootstrap();
