@@ -41,9 +41,9 @@ export class SocketIOAdapter extends IoAdapter {
 
     // Socket.io middleware
     // middleware must be namespaced if gateway is namespaced!
-    server.of('chat').use(createSocketTokenAuthMiddleware(jwtService, this.logger));
+    // server.of('chat').use(createSocketTokenAuthMiddleware(jwtService, this.logger));
     // line below for game-stream since it has no defined namespace
-    // server.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
+    server.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
 
     return server;
 	}
@@ -60,8 +60,8 @@ async (socket: SocketWithAuthData, next) => {
   logger.debug(`Validating token before connection: ${token}`)
 
   try {
-    const payload = await jwtAccessService.verifyAccessToken(token);
-    socket.userId = payload.id;
+    const user = await jwtAccessService.verifyAccessToken(token);
+    socket.user = user;
     next();
   }
   catch {
