@@ -69,6 +69,20 @@ export class FriendRequestController {
     return friendRequest;
   }
 
+  @UseGuards(UserAuthGuard)
+  @Get('/findUserFriends')
+  async findUserFriends(@Req() req: any) {
+    const userId = req.user.id;
+    const friends = await this.friendRequestService.findUserFriends(userId);
+
+    Logger.log(
+      `Trying to get all friends for user with with id = [${userId}]`,
+      'FriendStatus => findUserFriends()',
+    );
+
+    return friends;
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const friendRequest = await this.friendRequestService.findOne(id);
@@ -81,8 +95,8 @@ export class FriendRequestController {
     return friendRequest;
   }
 
-  @Get(':userId/findUserFriends')
-  async findUserFriends(@Param('userId', ParseIntPipe) userId: number) {
+  @Get(':userId/findUserFriendsTesting')
+  async findUserFriendsTesting(@Param('userId', ParseIntPipe) userId: number) {
     const friends = await this.friendRequestService.findUserFriends(userId);
 
     return friends;

@@ -59,7 +59,8 @@ export class ChatLineService {
       .orderBy('chatLine.createdAt', 'DESC')
       .offset(chatLineOffset)
       .limit(5)
-      .select('chatLine')
+      .select(['chatLine', 'user.nickName', 'user.id'])
+      .leftJoin('chatLine.sender', 'user')
       .getMany();
 
     if (chatLine === null) {

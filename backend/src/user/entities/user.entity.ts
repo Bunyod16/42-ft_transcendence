@@ -59,7 +59,8 @@ export class User {
   @JoinColumn({ name: 'responder' })
   responses: FriendRequest[];
 
-  @Column({ nullable: true })
+  //hide this when querying
+  @Column({ nullable: true, select: false })
   @Exclude()
   public currentHashedRefreshToken?: string;
 
