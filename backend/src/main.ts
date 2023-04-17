@@ -6,11 +6,13 @@ import {
   CustomWSExceptionFilter,
 } from './utils/app.exception-filter';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SocketIOAdapter } from './socket_io_adapter/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // To be passed to custom socketIO adapter
-  // const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService);
   app.enableCors({
     origin: ['http://localhost:8080'],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
@@ -37,7 +39,7 @@ async function bootstrap() {
 
   // Commented out for the time being
   // Custom socketIO adapter for custom cors on all websockets
-  // app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
+  app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
   await app.listen(3000);
 }
 bootstrap();

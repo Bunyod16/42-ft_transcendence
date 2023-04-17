@@ -20,32 +20,32 @@ import { parse } from 'cookie';
 import { exec } from 'child_process';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
-export class AuthGateway implements OnGatewayConnection, OnModuleInit {
+export class AuthGateway {
   @WebSocketServer()
   server: Server;
 
-  init: boolean = false;
+  // init: boolean = false;
 
   constructor(private readonly jwtAccessService: JwtAccessService) {}
 
-  onModuleInit() {}
-  async handleConnection(socket: Socket) {
-    if (this.init) return;
-
-    await this.server.use(async (socket, next) => {
-      console.log('socket connected, authenticating it');
-      try {
-        const cookie = parse(socket.handshake.headers.cookie);
-        const user = await this.jwtAccessService.verifyAccessToken(
-          cookie.Authentication,
-        );
-        socket.data.user = user;
-        next();
-      } catch (error) {
-        next(new Error('fuck off'));
-      }
-    });
-
-    this.init = true;
-  }
+  // onModuleInit() {}
+  // async handleConnection(socket: Socket) {
+  //   // if (this.init) return;
+  //   //
+  //   // await this.server.use(async (socket, next) => {
+  //   //   console.log('socket connected, authenticating it');
+  //   //   try {
+  //   //     const cookie = parse(socket.handshake.headers.cookie);
+  //   //     const user = await this.jwtAccessService.verifyAccessToken(
+  //   //       cookie.Authentication,
+  //   //     );
+  //   //     socket.data.user = user;
+  //   //     next();
+  //   //   } catch (error) {
+  //   //     next(new Error('fuck off'));
+  //   //   }
+  //   // });
+  //   //
+  //   // this.init = true;
+  // }
 }

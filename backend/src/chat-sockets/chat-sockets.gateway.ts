@@ -32,6 +32,7 @@ import {
   CustomWSExceptionFilter,
 } from 'src/utils/app.exception-filter';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
 class ChatMessage {
   @IsNotEmpty()
@@ -63,18 +64,19 @@ export class ChatSocketsGateway
   ) {}
 
   afterInit() {
-    Logger.debug('chatSocket has been initialized');
+    Logger.log('chatSocket has been initialized');
   }
 
-  @UseGuards(UserAuthGuard)
-  handleConnection(client: Socket) {
+  // @UseGuards(UserAuthGuard)
+  handleConnection(client: SocketWithAuthData) {
+    console.log(client.user);
     console.log(`Amount of clients connected = ${this.io.sockets.size}`);
     console.log(`client with id = ${client.id} connected to chatSocket`);
     this.io.emit('connected');
   }
 
-  @UseGuards(UserAuthGuard)
-  handleDisconnect(client: Socket) {
+  // @UseGuards(UserAuthGuard)
+  handleDisconnect(client: SocketWithAuthData) {
     console.log(`Amount of clients connected = ${this.io.sockets.size}`);
     console.log(`client with id = ${client.id} disconnected to chatSocket`);
     this.io.emit('connected');
@@ -87,7 +89,7 @@ export class ChatSocketsGateway
   @UseGuards(UserAuthGuard)
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: SocketWithAuthData,
     @Req() req: any,
     @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {

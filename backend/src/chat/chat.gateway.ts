@@ -1,11 +1,20 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, ConnectedSocket } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayInit,
+  OnGatewayDisconnect,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 // import { CreateChatDto } from './dto/create-chat.dto';
 // import { UpdateChatDto } from './dto/update-chat.dto';
-import { Logger, } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Server, Namespace } from 'socket.io';
 import { ChatLineService } from 'src/chat_line/chat_line.service';
 import { User } from 'src/user/entities/user.entity';
-import { SocketWithAuthData } from 'src/utils/types';
+import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { UserService } from '../user/user.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 
@@ -22,15 +31,16 @@ import { CreateChatDto } from './dto/create-chat.dto';
   //   ]
   // },
 })
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   private readonly logger = new Logger(ChatGateway.name);
   private connectedUsers: User[];
 
   constructor(
     private chatLineService: ChatLineService,
-    private userService: UserService
-    ) {
+    private userService: UserService,
+  ) {
     this.connectedUsers = [];
   }
 
@@ -43,36 +53,43 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   async handleConnection(client: SocketWithAuthData) {
     const sockets = this.server.sockets;
-    const user = await this.userService.findOne(client.userId);
+    const user = await this.userService.findOne(client.user.id);
 
-    this.connectedUsers = [
-      ...this.connectedUsers,
-      user
-    ]
+    this.connectedUsers = [...this.connectedUsers, user];
 
-    this.logger.log(`User ${user.nickName}(id:${user.id}) with socket client id: ${client.id} has connected`);
+    this.logger.log(
+      `User ${user.nickName}(id:${user.id}) with socket client id: ${client.id} has connected`,
+    );
     this.logger.debug(`Number of currently connected sockets: ${sockets.size}`);
   }
 
   async handleDisconnect(client: SocketWithAuthData) {
     const sockets = this.server.sockets;
-    const user = await this.userService.findOne(client.userId);
+    const user = await this.userService.findOne(client.user.id);
 
-    this.connectedUsers = this.connectedUsers.filter(connectedUser => connectedUser.id != user.id);
-    this.logger.log(`User ${user.nickName}(id:${user.id}) with socket client id: ${client.id} has connected`);
+    this.connectedUsers = this.connectedUsers.filter(
+      (connectedUser) => connectedUser.id != user.id,
+    );
+    this.logger.log(
+      `User ${user.nickName}(id:${user.id}) with socket client id: ${client.id} has connected`,
+    );
     this.logger.debug(`Number of remaining connected sockets: ${sockets.size}`);
   }
 
   @SubscribeMessage('message')
   async message(
     @MessageBody() createChatDto: CreateChatDto,
-    @ConnectedSocket() client: SocketWithAuthData
-    ) {
-    const user = await this.userService.findOne(client.userId);
-    await this.chatLineService.create(createChatDto.message, createChatDto.channelId, user);
+    @ConnectedSocket() client: SocketWithAuthData,
+  ) {
+    const user = await this.userService.findOne(client.user.id);
+    await this.chatLineService.create(
+      createChatDto.message,
+      createChatDto.channelId,
+      user,
+    );
     this.server.to(createChatDto.channelId.toString()).emit('message', {
       user: user.nickName,
-      message: createChatDto.message
+      message: createChatDto.message,
     });
   }
 
@@ -83,7 +100,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   // @SubscribeMessage('findOneChat')
   // findOne(@MessageBody() id: number) {
-    // return this.chatService.findOne(id);
+  // return this.chatService.findOne(id);
   // }
 
   // @SubscribeMessage('updateChat')
@@ -93,6 +110,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   // @SubscribeMessage('removeChat')
   // remove(@MessageBody() id: number) {
-    // return this.chatService.remove(id);
+  // return this.chatService.remove(id);
   // }
 }
