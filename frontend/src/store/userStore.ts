@@ -1,18 +1,28 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface UserState {
+type States = "Matching" | "Idle";
+
+type Views = "Lobby" | "Game" | "Profile" | "Settings";
+
+interface UserStore {
   isLoggedIn: boolean;
   name: string;
+  state: States;
+  view: Views;
   login: (name: string) => void;
   logout: () => void;
+  updateState: (state: States) => void;
+  updateView: (view: Views) => void;
 }
 
-const useUserStore = create<UserState>()(
+const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       isLoggedIn: false,
       name: "",
+      state: "Idle",
+      view: "Lobby",
       // Persist state to localStorage
       // This will allow the state to be restored even if the user leaves the site
       // or refreshes the page
@@ -23,7 +33,6 @@ const useUserStore = create<UserState>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-
       login: (name: string) => {
         set(() => ({
           isLoggedIn: true,
@@ -34,8 +43,15 @@ const useUserStore = create<UserState>()(
         set(() => ({
           isLoggedIn: false,
           name: "",
-          email: "",
         }));
+      },
+      updateState: (state: States) => {
+        set(() => ({
+          state,
+        }));
+      },
+      updateView: (view: Views) => {
+        set(() => ({ view }));
       },
     }),
     {

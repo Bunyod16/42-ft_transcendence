@@ -4,8 +4,8 @@ import { UpdateMatchDto } from './dto/update-match.dto';
 import { DeleteResult, IsNull, Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
+import { GameStateService } from 'src/game_state/gameState.service';
 import { CustomException } from 'src/utils/app.exception-filter';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class MatchService {
   constructor(
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
-    private readonly userService: UserService,
+    private gameStateService: GameStateService,
   ) {}
 
   async create(
@@ -22,20 +22,51 @@ export class MatchService {
     return this.matchRepository.save(createMatchDto);
   }
 
-  async create_with_id(userId1: number, userId2: number) {
-    const user1: User = await this.userService.findOne(userId1);
-    const user2: User = await this.userService.findOne(userId2);
-
-    console.log(`user1.id = ${user1.id}`);
-    console.log(`user2.id = ${user2.id}`);
-
-    if (user1 && user2) {
-      const newMatch = new CreateMatchDto();
-      newMatch.playerOne = user1;
-      newMatch.playerTwo = user2;
-      return this.matchRepository.save(newMatch);
+  async create_with_user(userOne: User, userTwo: User) {
+    if (!userOne || !userTwo) {
+      throw new HttpException(
+        "One of the users doesn't exist",
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    //throw some error
+    const userOneCheck = await this.findCurrentByUser(userOne);
+    const userTwoCheck = await this.findCurrentByUser(userTwo);
+    if (userOneCheck || userTwoCheck) {
+      throw new HttpException(
+        "One or both of the users is already in a match",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const newMatch = new CreateMatchDto();
+    newMatch.playerOne = userOne;
+    newMatch.playerTwo = userTwo;
+    newMatch.isPrivate = false;
+    await this.matchRepository.save(newMatch); // TODO: only create if match does not exist?
+    const match = await this.findCurrentByUser(userOne);
+    await this.gameStateService.createGameIfNotExist(
+      match.id,
+      userOne.id,
+      userTwo.id,
+    );
+    return match;
+  }
+
+  async findAllCurrent(): Promise<Match[]> {
+    return await this.matchRepository
+      .createQueryBuilder('Match')
+      .where([
+        { endedAt: IsNull()},
+      ])
+      .select([
+        'Match',
+        'playerOne.id',
+        'playerOne.nickName',
+        'playerTwo.id',
+        'playerTwo.nickName',
+      ])
+      .leftJoin('Match.playerOne', 'playerOne')
+      .leftJoin('Match.playerTwo', 'playerTwo')
+      .getMany();
   }
 
   async findAll(): Promise<Match[]> {
@@ -55,7 +86,7 @@ export class MatchService {
     // });
   }
 
-  async findCurrentByUser(user: User): Promise<any> {
+  async findCurrentByUser(user: User): Promise<Match> {
     return await this.matchRepository
       .createQueryBuilder('Match')
       .where([
@@ -154,6 +185,7 @@ export class MatchService {
   }
 
   async updateGameEnded(id: number, updateMatchDto: UpdateMatchDto) {
+    updateMatchDto.endedAt = new Date();
     return this.matchRepository.update(id, updateMatchDto);
   }
 

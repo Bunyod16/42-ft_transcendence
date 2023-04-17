@@ -7,33 +7,69 @@ import useUserStore from "@/store/userStore";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
-// import axios from "axios";
+import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
+import { socket } from "../socket/socket";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
   const { name, isLoggedIn, logout, login } = useUserStore();
   const router = useRouter();
   const handleLogout = () => {
-    // axios
-    //   .post("/auth/log-out")
-    //   .then(() => logout())
-    //   .catch((err) => console.log(err));
+    axios
+      .post("/auth/log-out")
+      .then()
+      .catch((err) => console.log(err));
     logout();
   };
 
   React.useEffect(() => {
-    // axios
-    //   .get("auth/profile")
-    //   .then((res) => {
-    //     login(res.data.nickName);
-    //   })
-    //   .catch(() => {
-    //     router.push("/login");
-    //   });
-    login("falsy");
+    // login("not login");
+
+    function refreshToken() {
+      axios
+        .get("auth/refresh")
+        .then(() => {
+          console.log("refreshed token");
+          axios.get("auth/profile").then((res) => {
+            login(res.data.nickName);
+            socket.connect();
+          });
+        })
+        .catch(() => {
+          socket.disconnect();
+          logout();
+          router.push("/login");
+        });
+    }
+
+    axios
+      .get("auth/profile")
+      .then((res) => {
+        login(res.data.nickName);
+        console.log("user authenticated");
+        socket.connect();
+      })
+      .catch(() => {
+        refreshToken();
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
+
+  React.useEffect(() => {
+    function onConnect() {
+      console.log("Socket connected....");
+      socket.emit("authenticateUser");
+    }
+
+    socket.on("connect", onConnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+    };
+  }, []);
 
   if (!isLoggedIn) return <></>;
   return (
