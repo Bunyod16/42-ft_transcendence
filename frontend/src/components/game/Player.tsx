@@ -19,7 +19,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   // const body = useRef<RapierRigidBody>(null);
   console.log("player render");
   const body = useRef<Mesh>(null);
-  const { matchInfo } = useGameStore();
+  const matchInfo = useGameStore((state) => state.matchInfo);
   const lastEmit = useRef<number>(0);
   const gameState = useGameState();
 
