@@ -6,6 +6,7 @@ export interface ServerToClientEvents {
   queueEnterSuccess: () => void;
   updateGame: (data: unknown) => void;
   fuck: () => void;
+  gameEnded: (data: unknown) => void;
 }
 
 export interface ClientToServerEvents {
@@ -13,6 +14,7 @@ export interface ClientToServerEvents {
   queueEnter: () => void;
   queueLeave: () => void;
   userConnected: () => void;
+  userDisconnected: () => void;
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;

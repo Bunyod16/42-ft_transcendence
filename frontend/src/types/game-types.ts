@@ -24,4 +24,6 @@ export interface MatchInfo {
   gameId: string;
   playerOne: Player | undefined;
   playerTwo: Player | undefined;
+  playerOneScore?: number;
+  playerTwoScore?: number;
 }

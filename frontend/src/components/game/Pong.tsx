@@ -34,6 +34,7 @@ function Pong() {
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
+  const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
   const gameState = useRef<GameState>({
@@ -47,19 +48,37 @@ function Pong() {
     socket.emit("userConnected");
     console.log(matchInfo, name);
 
-    function onUpdateGame(data: any) {
-      gameState.current = {
-        playerOneState: data.playerOne,
-        playerTwoState: data.playerTwo,
-        ballProperties: data.ballProperties,
-        gameId: data.id,
-      };
+    // function onGameEnded() {
+    //   console.log("gameEnded");
+    // }
+
+    // socket.on("gameEnded", onGameEnded);
+
+    // function onUpdateGame(data: any) {
+    //   gameState.current = {
+    //     playerOneState: data.playerOne,
+    //     playerTwoState: data.playerTwo,
+    //     ballProperties: data.ballProperties,
+    //     gameId: data.id,
+    //   };
+    //   console.log("update game...");
+    // }
+
+    function onGameEnded(data: any) {
+      console.log("gameEnded");
+      setMatchInfo({
+        ...matchInfo,
+        playerOneScore: data.playerOneScore,
+        playerTwoScore: data.playerTwoScore,
+      });
     }
 
-    socket.on("updateGame", onUpdateGame);
+    // socket.on("updateGame", onUpdateGame);
+    socket.on("gameEnded", onGameEnded);
 
     return () => {
-      socket.off("updateGame", onUpdateGame);
+      // socket.off("updateGame", onUpdateGame);
+      socket.off("gameEnded", onGameEnded);
     };
   }, []);
 
