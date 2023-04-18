@@ -3,6 +3,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ContentController } from './content.controller';
 import { diskStorage } from 'multer';
 import { UserModule } from 'src/user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { UserModule } from 'src/user/user.module';
         }
       })
     }),
-    UserModule
+    UserModule,
+    ConfigModule
   ],
   controllers: [ContentController]
 })

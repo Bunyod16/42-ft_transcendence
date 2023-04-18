@@ -6,12 +6,16 @@ import { UserService } from 'src/user/user.service';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { User } from 'src/user/entities/user.entity';
 import * as fs from 'node:fs';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('content')
 export class ContentController {
   private readonly logger = new Logger(ContentController.name);
 
-  constructor(private userService: UserService){}
+  constructor(
+    private userService: UserService,
+    private configService: ConfigService
+  ){}
 
   @UseGuards(UserAuthGuard)
 	@Post('upload_avatar')
@@ -53,6 +57,11 @@ export class ContentController {
       avatar: filename
     });
 
-    return "File successfully uploaded";
+    const cdnURI = (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + (this.configService.get('CDN_PORT') || process.env.CDN_PORT) 
+
+    return {
+      message: "File successfully uploaded",
+      avatarURI: `${cdnURI}/$filename`
+    }
 	}
 }
