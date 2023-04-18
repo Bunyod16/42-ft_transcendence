@@ -3,29 +3,63 @@ import React from "react";
 import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
 import { Typography } from "@mui/material";
-import Navbar from "@/components/layout/Navbar";
-import Lobby from "@/components/Lobby";
-
+import axios from "axios";
+import { socket } from "@/components/socket/socket";
+import Login from "./login";
 export default function Home() {
-  const { isLoggedIn } = useUserStore();
+  const { isLoggedIn, logout, login } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   React.useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  if (!isHydrated) return <></>;
+  React.useEffect(() => {
+    // login("not login");
 
-  return (
-    <DefaultLayout>
-      {isLoggedIn ? (
-        <>
-          <Navbar sx={{}} />
-          <Typography>Welcome to RGM</Typography>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
-    </DefaultLayout>
-  );
+    function refreshToken() {
+      axios
+        .get("auth/refresh")
+        .then(() => {
+          console.log("refreshed token");
+          axios.get("auth/profile").then((res) => {
+            login(res.data.nickName, res.data.id);
+            socket.connect();
+          });
+        })
+        .catch(() => {
+          socket.disconnect();
+          logout();
+        });
+    }
+
+    axios
+      .get("auth/profile")
+      .then((res) => {
+        login(res.data.nickName, res.data.id);
+        console.log("user authenticated");
+        socket.connect();
+      })
+      .catch(() => {
+        refreshToken();
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
+
+  React.useEffect(() => {
+    function onConnect() {
+      console.log("Socket connected....");
+      socket.emit("authenticateUser");
+    }
+
+    socket.on("connect", onConnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+    };
+  }, []);
+
+  if (!isHydrated) return <></>;
+  return <>{isLoggedIn ? <DefaultLayout></DefaultLayout> : <Login />}</>;
 }

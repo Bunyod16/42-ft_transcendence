@@ -9,7 +9,7 @@ const StyleImage = {
   margin: "0 25px",
 };
 
-export default function FriendTab({
+export default function DirectChat({
   setPanel,
 }: {
   setPanel: React.Dispatch<React.SetStateAction<string>>;

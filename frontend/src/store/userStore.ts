@@ -7,10 +7,11 @@ type Views = "Lobby" | "Game" | "Profile" | "Settings";
 
 interface UserStore {
   isLoggedIn: boolean;
+  id: number | null;
   name: string;
   state: States;
   view: Views;
-  login: (name: string) => void;
+  login: (name: string, id: number) => void;
   logout: () => void;
   updateState: (state: States) => void;
   updateView: (view: Views) => void;
@@ -20,6 +21,7 @@ const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       isLoggedIn: false,
+      id: null,
       name: "",
       state: "Idle",
       view: "Lobby",
@@ -33,9 +35,10 @@ const useUserStore = create<UserStore>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-      login: (name: string) => {
+      login: (name: string, id: number) => {
         set(() => ({
           isLoggedIn: true,
+          id,
           name,
         }));
       },
@@ -43,6 +46,7 @@ const useUserStore = create<UserStore>()(
         set(() => ({
           isLoggedIn: false,
           name: "",
+          id: null,
         }));
       },
       updateState: (state: States) => {

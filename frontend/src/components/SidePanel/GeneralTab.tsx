@@ -4,8 +4,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from "@mui/material";
-import Channels from "./Channels";
-import Friends from "./Friends";
+import Channels from "./ChannelList";
+import Friends from "./FriendList";
 import { TabTypes } from "../SidePanel";
 interface generalTabProps {
   tabs: TabTypes;
