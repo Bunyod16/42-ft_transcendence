@@ -19,6 +19,7 @@ import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
 import { GameStream } from './entities/game_stream.entity';
 import { User } from 'src/user/entities/user.entity';
+import { GameState } from 'src/game_state/gameState.class';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
@@ -65,9 +66,11 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     }
   }
 
-  async endGame(match: Match) {
+  async endGame(match: Match, gameState: GameState) {
     const game = await this.gameStateService.getGame(match.id);
     await this.server.to(`${match.id}`).emit('gameEnded', game);
+    match.playerOneScore = gameState.playerOne.score;
+    match.playerTwoScore = gameState.playerTwo.score;
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     try {
@@ -95,7 +98,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
         moved_state.playerOne.score >= 5 ||
         moved_state.playerTwo.score >= 5
       ) {
-        this.endGame(match);
+        this.endGame(match, moved_state);
       }
       this.server.to(`${moved_state.id}`).emit('updateGame', moved_state);
     };
