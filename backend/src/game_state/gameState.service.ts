@@ -89,39 +89,41 @@ export class GameStateService {
   }
 
   bounceRacket(gameState: GameState) {
+    const playerOneRacketTop = gameState.playerOne.y + racketSize.y / 2;
+    const playerOneRacketBottom = gameState.playerOne.y - racketSize.y / 2;
+    const playerTwoRacketTop = gameState.playerTwo.y + racketSize.y / 2;
+    const playerTwoRacketBottom = gameState.playerTwo.y - racketSize.y / 2;
     if (
-      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 20 &&
-      gameState.ballProperties.x >= (planeSize.x / 2) * -1 + 10 &&
-      gameState.ballProperties.y <= gameState.playerTwo.y + racketSize.y / 2 + 10 &&
-      gameState.ballProperties.y >= gameState.playerTwo.y - racketSize.y / 2 - 10
+      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 20 && // if the ball is right infront of the racket
+      gameState.ballProperties.x >= (planeSize.x / 2) * -1 + 10 && // ^
+      gameState.ballProperties.y <= playerTwoRacketTop + 10 && // ball below the top of the racket
+      gameState.ballProperties.y >= playerTwoRacketBottom - 10 // ball above the racket
     ) {
       if (
-        gameState.ballProperties.y >=
-          gameState.playerTwo.y + racketSize.y / 16 ||
-        gameState.ballProperties.y <= gameState.playerTwo.y - racketSize.y / 16
+        gameState.ballProperties.y >= playerTwoRacketTop - 10 ||
+        gameState.ballProperties.y <= playerTwoRacketBottom + 10 // the ball is on the edge
       ) {
-        gameState.ballProperties.dy *= -1;
+        gameState.ballProperties.dy *= -1; // flip the y
       } else {
-        gameState.ballProperties.x = (planeSize.x / 2) * -1 + 20;
+        gameState.ballProperties.x = (planeSize.x / 2) * -1 + 20; // this is to stop the bug where the ball gets stuck bouncing "inside" the racket
       }
-      gameState.ballProperties.dx *= -1;
+      gameState.ballProperties.dx *= -1; // flip x regardless
     }
     if (
-      gameState.ballProperties.x >= planeSize.x / 2 - 20 &&
-      gameState.ballProperties.x <= planeSize.x / 2 - 10 &&
-      gameState.ballProperties.y <= gameState.playerOne.y + racketSize.y / 2 + 10 &&
-      gameState.ballProperties.y >= gameState.playerOne.y - racketSize.y / 2 - 10
+      gameState.ballProperties.x >= planeSize.x / 2 - 20 && // if the ball is right infront of the racket
+      gameState.ballProperties.x <= planeSize.x / 2 - 10 && // ^
+      gameState.ballProperties.y <= playerOneRacketTop + 10 && // ball below the top of the racket
+      gameState.ballProperties.y >= playerOneRacketBottom - 10 // ball above the top of the racket
     ) {
       if (
-        gameState.ballProperties.y >=
-          gameState.playerOne.y + racketSize.y / 16 ||
-        gameState.ballProperties.y <= gameState.playerTwo.y - racketSize.y / 16
+        gameState.ballProperties.y >= playerOneRacketTop - 10 ||
+        gameState.ballProperties.y <= playerOneRacketBottom + 10 // the ball is on the edge
       ) {
-        gameState.ballProperties.dy *= -1;
+        gameState.ballProperties.dy *= -1; // flip the y
       } else {
-        gameState.ballProperties.x = planeSize.x / 2 - 20;
+        gameState.ballProperties.x = planeSize.x / 2 - 20; // this is to stop the bug where the ball gets stuck bouncing "inside" the racket
       }
-      gameState.ballProperties.dx *= -1;
+      gameState.ballProperties.dx *= -1; // flip x regardless
     }
 
     return gameState;
