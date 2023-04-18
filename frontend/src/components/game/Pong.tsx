@@ -37,12 +37,6 @@ function Pong() {
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
-  const gameState = useRef<GameState>({
-    playerOneState: { y: 0, isConnected: false },
-    playerTwoState: { y: 0, isConnected: false },
-    ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
-    gameId: "",
-  });
 
   React.useEffect(() => {
     socket.emit("userConnected");
@@ -64,12 +58,12 @@ function Pong() {
     //   console.log("update game...");
     // }
 
-    function onGameEnded(data: any) {
+    function onGameEnded(data: GameState) {
       console.log("gameEnded");
       setMatchInfo({
         ...matchInfo,
-        playerOneScore: data.playerOneScore,
-        playerTwoScore: data.playerTwoScore,
+        playerOneScore: data.playerOne.score,
+        playerTwoScore: data.playerTwo.score,
       });
     }
 
@@ -90,14 +84,12 @@ function Pong() {
         tableSize={tableSize}
         playerLR={LEFT}
         isPlayer={matchInfo.playerOne?.nickName == name}
-        gameState={gameState.current}
       />
 
       <Player
         tableSize={tableSize}
         playerLR={RIGHT}
         isPlayer={matchInfo.playerTwo?.nickName == name}
-        gameState={gameState.current}
       />
 
       <Ball tableSize={tableSize} />

@@ -1,12 +1,14 @@
+import { GameState } from "@/types/game-types";
+
 export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   matchFound: (data: unknown) => void;
   queueEnterSuccess: () => void;
-  updateGame: (data: unknown) => void;
+  updateGame: (data: GameState) => void;
   fuck: () => void;
-  gameEnded: (data: unknown) => void;
+  gameEnded: (data: GameState) => void;
 }
 
 export interface ClientToServerEvents {

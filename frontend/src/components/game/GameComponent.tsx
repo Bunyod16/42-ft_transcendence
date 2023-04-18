@@ -5,6 +5,7 @@ import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Box, Button } from "@mui/material";
 import useUserStore from "@/store/userStore";
 import { socket } from "../socket/socket";
+import Score from "./Score";
 
 function GameComponent() {
   const { updateState } = useUserStore();
@@ -19,6 +20,7 @@ function GameComponent() {
       component={"div"}
       sx={{ width: "100vw", height: "100vh", position: "relative" }}
     >
+      <Score />
       <Button
         variant="contained"
         sx={{ position: "absolute", bottom: 0, zIndex: 100 }}

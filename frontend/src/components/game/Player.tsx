@@ -1,19 +1,17 @@
-import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { Controls, ISize } from "./types";
 import { boxGeometry, playerMaterial } from "./resource";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import React, { use, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import { Mesh } from "three";
-import { GameState } from "@/types/game-types";
+import useGameState from "@/hooks/useGameState";
 
 interface IPlayerProps {
   tableSize: ISize;
   playerLR: number;
   isPlayer: boolean;
-  gameState: GameState;
 }
 
 function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
@@ -23,33 +21,10 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const body = useRef<Mesh>(null);
   const { matchInfo } = useGameStore();
   const lastEmit = useRef<number>(0);
-  const gameState = useRef<GameState>({
-    playerOneState: { y: 0, isConnected: false },
-    playerTwoState: { y: 0, isConnected: false },
-    ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
-    gameId: "",
-  });
+  const gameState = useGameState();
 
   React.useEffect(() => {
     console.log("player rendered");
-  }, []);
-
-  useEffect(() => {
-    function onUpdateGame(data: any) {
-      gameState.current = {
-        playerOneState: data.playerOne,
-        playerTwoState: data.playerTwo,
-        ballProperties: data.ballProperties,
-        gameId: data.id,
-      };
-      console.log("update game...");
-    }
-
-    socket.on("updateGame", onUpdateGame);
-
-    return () => {
-      socket.off("updateGame", onUpdateGame);
-    };
   }, []);
 
   useFrame((state, delta) => {
@@ -66,20 +41,13 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       }
       const targetPosition =
         playerLR == 1
-          ? gameState.current.playerOneState.y
-          : gameState.current.playerTwoState.y;
+          ? gameState.current.playerOne.y
+          : gameState.current.playerTwo.y;
       body.current.position.y = targetPosition;
     }
   });
 
   return (
-    // <RigidBody
-    //   type="kinematicPosition"
-    //   ref={body}
-    //   position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
-    //   rotation={[Math.PI / 2, 0, 0]}
-    //   restitution={1}
-    // >
     <mesh
       ref={body}
       geometry={boxGeometry}
@@ -89,7 +57,6 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
     />
-    // </RigidBody>
   );
 }
 

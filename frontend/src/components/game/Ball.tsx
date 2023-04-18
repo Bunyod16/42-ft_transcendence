@@ -8,40 +8,16 @@ import { Mesh } from "three";
 import useGameStore from "@/store/gameStore";
 import { GameState } from "@/types/game-types";
 import { socket } from "../socket/socket";
+import useGameState from "@/hooks/useGameState";
 
 interface IBallProps {
   tableSize: ISize;
 }
 
 function Ball({ tableSize }: IBallProps) {
-  // const body = useRef<RapierRigidBody>(null);
   const body = useRef<Mesh>(null);
-  // const { gameState } = useGameStore();
 
-  const gameState = useRef<GameState>({
-    playerOneState: { y: 0, isConnected: false },
-    playerTwoState: { y: 0, isConnected: false },
-    ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
-    gameId: "",
-  });
-
-  useEffect(() => {
-    function onUpdateGame(data: any) {
-      gameState.current = {
-        playerOneState: data.playerOne,
-        playerTwoState: data.playerTwo,
-        ballProperties: data.ballProperties,
-        gameId: data.id,
-      };
-      console.log("update game...");
-    }
-
-    socket.on("updateGame", onUpdateGame);
-
-    return () => {
-      socket.off("updateGame", onUpdateGame);
-    };
-  }, []);
+  const gameState = useGameState();
 
   useFrame(() => {
     const x = gameState.current.ballProperties.x;

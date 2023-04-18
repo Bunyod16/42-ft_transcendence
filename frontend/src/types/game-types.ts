@@ -6,18 +6,18 @@ export interface Player {
 export interface PlayerState {
   y: number;
   isConnected: boolean;
+  score: number;
 }
 
 export interface GameState {
-  playerOneState: PlayerState;
-  playerTwoState: PlayerState;
+  playerOne: PlayerState;
+  playerTwo: PlayerState;
   ballProperties: {
     dy: number;
     dx: number;
     x: number;
     y: number;
   };
-  gameId: string;
 }
 
 export interface MatchInfo {
@@ -26,4 +26,5 @@ export interface MatchInfo {
   playerTwo: Player | undefined;
   playerOneScore?: number;
   playerTwoScore?: number;
+  gameStatus: "InGame" | "Ended" | "NoGame";
 }

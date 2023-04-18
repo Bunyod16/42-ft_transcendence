@@ -13,16 +13,16 @@ const useGameStore = create<GameStore>()((set) => ({
     playerOne: undefined,
     playerTwo: undefined,
     gameId: "",
+    gameStatus: "NoGame",
   },
   setMatchInfo: (matchInfo: MatchInfo) =>
     set(() => ({
       matchInfo,
     })),
   gameState: {
-    playerOneState: { y: 0, isConnected: false },
-    playerTwoState: { y: 0, isConnected: false },
+    playerOne: { y: 0, isConnected: false, score: 0 },
+    playerTwo: { y: 0, isConnected: false, score: 0 },
     ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
-    gameId: "",
   },
   setGameState: (state: GameState) =>
     set(() => ({
