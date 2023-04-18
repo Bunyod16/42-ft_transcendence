@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Param } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -8,7 +8,6 @@ import { FriendRequest, FriendStatus } from './entities/friend_request.entity';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
-import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
@@ -248,6 +247,39 @@ export class FriendRequestService {
     );
 
     return res;
+  }
+
+  async findUserBlockedFriends(id: number) {
+    const friends = await this.friendRequestRepository
+      .createQueryBuilder('friendRequest')
+      .select([
+        'friendRequest.id',
+        'friendRequest.createdAt',
+        'friendRequest.friendStatus',
+        'requester',
+        'responder',
+      ])
+      .leftJoin('friendRequest.requester', 'requester')
+      .leftJoin('friendRequest.responder', 'responder')
+      .where(
+        '(requester.id = :id OR responder.id = :id) AND friendRequest.friendStatus = :friendStatus',
+        { id: id, friendStatus: FriendStatus.BLOCKED },
+      )
+      .getMany();
+
+    //filtering out the requested and responder from the object to make it easier for front end
+    const filteredFriends = friends.map((friend) => {
+      const friendUser =
+        friend.requester.id === id ? friend.responder : friend.requester;
+      delete friend.responder;
+      delete friend.requester;
+      return {
+        friendRequest: friend,
+        friend: friendUser,
+      };
+    });
+
+    return filteredFriends;
   }
 
   async findUserFriendsWithDirectMessage(id: number) {

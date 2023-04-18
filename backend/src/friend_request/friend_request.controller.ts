@@ -121,7 +121,7 @@ export class FriendRequestController {
 
     Logger.log(
       `Trying to get all friendRequests for user with with id = [${userId}]`,
-      'FriendStatus => findUserFriends()',
+      'FriendStatus => findUserFriendRequests()',
     );
 
     return friends;
@@ -136,7 +136,22 @@ export class FriendRequestController {
 
     Logger.log(
       `Trying to get all pending request for user with with id = [${userId}]`,
-      'FriendStatus => findUserFriends()',
+      'FriendStatus => findUserPendingRequests()',
+    );
+
+    return pendingRequests;
+  }
+
+  @UseGuards(UserAuthGuard)
+  @Get('/findUserBlockedFriends')
+  async findUserBlockedFriends(@Req() req: any) {
+    const userId = req.user.id;
+    const pendingRequests =
+      await this.friendRequestService.findUserBlockedFriends(userId);
+
+    Logger.log(
+      `Trying to get all blocked request for user with with id = [${userId}]`,
+      'FriendStatus => findUserBlockedFriends()',
     );
 
     return pendingRequests;
