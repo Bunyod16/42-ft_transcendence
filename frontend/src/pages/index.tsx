@@ -6,6 +6,7 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "./login";
+
 export default function Home() {
   const { isLoggedIn, logout, login } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
@@ -13,7 +14,6 @@ export default function Home() {
   React.useEffect(() => {
     setIsHydrated(true);
   }, []);
-
   React.useEffect(() => {
     // login("not login");
 
