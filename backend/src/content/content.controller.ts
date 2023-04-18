@@ -28,7 +28,6 @@ export class ContentController {
   )
 	async uploadAvatar(
     @Req() req: RequestWithUser,
-    @Body() body: Request,
     @UploadedFile(
     new ParseFilePipe({
       validators: [
@@ -37,7 +36,8 @@ export class ContentController {
       ],
       errorHttpStatusCode: HttpStatus.BAD_REQUEST
     })
-  ) file: Express.Multer.File) {
+    )
+    file: Express.Multer.File) {
     const { user } = req;
 
     const filename = user.id + '-' + user.nickName + '.' + file.originalname.split('.').pop();
@@ -46,7 +46,7 @@ export class ContentController {
     const retUser: User = await this.userService.findOne(user.id);
 
     // if (retUser.avatar !== 'default-stormtrooper.png') {
-      // send request to delete user.avatar on cdn.
+    //   delete previous pp
     // }
 
     await this.userService.update(user.id, {
