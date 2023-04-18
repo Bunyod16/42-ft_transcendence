@@ -1,5 +1,4 @@
-import SidePanel from "@/components/SidePanel";
-
+import DefaultLayout from "@/components/layout/DefaultLayout";
 export default function side() {
-  return <SidePanel />;
+  return <DefaultLayout />;
 }

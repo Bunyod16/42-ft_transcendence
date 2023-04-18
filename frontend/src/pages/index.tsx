@@ -2,6 +2,8 @@ import React from "react";
 
 import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
+import { Typography } from "@mui/material";
+import Navbar from "@/components/layout/Navbar";
 import Lobby from "@/components/Lobby";
 
 export default function Home() {
@@ -16,7 +18,14 @@ export default function Home() {
 
   return (
     <DefaultLayout>
-      {isLoggedIn ? <Lobby /> : <div>Loading...</div>}
+      {isLoggedIn ? (
+        <>
+          <Navbar sx={{}} />
+          <Typography>Welcome to RGM</Typography>
+        </>
+      ) : (
+        <div>Loading...</div>
+      )}
     </DefaultLayout>
   );
 }
