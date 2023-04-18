@@ -38,6 +38,7 @@ services:
       ENV: ${DEV_ENV}
     volumes:
       - ./backend:/trancendence_nestjs
+      - /trancendence_nestjs/node_modules
     ports:
       - "3000:${DEV_NEST_LISTEN_PORT}"
     expose:
@@ -47,6 +48,7 @@ services:
   nextjs:
     volumes:
       - ./frontend:/trancendence_nextjs
+      - /trancendence_nestjs/node_modules
     entrypoint: ["npx", "next", "dev"]
 
 volumes:

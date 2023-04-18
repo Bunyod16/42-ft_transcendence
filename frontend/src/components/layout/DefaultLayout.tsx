@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
 import React from "react";
-import Navbar from "./Navbar";
+
+import SidePanel from "../SidePanel";
 
 interface IDefaultLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 // ! side panel should add to here too
@@ -12,15 +13,15 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
     <Box
       component={"div"}
       sx={{
-        height: "100vh",
-        width: "100vw",
+        height: "100%",
+        width: "100%",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
       }}
     >
       {/* sidepanel */}
-      <Navbar />
-      <Box component={"div"} sx={{ height: "100%", width: "100%", p: 4 }}>
+      <SidePanel sx={{ overflow: "hidden" }} />
+      <Box component={"div"} sx={{ width: "100%", height: "100%" }}>
         {children}
       </Box>
     </Box>

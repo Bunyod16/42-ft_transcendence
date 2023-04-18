@@ -1,13 +1,8 @@
-// import { Widgets } from "@mui/icons-material";
-import {
-  Box,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import React, { useState } from "react";
-import Channels from "./SidePanel/Channels";
-import Friends from "./SidePanel/Friends";
+import FriendTab from "./SidePanel/FriendTab";
+import GeneralTab from "./SidePanel/GeneralTab";
+
 /**
  * State to track
  * - Whether in chat room or not
@@ -15,55 +10,23 @@ import Friends from "./SidePanel/Friends";
  *    - if not in chat room display socials
  */
 
-interface SidePanelProps {
-  isChat?: boolean;
-}
+// interface SidePanelProps {
+//   isChat?: boolean;
+// }
 
-type TabTypes = "friends" | "channels";
+export type TabTypes = "friends" | "channels";
 
-export default function SidePanel() {
+export default function SidePanel(sx: SxProps) {
   const [tabs, setTabs] = useState<TabTypes>("friends");
+  const [panel, setPanel] = useState<string>("");
 
   return (
-    <Box sx={{ minWidth: "350px", width: "25%" }}>
-      <Box sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-        <Typography variant="h4" sx={{ mb: "12px" }}>
-          SOCIAL
-        </Typography>
-        <ToggleButtonGroup
-          value={tabs}
-          exclusive
-          onChange={(_event, value) => setTabs(value)}
-        >
-          <ToggleButton
-            sx={{ color: "#FEFEFE", border: "none" }}
-            value="friends"
-            disabled={tabs === "friends"}
-          >
-            FRIENDS
-          </ToggleButton>
-          <ToggleButton
-            sx={{ color: "#FEFEFE", border: "none" }}
-            value="channels"
-            disabled={tabs === "channels"}
-          >
-            CHANNELS
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: tabs === "channels" ? "end" : "start",
-          gap: "10px",
-          width: "100%",
-          height: "calc(100vh - 102px)",
-          border: "2px solid red",
-        }}
-      >
-        {tabs === "channels" ? <Channels /> : <Friends />}
-      </Box>
+    <Box component="div" sx={{ minWidth: "350px", width: "25%", ...sx }}>
+      {panel === "" ? (
+        <GeneralTab tabs={tabs} setTabs={setTabs} setPanel={setPanel} />
+      ) : (
+        <FriendTab setPanel={setPanel} />
+      )}
     </Box>
   );
 }
