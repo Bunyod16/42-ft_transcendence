@@ -15,7 +15,7 @@ import { ChatChannelMemberModule } from 'src/chat_channel_member/chat_channel_me
     ChatChannelsModule,
     UserModule,
     ChatLineModule,
-    ChatChannelMemberModule
+    ChatChannelMemberModule,
   ],
   providers: [ChatSocketsGateway, ChatSocketsService],
   exports: [ChatSocketsService],
