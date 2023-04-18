@@ -5,6 +5,7 @@ import { diskStorage } from 'multer';
 import { UserService } from 'src/user/user.service';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { User } from 'src/user/entities/user.entity';
+import * as fs from 'node:fs';
 
 @Controller('content')
 export class ContentController {
@@ -18,7 +19,12 @@ export class ContentController {
     FileInterceptor('avatar',
     {
       storage: diskStorage({
-        destination: 'avatars/',
+        destination: (req: RequestWithUser, file, cb) => {
+          if (req.user.avatar !== 'default-stormtrooper.png') {
+            fs.unlinkSync(`avatars/${req.user.avatar}`);
+          }
+          cb(null, 'avatars/')
+        },
         filename: (req: RequestWithUser, file: Express.Multer.File, callback) => {
           callback(null, req.user.id + '-' + req.user.nickName + '.' + file.originalname.split('.').pop());
         }
@@ -42,12 +48,6 @@ export class ContentController {
 
     const filename = user.id + '-' + user.nickName + '.' + file.originalname.split('.').pop();
     this.logger.log(`Saving avatar for user ${user.nickName} to ${file.destination} as ${filename}`);
-
-    const retUser: User = await this.userService.findOne(user.id);
-
-    // if (retUser.avatar !== 'default-stormtrooper.png') {
-    //   delete previous pp
-    // }
 
     await this.userService.update(user.id, {
       avatar: filename
