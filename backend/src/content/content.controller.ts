@@ -4,7 +4,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from 'src/user/user.service';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
-import { User } from 'src/user/entities/user.entity';
 import * as fs from 'node:fs';
 import { ConfigService } from '@nestjs/config';
 
@@ -25,7 +24,9 @@ export class ContentController {
       storage: diskStorage({
         destination: (req: RequestWithUser, file, cb) => {
           if (req.user.avatar !== 'default-stormtrooper.png') {
-            fs.unlinkSync(`avatars/${req.user.avatar}`);
+            const avatarFilename: string = `avatars/${req.user.avatar.split('/').pop()}`;
+            if (fs.existsSync(avatarFilename))
+              fs.unlinkSync(avatarFilename);
           }
           cb(null, 'avatars/')
         },
@@ -48,20 +49,20 @@ export class ContentController {
     })
     )
     file: Express.Multer.File) {
-    const { user } = req;
 
-    const filename = user.id + '-' + user.nickName + '.' + file.originalname.split('.').pop();
-    this.logger.log(`Saving avatar for user ${user.nickName} to ${file.destination} as ${filename}`);
+    const { user } = req;
+    const cdnURI: string = (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + ':' + (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
+    const avatarURL: string = `${cdnURI}/${file.filename}`;
+
+    this.logger.log(`Saving avatar for user ${user.nickName} to ${process.cwd()}/${file.destination} as ${file.filename}`);
 
     await this.userService.update(user.id, {
-      avatar: filename
+      avatar: avatarURL
     });
-
-    const cdnURI = (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + (this.configService.get('CDN_PORT') || process.env.CDN_PORT) 
 
     return {
       message: "File successfully uploaded",
-      avatarURI: `${cdnURI}/$filename`
+      avatarURI: avatarURL
     }
 	}
 }
