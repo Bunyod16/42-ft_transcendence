@@ -51,8 +51,10 @@ export class ContentController {
     file: Express.Multer.File) {
 
     const { user } = req;
-    const cdnURI: string = (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + ':' + (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
-    const avatarURL: string = `${cdnURI}/${file.filename}`;
+    const cdnURI: string =
+    (this.configService.get('CDN_DOMAIN_NAME') || process.env.CDN_DOMAIN_NAME)
+    || (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + ':' + (this.configService.get('CDN_PORT') || process.env.CDN_PORT)
+    const avatarURL: string = `${cdnURI}/avatar/${file.filename}`;
 
     this.logger.log(`Saving avatar for user ${user.nickName} to ${process.cwd()}/${file.destination} as ${file.filename}`);
 
