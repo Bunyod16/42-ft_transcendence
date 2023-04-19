@@ -45,7 +45,7 @@ export class ChatChannel {
 
   @ValidateIf((entity) => entity.channel_type === ChannelType.PROTECTED)
   @IsString()
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   password: string;
 
   @OneToMany(() => ChatLine, (chatLine) => chatLine.chatChannel)

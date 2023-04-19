@@ -123,7 +123,7 @@ export class ChatChannelMemberService {
     return chatChannelMember;
   }
 
-  async findAllUserDirectMessageChatChannel(userId: number) {
+  async findAllUsersChatChannelType(userId: number, chatType: ChatType) {
     const chatChannelMember = await this.chatChannelMemberRepository
       .createQueryBuilder('chatChannelMember')
       .select(['chatChannelMember', 'chatChannel'])
@@ -131,7 +131,7 @@ export class ChatChannelMemberService {
       .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
       .where('(user.id = :userId) AND (chatChannel.chatType = :chatType)', {
         userId: userId,
-        chatType: ChatType.DIRECT_MESSAGE,
+        chatType: chatType,
       })
       .getMany();
 
@@ -177,6 +177,44 @@ export class ChatChannelMemberService {
       return true;
     }
     return false;
+  }
+
+  async findUserChatWithFriend(userId: number, friendId: number) {
+    //check if both users exist
+    await this.userService.findOne(userId);
+    await this.userService.findOne(friendId);
+
+    const userDirectMessages = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember', 'chatChannel'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('chatChannel.id')
+          .from(ChatChannel, 'chatChannel')
+          .leftJoin('chatChannel.chatChannelMembers', 'chatChannelMember')
+          .leftJoin('chatChannelMember.user', 'user')
+          .where('chatChannel.chatType = :chatType AND user.id = :friendId', {
+            chatType: ChatType.DIRECT_MESSAGE,
+            friendId: friendId,
+          })
+          .getQuery();
+        return 'chatChannel.id IN ' + subQuery;
+      })
+      .andWhere('user.id = :userId', { userId: userId })
+      .getOne();
+
+    if (userDirectMessages === null) {
+      throw new CustomException(
+        `User with id = [${userId}] doesn't have chat with friend with id = ${friendId}`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => findUserChatWithFriend()',
+      );
+    }
+
+    return userDirectMessages;
   }
 
   async findAllUsersInChatChannel(chatChannelId: number) {

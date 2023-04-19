@@ -18,6 +18,7 @@ import { ChatChannelMemberService } from './chat_channel_member.service';
 import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { UserAuthGuard } from 'src/auth/auth.guard';
+import { ChatType } from 'src/chat_channels/entities/chat_channel.entity';
 
 @Controller('chat-channel-member')
 export class ChatChannelMemberController {
@@ -64,6 +65,42 @@ export class ChatChannelMemberController {
 
     Logger.log(
       `Trying to get ChatChannelMember with userId = [${userId}]`,
+      'ChatChannelMember => findAllUsersInChatChannel()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @UseGuards(UserAuthGuard)
+  @Get('/usersDirectMessages')
+  async findAllUsersDirectMessages(@Req() req: any) {
+    const userId = req.user.id;
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUsersChatChannelType(
+        userId,
+        ChatType.DIRECT_MESSAGE,
+      );
+
+    Logger.log(
+      `Trying to get all Users Direct Messages with userId = [${userId}]`,
+      'ChatChannelMember => findAllUsersInChatChannel()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @UseGuards(UserAuthGuard)
+  @Get('/usersGroupMessages')
+  async findAllUsersGroupMessages(@Req() req: any) {
+    const userId = req.user.id;
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUsersChatChannelType(
+        userId,
+        ChatType.GROUP_MESSAGE,
+      );
+
+    Logger.log(
+      `Trying to get Users Group Messages with userId = [${userId}]`,
       'ChatChannelMember => findAllUsersInChatChannel()',
     );
 
