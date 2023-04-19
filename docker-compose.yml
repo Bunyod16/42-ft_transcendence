@@ -29,6 +29,23 @@ services:
       retries: 3
     entrypoint: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
+  nginx:
+    container_name: nginx_cdn
+    image: nginx:alpine3.17
+    restart: unless-stopped
+    networks:
+      - ft_trancendence
+    expose:
+      - ${CDN_PORT}
+    ports:
+      - "7001:${CDN_PORT}"
+    environment:
+      CDN_PORT: ${CDN_PORT}
+      CDN_DOMAIN_NAME: ${CDN_DOMAIN_NAME}
+    configs:
+      - source: nginx_42trancendence_conf_template
+        target: /etc/nginx/templates/42trancendence_cdn.conf.template
+
   nestjs:
     container_name: backend
     image: 42-ft_transendence-nestjs
@@ -58,10 +75,12 @@ services:
       - ft_trancendence
 
 configs:
+  nginx_42trancendence_conf_template:
+    file: ./backend/nginx/conf/42trancendence_cdn.conf.template
   postgres_initsql:
-    file: ./backend/postgres/init.sh
+    file: ./backend/postgres/conf/init.sh
   redis_config:
-    file: ./backend/redis/redis.conf
+    file: ./backend/redis/conf/redis.conf
 
 networks:
   ft_trancendence:
