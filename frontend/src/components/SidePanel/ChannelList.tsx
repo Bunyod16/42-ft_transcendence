@@ -12,7 +12,7 @@ import ChatBox from "./ChatBox";
  * Need to add channel list on top
  */
 
-export default function Channels() {
+export default function ChannelList() {
   const [chats, setChats] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [channels, setChannels] = useState<string[]>([]);

@@ -119,7 +119,7 @@ function FriendBox({
   );
 }
 
-export default function Friends({
+export default function FriendList({
   setPanel,
 }: {
   setPanel: React.Dispatch<React.SetStateAction<string>>;
