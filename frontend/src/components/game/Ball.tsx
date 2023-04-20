@@ -1,13 +1,8 @@
-import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { ballMaterial, boxGeometry } from "./resource";
 import { ISize } from "./types";
-import { useEffect, useRef } from "react";
-import { button, useControls } from "leva";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
-import useGameStore from "@/store/gameStore";
-import { GameState } from "@/types/game-types";
-import { socket } from "../socket/socket";
 import useGameState from "@/hooks/useGameState";
 
 interface IBallProps {
@@ -20,8 +15,8 @@ function Ball({ tableSize }: IBallProps) {
   const gameState = useGameState();
 
   useFrame(() => {
-    const x = gameState.current.ballProperties.x;
-    const y = gameState.current.ballProperties.y;
+    const x = gameState.current.ballProperties.x / 100;
+    const y = gameState.current.ballProperties.y / 100;
 
     body.current?.position.set(x, y, body.current?.position.z);
   });

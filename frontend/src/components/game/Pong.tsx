@@ -30,7 +30,7 @@ function Table({ tableSize }: ITableProps) {
 
 // ! zustand save playerNumber
 function Pong() {
-  const tableSize = { x: 600, y: 20, z: 300 };
+  const tableSize = { x: 6, y: 0.2, z: 3 };
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
@@ -53,7 +53,7 @@ function Pong() {
     //     playerOneState: data.playerOne,
     //     playerTwoState: data.playerTwo,
     //     ballProperties: data.ballProperties,
-    //     gameId: data.id,
+    //     id: data.id,
     //   };
     //   console.log("update game...");
     // }
@@ -77,7 +77,7 @@ function Pong() {
   }, []);
 
   return (
-    <>
+    <group visible={matchInfo.gameStatus != "NoGame"}>
       <Table tableSize={tableSize} />
 
       <Player
@@ -93,7 +93,7 @@ function Pong() {
       />
 
       <Ball tableSize={tableSize} />
-    </>
+    </group>
   );
 }
 

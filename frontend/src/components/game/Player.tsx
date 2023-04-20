@@ -1,12 +1,12 @@
 import { Controls, ISize } from "./types";
 import { boxGeometry, playerMaterial } from "./resource";
-import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls } from "@react-three/drei";
-import React, { useRef } from "react";
-import { socket } from "../socket/socket";
-import useGameStore from "@/store/gameStore";
 import { Mesh } from "three";
+import { socket } from "../socket/socket";
+import { useFrame } from "@react-three/fiber";
 import useGameState from "@/hooks/useGameState";
+import useGameStore from "@/store/gameStore";
+import { useKeyboardControls } from "@react-three/drei";
+import { useEffect, useRef } from "react";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -23,7 +23,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const lastEmit = useRef<number>(0);
   const gameState = useGameState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log("player rendered");
   }, []);
 
@@ -36,14 +36,14 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
           lastEmit.current = 0;
           const event = keys.up ? "playerUp" : "playerDown";
           console.log(`emit [${event}]: `, gameState);
-          socket.emit(event, { gameId: matchInfo.gameId });
+          socket.emit(event, { id: matchInfo.id });
         }
       }
       const targetPosition =
         playerLR == 1
           ? gameState.current.playerOne.y
           : gameState.current.playerTwo.y;
-      body.current.position.y = targetPosition;
+      body.current.position.y = targetPosition / 100;
     }
   });
 
@@ -53,7 +53,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       geometry={boxGeometry}
       material={playerMaterial}
       scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
-      position={[playerLR * (tableSize.x / 2 - 10), 0, tableSize.y + 2]}
+      position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
     />
