@@ -5,7 +5,7 @@ import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Box, Button } from "@mui/material";
 import useUserStore from "@/store/userStore";
 import { socket } from "../socket/socket";
-import Score from "./Score";
+import Overlay from "./Overlay";
 
 function GameComponent() {
   const { updateState } = useUserStore();
@@ -20,14 +20,6 @@ function GameComponent() {
       component={"div"}
       sx={{ width: "100vw", height: "100vh", position: "relative" }}
     >
-      <Score />
-      <Button
-        variant="contained"
-        sx={{ position: "absolute", bottom: 0, zIndex: 100 }}
-        onClick={handleQuit}
-      >
-        Quit
-      </Button>
       <KeyboardControls
         map={[
           { name: "up", keys: ["ArrowUp", "KeyW"] },
@@ -38,18 +30,19 @@ function GameComponent() {
           // orthographic
           shadows
           camera={{
-            position: [0, -400, 100],
+            position: [0, -4, 2],
             // zoom: 200,
             // fov: 45,
             near: 0.1,
             far: 1000,
           }}
         >
-          <Perf position="top-left" />
+          <Perf position="bottom-left" />
 
           <Experience />
           <OrbitControls />
         </Canvas>
+        <Overlay />
       </KeyboardControls>
     </Box>
   );

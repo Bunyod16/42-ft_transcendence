@@ -1,13 +1,11 @@
-import { Debug, Physics } from "@react-three/rapier";
 import Pong from "./Pong";
+import VictoryDefeat from "./VictoryDefeat";
+import useGameStore from "@/store/gameStore";
+import { button, useControls } from "leva";
 
-function Experience() {
+function Lights() {
   return (
     <>
-      <color args={["#252731"]} attach="background" />
-
-      {/* <Physics gravity={[0, 0, 0]}> */}
-      {/* <Debug /> */}
       <directionalLight
         castShadow
         position={[3, 3, 1]}
@@ -21,10 +19,31 @@ function Experience() {
         shadow-camera-left={-10}
       />
       <ambientLight intensity={0.5} />
+    </>
+  );
+}
+function Experience() {
+  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+
+  useControls({
+    InGame: button(() => updateGameStatus("InGame")),
+    Ended: button(() => updateGameStatus("Ended")),
+    NoGame: button(() => updateGameStatus("NoGame")),
+  });
+  return (
+    <>
+      <color args={["#26333A"]} attach="background" />
+
+      {/* <Physics gravity={[0, 0, 0]}> */}
+      {/* <Debug /> */}
+      <Lights />
       <Pong />
+      <VictoryDefeat />
       {/* </Physics> */}
     </>
   );
 }
+
+// ! wip: show different stuffs on different game state
 
 export default Experience;

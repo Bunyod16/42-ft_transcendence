@@ -5,6 +5,7 @@ import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
 import { useRouter } from "next/router";
 import { MatchInfo } from "@/types/game-types";
+import GameComponent from "./game/GameComponent";
 
 const Lobby = () => {
   const { updateView } = useUserStore();
@@ -24,16 +25,15 @@ const Lobby = () => {
     setIsQueueing(false);
   };
 
-  function onMatchFound(data: any) {
+  function onMatchFound(data: MatchInfo) {
     alert("match found");
 
     const state: MatchInfo = {
       playerOne: data.playerOne,
       playerTwo: data.playerTwo,
-      gameId: data.id,
+      id: data.id,
     };
     setMatchInfo(state);
-    // updateState("InGame");
     updateView("Game");
     router.push("/game");
   }
@@ -76,6 +76,7 @@ const Lobby = () => {
           {isQueueing ? "Cancel" : "Quick Play"}
         </Button>
       </Grid>
+      {/* <GameComponent /> */}
     </Grid>
   );
 };
