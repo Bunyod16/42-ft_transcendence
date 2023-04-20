@@ -8,25 +8,15 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-
+import axios from "axios";
+import { io } from "socket.io-client";
 const inlineStyle = {
   width: "32px",
   height: "32px",
   borderRadius: "50px",
 };
-
-/**
- * Convert Friends list into array of =
- * {
- * img: .jpg,
- * username: string,
- * status: online | offline
- * }
- *
- * need to add dot icon, green = online | red = offline
- */
 
 const sampleData = [
   {
@@ -61,11 +51,27 @@ const sampleData = [
   },
 ];
 
+// not sure something.
+// data acpt from here, friend msg etc
+// socket.on("serverMessage", (data) => {
+//   data;
+// });
 function FriendBox({
   setPanel,
 }: {
   setPanel: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  /**
+   * useState to store friend;
+   */
+  // const socket = io();
+  function handleDirectMessage() {
+    // socket.emit("joinRoomDirectMessage", {
+    //   // have to check if id is me or not for resquester and responder
+    //   friendId: directMessage.id | friend.id,
+    // });
+  }
+
   return (
     <List
       sx={{
@@ -76,6 +82,7 @@ function FriendBox({
       }}
       aria-label="contacts"
     >
+      {/** map new friend state */}
       {sampleData.map((friend, index) => (
         <ListItem
           key={index}
@@ -112,7 +119,7 @@ function FriendBox({
   );
 }
 
-export default function Friends({
+export default function FriendList({
   setPanel,
 }: {
   setPanel: React.Dispatch<React.SetStateAction<string>>;

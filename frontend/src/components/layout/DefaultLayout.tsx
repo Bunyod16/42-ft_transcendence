@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
-
+import Navbar from "./Navbar";
 import SidePanel from "../SidePanel";
 
 interface IDefaultLayoutProps {
@@ -22,7 +22,8 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
       {/* sidepanel */}
       <SidePanel sx={{ overflow: "hidden" }} />
       <Box component={"div"} sx={{ width: "100%", height: "100%" }}>
-        {children}
+        <Navbar sx={{}} />
+        <Typography>You have logged in</Typography>
       </Box>
     </Box>
   );
