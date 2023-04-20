@@ -4,8 +4,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from "@mui/material";
-import Channels from "./Channels";
-import Friends from "./Friends";
+import ChannelList from "./ChannelList";
+import FriendList from "./FriendList";
 import { TabTypes } from "../SidePanel";
 interface generalTabProps {
   tabs: TabTypes;
@@ -60,7 +60,11 @@ export default function GeneralTab({
           border: "2px solid red",
         }}
       >
-        {tabs === "channels" ? <Channels /> : <Friends setPanel={setPanel} />}
+        {tabs === "channels" ? (
+          <ChannelList />
+        ) : (
+          <FriendList setPanel={setPanel} />
+        )}
       </Box>
     </>
   );

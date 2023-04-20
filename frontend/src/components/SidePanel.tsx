@@ -1,6 +1,6 @@
 import { Box, SxProps } from "@mui/material";
 import React, { useState } from "react";
-import FriendTab from "./SidePanel/FriendTab";
+import DirectChat from "./SidePanel/DirectChat";
 import GeneralTab from "./SidePanel/GeneralTab";
 
 /**
@@ -25,7 +25,7 @@ export default function SidePanel(sx: SxProps) {
       {panel === "" ? (
         <GeneralTab tabs={tabs} setTabs={setTabs} setPanel={setPanel} />
       ) : (
-        <FriendTab setPanel={setPanel} />
+        <DirectChat setPanel={setPanel} />
       )}
     </Box>
   );

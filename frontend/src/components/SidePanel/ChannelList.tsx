@@ -1,13 +1,5 @@
-import { useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material";
-
+import { useState, useEffect } from "react";
+import { Box, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import ChatBox from "./ChatBox";
 /**
  * Chat Data Array of =
@@ -20,7 +12,7 @@ import ChatBox from "./ChatBox";
  * Need to add channel list on top
  */
 
-export default function Channels() {
+export default function ChannelList() {
   const [chats, setChats] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [channels, setChannels] = useState<string[]>([]);
@@ -62,7 +54,6 @@ export default function Channels() {
       >
         <Button
           sx={{
-            color: "white",
             width: "100%",
             height: "56px",
             border: "2px solid #fefefe",
