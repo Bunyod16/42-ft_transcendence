@@ -1,10 +1,10 @@
-import { GameState } from "@/types/game-types";
+import { GameState, MatchInfo } from "@/types/game-types";
 
 export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
-  matchFound: (data: unknown) => void;
+  matchFound: (data: MatchInfo) => void;
   queueEnterSuccess: () => void;
   updateGame: (data: GameState) => void;
   fuck: () => void;
@@ -17,8 +17,8 @@ export interface ClientToServerEvents {
   queueLeave: () => void;
   userConnected: () => void;
   userDisconnected: () => void;
-  playerUp: (data: { gameId: string }) => void;
-  playerDown: (data: { gameId: string }) => void;
+  playerUp: (data: { id: string }) => void;
+  playerDown: (data: { id: string }) => void;
   leaveGame: () => void;
 }
 
