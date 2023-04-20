@@ -20,11 +20,14 @@ export interface GameState {
   };
 }
 
+export type GameStatus = "InGame" | "Ended" | "NoGame";
+
 export interface MatchInfo {
-  gameId: string;
+  id: string;
   playerOne: Player | undefined;
   playerTwo: Player | undefined;
   playerOneScore?: number;
   playerTwoScore?: number;
-  gameStatus: "InGame" | "Ended" | "NoGame";
+  gameStatus?: GameStatus;
+  isWinner?: boolean;
 }
