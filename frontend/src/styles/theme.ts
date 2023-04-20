@@ -23,9 +23,12 @@ const theme = createTheme({
     },
     text: {
       primary: "#ffffff",
+      secondary: "#808080",
     },
     primary: {
       main: "#26333A",
+      "100": "#1b2429",
+      "200": "rgba(0,0,0,0.2)",
     },
     secondary: {
       main: "#048BA8",
@@ -60,26 +63,27 @@ const theme = createTheme({
       },
     },
     MuiCssBaseline: {
-     styleOverrides: {
-      body: {
-        "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-          width: "20px",
+      styleOverrides: {
+        body: {
+          "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+            width: "20px",
+          },
+          "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+            backgroundColor: "#d6dee1",
+            borderRadius: "20px",
+            border: "6px solid transparent",
+            backgroundClip: "content-box",
+          },
+          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
+            {
+              backgroundColor: "#a8bbbf",
+            },
         },
-        "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track": {
-          backgroundColor: "transparent",
-        },
-        "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-          backgroundColor: "#d6dee1",
-          borderRadius: "20px",
-          border: "6px solid transparent",
-          backgroundClip: "content-box",
-        },
-        "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#a8bbbf",
-        },
-      }
-     } 
-    }
+      },
+    },
   },
 });
 
