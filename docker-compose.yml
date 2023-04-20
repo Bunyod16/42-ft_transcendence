@@ -38,7 +38,7 @@ services:
     expose:
       - ${CDN_PORT}
     ports:
-      - "7001:${CDN_PORT}"
+      - "${CDN_PORT}:${CDN_PORT}"
     environment:
       CDN_PORT: ${CDN_PORT}
       CDN_DOMAIN_NAME: ${CDN_DOMAIN_NAME}
