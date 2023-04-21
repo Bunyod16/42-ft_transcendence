@@ -9,7 +9,14 @@ export class RedisService {
   private client: Redis; // creates a new Redis client with default options
 
   constructor(private configService: ConfigService) {
-    this.client = new Redis(configService.get('REDIS_CONNECTION'));
+
+    const redis_port: number = parseInt(configService.get('REDIS_CONNECTION')) || parseInt(process.env.REDIS_CONNECTION) || 6379;
+    const redis_host: string = configService.get('REDIS_HOST') || process.env.REDIS_HOST || 'localhost';
+
+    this.client = new Redis(
+      redis_port,
+      redis_host,
+    );
   }
 
   async setGameState(gameId: number, gameState: GameState) {
@@ -28,7 +35,7 @@ export class RedisService {
     const allGames = await this.client.keys(`game:*`);
     return allGames;
   }
-  
+
   async deleteAllGames(gameId: number) {
     const gameStateString = await this.client.del(`game:*`);
   }
