@@ -73,7 +73,7 @@ const createSocketTokenAuthMiddleware =
     // socket.handshake.headers['token'] is only for postman compatibility
     // Postman provides no way to append this field (socket.handshake.auth.token). Therefore, we'll pass a token header, and fall back to that.
 
-    const token = socket.handshake.auth.cookie || parse(socket.handshake.headers['cookie']);
+    const token = parse(socket.handshake.auth.cookie) || parse(socket.handshake.headers['cookie']);
 
     logger.debug(`Validating token before connection: ${token}`);
 
