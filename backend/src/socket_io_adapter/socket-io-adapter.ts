@@ -43,14 +43,19 @@ export class SocketIOAdapter extends IoAdapter {
     const server: Server = super.createIOServer(port, allOptions);
 
     // Socket.io middleware
+    // Middleware should also be registered to main namespace if it requires middleware.
+    server.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
+    // top is equivalent to
+    // server
+    //   .of('/')
+    //   .use(createSocketTokenAuthMiddleware(jwtService, this.logger));
+
     // middleware must be namespaced if gateway is namespaced!
     // server
     //   .of('chatSockets')
     //   .use(createSocketTokenAuthMiddleware(jwtService, this.logger));
 
-    // line below for game-stream since it has no defined namespace
-    // server.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
-
+    // line below registers middleware for every sub-namespace
     server.on('new_namespace', (namespace) => {
       namespace.use(createSocketTokenAuthMiddleware(jwtService, this.logger));
     });
