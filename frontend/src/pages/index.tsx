@@ -1,6 +1,5 @@
 import React from "react";
 
-import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
 import Lobby from "@/components/Lobby";
 
@@ -14,9 +13,5 @@ export default function Home() {
 
   if (!isHydrated) return <></>;
 
-  return (
-    <DefaultLayout>
-      {isLoggedIn ? <Lobby /> : <div>Loading...</div>}
-    </DefaultLayout>
-  );
+  return <>{isLoggedIn ? <Lobby /> : <div>Loading...</div>}</>;
 }

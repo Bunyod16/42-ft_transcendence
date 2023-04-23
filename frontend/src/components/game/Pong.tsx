@@ -3,7 +3,7 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import React, { useRef, useState } from "react";
+import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
@@ -38,25 +38,9 @@ function Pong() {
   // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
 
-  React.useEffect(() => {
+  useEffect(() => {
     socket.emit("userConnected");
     console.log(matchInfo, name);
-
-    // function onGameEnded() {
-    //   console.log("gameEnded");
-    // }
-
-    // socket.on("gameEnded", onGameEnded);
-
-    // function onUpdateGame(data: any) {
-    //   gameState.current = {
-    //     playerOneState: data.playerOne,
-    //     playerTwoState: data.playerTwo,
-    //     ballProperties: data.ballProperties,
-    //     id: data.id,
-    //   };
-    //   console.log("update game...");
-    // }
 
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
@@ -64,6 +48,7 @@ function Pong() {
         ...matchInfo,
         playerOneScore: data.playerOne.score,
         playerTwoScore: data.playerTwo.score,
+        gameStatus: "Ended",
       });
     }
 
@@ -74,7 +59,8 @@ function Pong() {
       // socket.off("updateGame", onUpdateGame);
       socket.off("gameEnded", onGameEnded);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchInfo]);
 
   return (
     <group visible={matchInfo.gameStatus != "NoGame"}>

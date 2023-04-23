@@ -3,6 +3,7 @@ import useGameStore from "@/store/gameStore";
 import { GameState } from "@/types/game-types";
 import { useState, useEffect } from "react";
 import { socket } from "../socket/socket";
+import useUserStore from "@/store/userStore";
 
 interface BgColorBox {
   color: string;
@@ -93,6 +94,7 @@ const GameResult = () => {
     },
   };
   const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+  const updateView = useUserStore((state) => state.updateView);
 
   if (matchInfo.gameStatus != "Ended") return <></>;
   return (
@@ -123,7 +125,10 @@ const GameResult = () => {
         fullWidth={false}
         color="accent"
         sx={{ pointerEvents: "all", fontSize: 40, width: "max-content", mt: 5 }}
-        onClick={() => updateGameStatus("NoGame")}
+        onClick={() => {
+          updateGameStatus("NoGame");
+          updateView("Lobby");
+        }}
       >
         Continue
       </Button>

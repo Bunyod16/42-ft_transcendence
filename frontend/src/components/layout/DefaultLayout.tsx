@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import Navbar from "./Navbar";
+import useUserStore from "@/store/userStore";
 
 interface IDefaultLayoutProps {
   children: React.ReactNode;
@@ -8,13 +9,15 @@ interface IDefaultLayoutProps {
 
 // ! side panel should add to here too
 function DefaultLayout({ children }: IDefaultLayoutProps) {
+  const view = useUserStore((state) => state.view);
+
   return (
     <Box
       component={"div"}
       sx={{
         height: "100vh",
         width: "100vw",
-        display: "flex",
+        display: view != "Game" ? "flex" : "none",
         flexDirection: "column",
       }}
     >
