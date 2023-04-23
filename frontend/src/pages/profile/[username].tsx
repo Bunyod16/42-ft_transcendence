@@ -7,22 +7,50 @@ import { useEffect, useState } from "react";
 
 export default function Profile() {
   const router = useRouter();
-  const {username} = router.query;
-  const [user, setUser] = useState<UserProfile>({name:""});
+  const { username } = router.query;
+  const [user, setUser] = useState<UserProfile>();
+  const [userExists, setUserExists] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const getUserProfile = async (username: string) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3000/user/findOneProfileByUsername/${username}`,
+      );
+      const data = await res.json();
+      const status = res.status;
+      if (status === 200) {
+        setUserExists(true);
+      } else {
+        setUserExists(false);
+      }
+      setLoading(false);
+      console.log(data);
+      setUser(data);
+    } catch (err) {
+      setLoading(false);
+      setUserExists(false);
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
-    setUser({...user, name: username as string});
-  },[router.isReady]);
+    getUserProfile(username as string);
+  }, [router.isReady]);
 
-  useEffect(() => {
-    console.log(`Profile Page of :`,user);
-  },[user]);
-  
   return (
     <DefaultLayout>
-      <ProfileIconBox {...user}></ProfileIconBox>
-      <StatsBox></StatsBox>
+      {loading ? (
+        <>loading</>
+      ) : userExists ? (
+        <>
+          <ProfileIconBox {...user}></ProfileIconBox>
+          <StatsBox {...user}></StatsBox>
+        </>
+      ) : (
+        <>User {username} Doesnt Exists</>
+      )}
     </DefaultLayout>
   );
 }

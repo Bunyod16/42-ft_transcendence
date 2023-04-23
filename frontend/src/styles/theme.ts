@@ -35,6 +35,7 @@ const theme = createTheme({
     },
     accent: {
       main: "#93032E",
+      light: "#4089A5",
       // contrastText: "#FFF",
       // hover: "#AC0436",
     },

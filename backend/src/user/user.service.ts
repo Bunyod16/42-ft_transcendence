@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository, In } from 'typeorm';
@@ -6,8 +6,8 @@ import { User } from './entities/user.entity';
 // import { encodePassword } from 'src/utils/bcrypt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { Match } from 'src/match/entities/match.entity';
 
 @Injectable()
 export class UserService {
@@ -102,6 +102,43 @@ export class UserService {
     return this.userRepository.findOneBy({
       nickName: nickName,
     });
+  }
+
+  async findOneProfileByUsername(nickName: string): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.nickName = :nickName', { nickName: nickName })
+      .select('user')
+      .leftJoinAndSelect('user.achievements', 'userAchievements')
+      .leftJoinAndSelect('userAchievements.achievement', 'achievement')
+      .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchesAsPlayerOne')
+      .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchesAsPlayerTwo')
+      .leftJoinAndSelect('matchesAsPlayerOne.playerOne', 'playerOne')
+      .leftJoinAndSelect('matchesAsPlayerOne.playerTwo', 'playerTwo')
+      .leftJoinAndSelect('matchesAsPlayerTwo.playerOne', 'playerOne2')
+      .leftJoinAndSelect('matchesAsPlayerTwo.playerTwo', 'playerTwo2')
+      .getOne();
+
+    if (user === null) {
+      throw new CustomException(
+        `User with nickName = [${nickName}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'User => findOne()',
+      );
+    }
+
+    //combining user matches as playerone and playertwo
+    const matches: Match[] = [
+      ...user.matchesAsPlayerOne,
+      ...user.matchesAsPlayerTwo,
+    ];
+
+    delete user.matchesAsPlayerOne;
+    delete user.matchesAsPlayerTwo;
+
+    const filteredUser = { ...user, matches };
+
+    return filteredUser;
   }
 
   //im not sure if this should be a user service or a match service

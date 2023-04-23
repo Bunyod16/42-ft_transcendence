@@ -6,15 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  ForbiddenException,
-  HttpStatus,
   ParseIntPipe,
   Logger,
+  HttpCode,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HttpException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
 
@@ -42,6 +40,18 @@ export class UserController {
   async findMany(@Body() body: any) {
     const user_ids: number[] = body.ids;
     return this.userService.findMany(user_ids);
+  }
+
+  @Get('/findOneProfileByUsername/:username')
+  async findOneProfileByUsername(@Param('username') username: string) {
+    const user = await this.userService.findOneProfileByUsername(username);
+
+    Logger.log(
+      `Trying to get User with username = [${username}]`,
+      'User => findOne()',
+    );
+
+    return user;
   }
 
   @Get(':id')

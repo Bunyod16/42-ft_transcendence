@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function ProfileIconBox(user: UserProfile) {
   useEffect(() => {
-    console.log(`Profile Page of in iconbox:${user.name}`);
+    console.log(`Profile Page of in iconbox:${user.nickName}`);
   }, [user]);
 
   return (
@@ -26,7 +26,7 @@ export default function ProfileIconBox(user: UserProfile) {
       </Typography>
       <Box component="div" sx={{ display: "flex", flexDirection: "row" }}>
         <Avatar
-          sx={{ width: "140px", height: "140px", borderRadius: "8px" }}
+          sx={{ width: "120px", height: "120px", borderRadius: "8px" }}
           src="/jakoh_smol.jpg"
         ></Avatar>
         <Box
@@ -45,27 +45,28 @@ export default function ProfileIconBox(user: UserProfile) {
               fontSize: "3em",
               fontWeight: "800",
               margin: "0px",
-              lineHeight: "0.7em",
+              lineHeight: "0.8em",
               color: "text.primary",
               textTransform: "uppercase",
             }}
           >
-            jakoh
+            {user.nickName}
           </Typography>
           <Typography
-            variant="h3"
             sx={{
               textTransform: "uppercase",
               textAlign: "center",
               lineHeight: "50px",
               backgroundColor: "primary.200",
               borderRadius: "8px",
-              padding: "5px 20px",
-              fontWeight: "500",
+              padding: "5px 5px",
+              width: "150px",
+              fontWeight: "700",
               fontSize: "1.5em",
+              margin: "0px",
             }}
           >
-            Lvl 99
+            Lvl 9.23
           </Typography>
         </Box>
       </Box>
