@@ -1,14 +1,11 @@
-import {
-  Logger,
-  INestApplicationContext,
-} from '@nestjs/common';
+import { Logger, INestApplicationContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { SocketWithAuthData } from './socket-io-adapter.types';
 import { parse } from 'cookie';
-import type { CorsOptions } from "cors";
+import type { CorsOptions } from 'cors';
 
 export class SocketIOAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketIOAdapter.name);
@@ -25,11 +22,8 @@ export class SocketIOAdapter extends IoAdapter {
     const clientPort = parseInt(this.configService.get('NEXT_PORT'));
 
     const cors: CorsOptions = {
-      origin: [
-        `http://localhost:8080`,
-        `${clientHost}:${clientPort}`
-      ],
-      credentials: true
+      origin: [`http://localhost:8080`, `${clientHost}:${clientPort}`],
+      credentials: true,
     };
 
     this.logger.log('Configuring SocketIO with custom cors', {
@@ -72,10 +66,9 @@ const createSocketTokenAuthMiddleware =
   async (socket: SocketWithAuthData, next) => {
     // socket.handshake.headers['token'] is only for postman compatibility
     // Postman provides no way to append this field (socket.handshake.auth.token). Therefore, we'll pass a token header, and fall back to that.
+    const token = parse(socket.handshake.headers.cookie);
 
-    const token = parse(socket.handshake.auth.cookie) || parse(socket.handshake.headers['cookie']);
-
-    logger.debug(`Validating token before connection: ${token}`);
+    logger.log(`Validating token before connection: ${token}`);
 
     try {
       const user = await jwtAccessService.verifyAccessToken(
