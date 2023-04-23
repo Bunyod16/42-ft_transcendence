@@ -5,6 +5,7 @@ import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
 import { MatchInfo } from "@/types/game-types";
 import DefaultLayout from "./layout/DefaultLayout";
+import { useRouter } from "next/router";
 
 const Lobby = () => {
   const updateView = useUserStore((state) => state.updateView);
@@ -12,6 +13,7 @@ const Lobby = () => {
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   const updateStatus = useGameStore((state) => state.updateGameStatus);
   const [isQueueing, setIsQueueing] = React.useState(false);
+  const router = useRouter();
 
   // *start queue here
   const handleQueue = () => {
