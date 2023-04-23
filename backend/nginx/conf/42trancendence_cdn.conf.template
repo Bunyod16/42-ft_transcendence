@@ -1,0 +1,19 @@
+server {
+	listen ${CDN_PORT} default_server;
+	listen [::]:${CDN_PORT} default_server;
+	server_name ${CDN_DOMAIN_NAME};
+
+	access_log /var/log/nginx/42trancendence_access.log;
+	error_log /var/log/nginx/42trancendence_error.log;
+
+	root /var/www/42trancendence;
+
+	location / {
+		autoindex on;
+		try_files $uri $uri/ =404;
+	}
+
+	location = /avatar/ {
+		sendfile_max_chunk 1m;
+	}
+}

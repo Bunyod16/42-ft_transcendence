@@ -4,6 +4,8 @@ POSTGRESQL_VOLUME = trancendence_posgresdb
 DEV_POSTGRESQL_VOLUME = dev_trancendence_posgresdb
 DEV_REDIS_VOLUME = dev_redis_volume
 REDIS_VOLUME = redis_volume
+NGINX_CDN_VOLUME = cdn_volume
+DEV_NGINX_CDN_VOLUME = dev_cdn_volume
 
 all : dev
 
@@ -16,23 +18,28 @@ prod :
 down :
 	docker compose down
 
+dev_down:
+	docker compose down --volumes
+
 rm_dev_volume :
 	docker volume rm $(NAME)_$(DEV_REDIS_VOLUME)
 	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
+	docker volume rm $(NAME)_$(DEV_NGINX_CDN_VOLUME)
 
 rm_prod_volume :
 	docker volume rm $(NAME)_$(REDIS_VOLUME)
 	docker volume rm $(NAME)_$(POSTGRESQL_VOLUME)
+	docker volume rm $(NAME)_$(NGINX_CDN_VOLUME)
 
 rm_img :
 	docker rmi $(NAME)-nestjs
 	docker rmi $(NAME)-nextjs
 
-re_dev : down rm_dev_volume dev
+re_dev : dev_down rm_dev_volume dev
 
 re_prod : down rm_dev_volume prod
 
-rm_everything_dev: down rm_dev_volume rm_img
+rm_everything_dev: dev_down down rm_dev_volume rm_img
 
 rm_everything_prod: down rm_prod_volume rm_img
 

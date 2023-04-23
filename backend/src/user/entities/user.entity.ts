@@ -22,6 +22,9 @@ export class User {
   @Column()
   nickName: string;
 
+  @Column({ default: 'default-stormtrooper.png'})
+  avatar: string;
+
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
@@ -59,7 +62,8 @@ export class User {
   @JoinColumn({ name: 'responder' })
   responses: FriendRequest[];
 
-  @Column({ nullable: true })
+  //hide this when querying
+  @Column({ nullable: true, select: false })
   @Exclude()
   public currentHashedRefreshToken?: string;
 

@@ -2,9 +2,10 @@ import { Box } from "@mui/material";
 import React from "react";
 import Navbar from "./Navbar";
 import useUserStore from "@/store/userStore";
+import SidePanel from "../SidePanel";
 
 interface IDefaultLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 // ! side panel should add to here too
@@ -18,12 +19,13 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
         height: "100vh",
         width: "100vw",
         display: view != "Game" ? "flex" : "none",
-        flexDirection: "column",
+        flexDirection: "row",
       }}
     >
       {/* sidepanel */}
-      <Navbar />
-      <Box component={"div"} sx={{ height: "100%", width: "100%", p: 4 }}>
+      <SidePanel sx={{ overflow: "hidden" }} />
+      <Box component={"div"} sx={{ width: "100%", height: "100%" }}>
+        <Navbar sx={{}} />
         {children}
       </Box>
     </Box>

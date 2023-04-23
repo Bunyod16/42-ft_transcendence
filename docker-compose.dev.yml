@@ -27,6 +27,10 @@ services:
     ports:
       - "3002:6379"
 
+  nginx:
+    volumes:
+      - dev_cdn_volume:/var/www/42trancendence/avatar:ro
+
   nestjs:
     environment:
       DB_HOST: ${DEV_DB_HOST}
@@ -37,7 +41,9 @@ services:
       LISTEN_PORT: ${DEV_NEST_LISTEN_PORT}
       ENV: ${DEV_ENV}
     volumes:
+      - dev_cdn_volume:/trancendence_nestjs/avatars
       - ./backend:/trancendence_nestjs
+      - /trancendence_nestjs/node_modules/
     ports:
       - "3000:${DEV_NEST_LISTEN_PORT}"
     expose:
@@ -47,8 +53,10 @@ services:
   nextjs:
     volumes:
       - ./frontend:/trancendence_nextjs
+      - /trancendence_nextjs/node-modules/
     entrypoint: ["npx", "next", "dev"]
 
 volumes:
+  dev_cdn_volume:
   dev_redis_volume:
   dev_trancendence_posgresdb:

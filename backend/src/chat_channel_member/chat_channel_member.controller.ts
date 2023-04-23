@@ -18,6 +18,7 @@ import { ChatChannelMemberService } from './chat_channel_member.service';
 import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { UserAuthGuard } from 'src/auth/auth.guard';
+import { ChatType } from 'src/chat_channels/entities/chat_channel.entity';
 
 @Controller('chat-channel-member')
 export class ChatChannelMemberController {
@@ -64,10 +65,65 @@ export class ChatChannelMemberController {
 
     Logger.log(
       `Trying to get ChatChannelMember with userId = [${userId}]`,
-      'ChatChannelMember => findOne()',
+      'ChatChannelMember => findAllUsersInChatChannel()',
     );
 
     return chatChannelMember;
+  }
+
+  @UseGuards(UserAuthGuard)
+  @Get('/usersDirectMessages')
+  async findAllUsersDirectMessages(@Req() req: any) {
+    const userId = req.user.id;
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUsersChatChannelType(
+        userId,
+        ChatType.DIRECT_MESSAGE,
+      );
+
+    Logger.log(
+      `Trying to get all Users Direct Messages with userId = [${userId}]`,
+      'ChatChannelMember => findAllUsersInChatChannel()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @UseGuards(UserAuthGuard)
+  @Get('/usersGroupMessages')
+  async findAllUsersGroupMessages(@Req() req: any) {
+    const userId = req.user.id;
+    const chatChannelMember =
+      await this.chatChannelMemberService.findAllUsersChatChannelType(
+        userId,
+        ChatType.GROUP_MESSAGE,
+      );
+
+    Logger.log(
+      `Trying to get Users Group Messages with userId = [${userId}]`,
+      'ChatChannelMember => findAllUsersInChatChannel()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @Get('/checkIfUserHasChatWithFriend')
+  async checkIfUserHasChatWithFriend(
+    @Body('userId', ParseIntPipe) userId: number,
+    @Body('friendId', ParseIntPipe) friendId: number,
+  ) {
+    const hasChat =
+      await this.chatChannelMemberService.checkIfUserHasChatWithFriend(
+        userId,
+        friendId,
+      );
+
+    Logger.log(
+      `Trying to see if userId = [${userId}] has chat with friendId = [${friendId}]`,
+      'ChatChannelMember => checkIfUserHasChatWithFriend()',
+    );
+
+    return hasChat;
   }
 
   @Get(':chatChannelId/usersInChatChannel')
@@ -87,19 +143,7 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const chatChannelMember = await this.chatChannelMemberService.findOne(id);
-
-    Logger.log(
-      `Trying to get ChatChannelMember with id = [${id}]`,
-      'ChatChannelMember => findOne()',
-    );
-
-    return chatChannelMember;
-  }
-
-  @Get(':userId/userChatChannels_testing/')
+  @Get(':userId/userChatChannelsTesting')
   async findAllUserChatChannel_testing(
     @Param('userId', ParseIntPipe) userId: number,
   ) {
@@ -108,6 +152,18 @@ export class ChatChannelMemberController {
 
     Logger.log(
       `Trying to get ChatChannelMember with userId = [${userId}]`,
+      'ChatChannelMember => findOne()',
+    );
+
+    return chatChannelMember;
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const chatChannelMember = await this.chatChannelMemberService.findOne(id);
+
+    Logger.log(
+      `Trying to get ChatChannelMember with id = [${id}]`,
       'ChatChannelMember => findOne()',
     );
 

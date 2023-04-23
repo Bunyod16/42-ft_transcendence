@@ -19,6 +19,7 @@ const Lobby = () => {
 
     // updateView("Game");
     // updateStatus("InGame");
+    console.log("trying to queue");
     // setTimeout(() => onMatchFound(null), 3000); // for development
   };
 

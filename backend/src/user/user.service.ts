@@ -72,12 +72,13 @@ export class UserService {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where({ id: id })
-      .leftJoinAndSelect('user.achievements', 'achievements')
-      .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchesAsPlayerOne')
-      .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchesAsPlayerTwo')
-      .leftJoinAndSelect('user.requests', 'requests')
-      .leftJoinAndSelect('user.responses', 'responses')
-      .leftJoinAndSelect('user.sentMessages', 'sentMessages')
+      .select('user')
+      // .leftJoinAndSelect('user.achievements', 'achievements')
+      // .leftJoinAndSelect('user.matchesAsPlayerOne', 'matchesAsPlayerOne')
+      // .leftJoinAndSelect('user.matchesAsPlayerTwo', 'matchesAsPlayerTwo')
+      // .leftJoinAndSelect('user.requests', 'requests')
+      // .leftJoinAndSelect('user.responses', 'responses')
+      // .leftJoinAndSelect('user.sentMessages', 'sentMessages')
       .getOne();
 
     if (user === null) {

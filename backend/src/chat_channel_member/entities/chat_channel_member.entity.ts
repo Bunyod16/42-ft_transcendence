@@ -27,9 +27,17 @@ export class ChatChannelMember {
   @Column({ nullable: true })
   mutedUntil: Date;
 
-  @ManyToOne(() => User, (user) => user.chatChannelMembers)
+  @ManyToOne(() => User, (user) => user.chatChannelMembers, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
-  @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatChannelMembers)
+  @ManyToOne(
+    () => ChatChannel,
+    (chatChannel) => chatChannel.chatChannelMembers,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   chatChannel: ChatChannel;
 }
