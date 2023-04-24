@@ -35,8 +35,8 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
         if ((keys.up || keys.down) && lastEmit.current >= 1 / 60) {
           lastEmit.current = 0;
           const event = keys.up ? "playerUp" : "playerDown";
-          console.log(`emit [${event}]: `, gameState);
-          socket.emit(event, { id: matchInfo.id });
+          // console.log(`emit [${event}]: `, matchInfo);
+          socket.emit(event, { gameId: matchInfo.id });
         }
       }
       const targetPosition =

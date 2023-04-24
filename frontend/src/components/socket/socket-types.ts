@@ -17,8 +17,8 @@ export interface ClientToServerEvents {
   queueLeave: () => void;
   userConnected: () => void;
   userDisconnected: () => void;
-  playerUp: (data: { id: string }) => void;
-  playerDown: (data: { id: string }) => void;
+  playerUp: (data: { gameId: string }) => void;
+  playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;
 }
 
