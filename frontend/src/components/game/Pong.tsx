@@ -3,10 +3,11 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import React, { useState } from "react";
+import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
+import { GameState } from "@/types/game-types";
 
 THREE.ColorManagement.enabled = true;
 
@@ -29,35 +30,40 @@ function Table({ tableSize }: ITableProps) {
 
 // ! zustand save playerNumber
 function Pong() {
-  const tableSize = { x: 600, y: 20, z: 300 };
+  const tableSize = { x: 6, y: 0.2, z: 3 };
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
-  const setGameState = useGameStore((state) => state.setGameState);
+  const setMatchInfo = useGameStore((state) => state.setMatchInfo);
+  // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
 
-  React.useEffect(() => {
-    socket.emit("userConnected");
+  socket.emit("userConnected");
+  useEffect(() => {
     console.log(matchInfo, name);
 
-    function onUpdateGame(data: any) {
-      setGameState({
-        playerOneState: data.playerOne,
-        playerTwoState: data.playerTwo,
-        ballProperties: data.ballProperties,
-        gameId: data.id,
+    function onGameEnded(data: GameState) {
+      console.log("gameEnded");
+      setMatchInfo({
+        ...matchInfo,
+        playerOneScore: data.playerOne.score,
+        playerTwoScore: data.playerTwo.score,
+        gameStatus: "Ended",
       });
     }
 
-    socket.on("updateGame", onUpdateGame);
+    // socket.on("updateGame", onUpdateGame);
+    socket.on("gameEnded", onGameEnded);
 
     return () => {
-      socket.off("updateGame", onUpdateGame);
+      // socket.off("updateGame", onUpdateGame);
+      socket.off("gameEnded", onGameEnded);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchInfo]);
 
   return (
-    <>
+    <group visible={matchInfo.gameStatus != "NoGame"}>
       <Table tableSize={tableSize} />
 
       <Player
@@ -73,7 +79,7 @@ function Pong() {
       />
 
       <Ball tableSize={tableSize} />
-    </>
+    </group>
   );
 }
 

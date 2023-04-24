@@ -1,4 +1,4 @@
-import { GameState, MatchInfo } from "@/types/game-types";
+import { GameState, GameStatus, MatchInfo } from "@/types/game-types";
 import { create } from "zustand";
 
 interface GameStore {
@@ -6,23 +6,29 @@ interface GameStore {
   gameState: GameState;
   setGameState: (state: GameState) => void;
   setMatchInfo: (matchInfo: MatchInfo) => void;
+  updateGameStatus: (gameStatus: GameStatus) => void;
 }
 
-const useGameStore = create<GameStore>()((set) => ({
+const useGameStore = create<GameStore>()((set, get) => ({
   matchInfo: {
     playerOne: undefined,
     playerTwo: undefined,
-    gameId: "",
+    id: "",
+    gameStatus: "NoGame",
+    isWinner: false,
   },
   setMatchInfo: (matchInfo: MatchInfo) =>
     set(() => ({
       matchInfo,
     })),
+  updateGameStatus: (gameStatus: GameStatus) =>
+    set(() => ({
+      matchInfo: { ...get().matchInfo, gameStatus },
+    })),
   gameState: {
-    playerOneState: { y: 0, isConnected: false },
-    playerTwoState: { y: 0, isConnected: false },
+    playerOne: { y: 0, isConnected: false, score: 0 },
+    playerTwo: { y: 0, isConnected: false, score: 0 },
     ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
-    gameId: "",
   },
   setGameState: (state: GameState) =>
     set(() => ({

@@ -1,12 +1,12 @@
-import { RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { Controls, ISize } from "./types";
 import { boxGeometry, playerMaterial } from "./resource";
-import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls } from "@react-three/drei";
-import React, { useRef } from "react";
-import { socket } from "../socket/socket";
-import useGameStore from "@/store/gameStore";
 import { Mesh } from "three";
+import { socket } from "../socket/socket";
+import { useFrame } from "@react-three/fiber";
+import useGameState from "@/hooks/useGameState";
+import useGameStore from "@/store/gameStore";
+import { useKeyboardControls } from "@react-three/drei";
+import { useEffect, useRef } from "react";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -17,65 +17,46 @@ interface IPlayerProps {
 function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const [, getKeys] = useKeyboardControls<Controls>();
   // const body = useRef<RapierRigidBody>(null);
+  console.log("player render");
   const body = useRef<Mesh>(null);
-  console.log(isPlayer);
-  const { matchInfo, gameState } = useGameStore();
+  const matchInfo = useGameStore((state) => state.matchInfo);
+  const lastEmit = useRef<number>(0);
+  const gameState = useGameState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log("player rendered");
-  });
+  }, []);
 
   useFrame((state, delta) => {
-    if (body.current) {
-      const keys = getKeys();
-      // if (keys.up) console.log("up");
-      // if (keys.down) console.log("down");
-      // const steps = 2 * delta;
-      // const bodyPosition = body.current.translation();
+    if (body.current && matchInfo.gameStatus == "InGame") {
       if (isPlayer) {
-        if (keys.up) {
-          console.log("emit [playerUp] : ", matchInfo.gameId);
-          socket.emit("playerUp", { gameId: matchInfo.gameId });
-          // body.current.setNextKinematicTranslation({
-          //   x: bodyPosition.x,
-          //   y: bodyPosition.y + steps,
-          //   z: bodyPosition.z,
-          // });
-        }
-        if (keys.down) {
-          console.log("emit [playerDown] : ", matchInfo.gameId);
-          socket.emit("playerDown", { gameId: matchInfo.gameId });
-          // body.current.setNextKinematicTranslation({
-          //   x: bodyPosition.x,
-          //   y: bodyPosition.y - steps,
-          //   z: bodyPosition.z,
-          // });
+        const keys = getKeys();
+        lastEmit.current += delta;
+        if ((keys.up || keys.down) && lastEmit.current >= 1 / 60) {
+          lastEmit.current = 0;
+          const event = keys.up ? "playerUp" : "playerDown";
+          // console.log(`emit [${event}]: `, matchInfo);
+          socket.emit(event, { gameId: matchInfo.id });
         }
       }
       const targetPosition =
-        playerLR == 1 ? gameState.playerOneState.y : gameState.playerTwoState.y;
-      body.current.position.y = targetPosition;
+        playerLR == 1
+          ? gameState.current.playerOne.y
+          : gameState.current.playerTwo.y;
+      body.current.position.y = targetPosition / 100;
     }
   });
 
   return (
-    // <RigidBody
-    //   type="kinematicPosition"
-    //   ref={body}
-    //   position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
-    //   rotation={[Math.PI / 2, 0, 0]}
-    //   restitution={1}
-    // >
     <mesh
       ref={body}
       geometry={boxGeometry}
       material={playerMaterial}
       scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
-      position={[playerLR * (tableSize.x / 2 - 10), 0, tableSize.y + 2]}
+      position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
     />
-    // </RigidBody>
   );
 }
 

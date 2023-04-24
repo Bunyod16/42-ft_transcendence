@@ -19,6 +19,7 @@ import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
 import { GameStream } from './entities/game_stream.entity';
 import { User } from 'src/user/entities/user.entity';
+import { GameState } from 'src/game_state/gameState.class';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
@@ -35,15 +36,18 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   @UseGuards(UserAuthGuard)
   async handleDisconnect(socket: SocketWithAuthData) {
     const match = await this.matchService.findCurrentByUser(socket.user);
-    console.log(`User ${socket.user.nickName} has disconnected, their match is ${match}`);
+    console.log(
+      `User ${socket.user.nickName} has disconnected, their match is ${match}`,
+    );
     if (!match) return;
-    await this.stop_game(socket);
+    const gameState = await this.gameStateService.getGame(match.id);
+    await this.endGame(match, gameState);
   }
 
   async onModuleDestroy() {
     const matches = await this.matchService.findAllCurrent();
-    for (var i = 0; i < matches.length; i++) {
-      var m = matches[i];
+    for (let i = 0; i < matches.length; i++) {
+      const m = matches[i];
       m.endedAt = new Date();
       console.log(m);
       await this.matchService.updateGameEnded(m.id, m);
@@ -67,9 +71,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     }
   }
 
-  async end_game(match: Match) {
-    const game = await this.gameStateService.getGame(match.id);
-    await this.server.to(`${match.id}`).emit('gameEnded', game);
+  async endGame(match: Match, gameState: GameState) {
+    await this.server.to(`${match.id}`).emit('gameEnded', gameState);
+    match.playerOneScore = gameState.playerOne.score;
+    match.playerTwoScore = gameState.playerTwo.score;
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     try {
@@ -93,6 +98,12 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
         console.log('moved_game has not been found, cannot send state');
         return;
       }
+      if (
+        moved_state.playerOne.score >= 5 ||
+        moved_state.playerTwo.score >= 5
+      ) {
+        this.endGame(match, moved_state);
+      }
       this.server.to(`${moved_state.id}`).emit('updateGame', moved_state);
     };
 
@@ -107,7 +118,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('playerUp')
-  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
+  playerUp(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: SocketWithAuthData,
+  ) {
     if (!socket.user) {
       socket.emit('exception', {
         errorMessage: 'Undefined user in the socket, need to authenticate',
@@ -118,7 +132,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('playerDown')
-  playerDown(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
+  playerDown(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: SocketWithAuthData,
+  ) {
     if (!socket.user) {
       socket.emit('exception', {
         errorMessage: 'Undefined user in the socket, need to authenticate',
@@ -130,7 +147,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
 
   @SubscribeMessage('userConnected')
   async userConnected(@ConnectedSocket() socket: SocketWithAuthData) {
-    var match = await this.matchService.findCurrentByUser(socket.user);
+    const match = await this.matchService.findCurrentByUser(socket.user);
     if (!match) {
       return;
     }
@@ -147,20 +164,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userDisconnected')
-  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
+  async leaveGame(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: SocketWithAuthData,
+  ) {
     await this.stop_game(socket);
   }
-
-  // @SubscribeMessage('updateGameStream')
-  // update(@MessageBody() updateGameStreamDto: UpdateGameStreamDto) {
-  //   return this.gameStreamService.update(
-  //     updateGameStreamDto.id,
-  //     updateGameStreamDto,
-  //   );
-  // }
-
-  // @SubscribeMessage('removeGameStream')
-  // remove(@MessageBody() id: number) {
-  //   return this.gameStreamService.remove(id);
-  // }
 }

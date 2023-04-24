@@ -3,10 +3,12 @@ export class PlayerData {
   isConnected: boolean;
   x: number;
   y: number;
+  score: number;
   constructor(id: number, y: number) {
     this.id = id;
     this.y = y;
     this.isConnected = false;
+    this.score = 0;
   }
 }
 
