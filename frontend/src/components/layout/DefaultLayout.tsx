@@ -23,7 +23,7 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
       <SidePanel sx={{ overflow: "hidden" }} />
       <Box component={"div"} sx={{ width: "100%", height: "100%" }}>
         <Navbar sx={{}} />
-        <Typography>You have logged in</Typography>
+        {children}
       </Box>
     </Box>
   );
