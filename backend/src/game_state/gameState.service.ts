@@ -3,7 +3,6 @@ import { RedisService } from './redis.service';
 import { GameState } from './gameState.class';
 import { User } from 'src/user/entities/user.entity';
 import { racketMoveDistance } from './gameState.constats';
-import { match } from 'assert';
 import { planeSize, racketSize } from './gameState.constats';
 
 @Injectable()
@@ -177,7 +176,7 @@ export class GameStateService {
   }
 
   bounceBall(gameState: GameState) {
-    var updatedGameState = this.bounceRacket(gameState);
+    let updatedGameState = this.bounceRacket(gameState);
     updatedGameState = this.checkBallOutOfBounds(gameState);
 
     if (
@@ -193,7 +192,7 @@ export class GameStateService {
   async moveBall(gameState: GameState, matchId: number) {
     gameState.ballProperties.x += gameState.ballProperties.dx;
     gameState.ballProperties.y += gameState.ballProperties.dy;
-    var updatedGameState = this.bounceBall(gameState);
+    const updatedGameState = this.bounceBall(gameState);
 
     await this.updateGame(matchId, updatedGameState);
     return this.getGame(matchId);
