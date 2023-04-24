@@ -130,7 +130,7 @@ export class GameStateService {
   }
 
   checkBallOutOfBounds(gameState: GameState) {
-    if (gameState.ballProperties.x < (planeSize.x / 2) * -1) {
+    if (gameState.ballProperties.x < (planeSize.x / 2) * -1 + 18) {
       const min = Math.ceil(3);
       const max = Math.floor(1);
       gameState.ballProperties.dx = Math.floor(
@@ -140,7 +140,7 @@ export class GameStateService {
         Math.random() * (max - min) + min,
       );
       gameState.playerOne.score += 1;
-    } else if (gameState.ballProperties.x > planeSize.x / 2) {
+    } else if (gameState.ballProperties.x > planeSize.x / 2 - 18) {
       const min = Math.ceil(-1);
       const max = Math.floor(-3);
       gameState.ballProperties.dx = Math.floor(
