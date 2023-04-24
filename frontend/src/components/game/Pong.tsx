@@ -38,8 +38,8 @@ function Pong() {
   // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
 
+  socket.emit("userConnected");
   useEffect(() => {
-    socket.emit("userConnected");
     console.log(matchInfo, name);
 
     function onGameEnded(data: GameState) {

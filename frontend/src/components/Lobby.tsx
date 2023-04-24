@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 
 const Lobby = () => {
   const updateView = useUserStore((state) => state.updateView);
-  const view = useUserStore((state) => state.view);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   const updateStatus = useGameStore((state) => state.updateGameStatus);
   const [isQueueing, setIsQueueing] = React.useState(false);
@@ -60,7 +59,7 @@ const Lobby = () => {
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
       socket.off("matchFound", onMatchFound);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // esl'int-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -74,23 +73,24 @@ const Lobby = () => {
             // justifyContent:"center",
             height: "100%",
             width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Grid sx={{ display: view == "Lobby" ? "block" : "none" }}>
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{
-                typography: "h4",
-                fontWeight: "medium",
-                width: "300px",
-                padding: 2,
-              }}
-              onClick={isQueueing ? handleQueueLeave : handleQueue}
-            >
-              {isQueueing ? "Cancel" : "Quick Play"}
-            </Button>
-          </Grid>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              typography: "h4",
+              fontWeight: "medium",
+              width: "300px",
+              padding: 2,
+            }}
+            onClick={isQueueing ? handleQueueLeave : handleQueue}
+          >
+            {isQueueing ? "Cancel" : "Quick Play"}
+          </Button>
         </Box>
       </DefaultLayout>
     </>

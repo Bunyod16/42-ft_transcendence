@@ -16,7 +16,7 @@ function useGameState() {
         playerTwo: data.playerTwo,
         ballProperties: data.ballProperties,
       };
-      //   console.log("update game...");
+        console.log("update game...");
     }
 
     socket.on("updateGame", onUpdateGame);

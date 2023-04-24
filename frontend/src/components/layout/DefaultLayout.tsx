@@ -18,13 +18,20 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
       sx={{
         height: "100vh",
         width: "100vw",
-        display: view != "Game" ? "flex" : "none",
+        display: "flex",
         flexDirection: "row",
       }}
     >
-      {/* sidepanel */}
-      <SidePanel sx={{ overflow: "hidden" }} />
-      <Box component={"div"} sx={{ width: "100%", height: "100%" }}>
+      {/* <SidePanel sx={{ overflow: "hidden" }} /> */}
+      <Box
+        component={"div"}
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Navbar sx={{}} />
         {children}
       </Box>
