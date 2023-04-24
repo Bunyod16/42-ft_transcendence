@@ -4,6 +4,7 @@ import { GameState } from "@/types/game-types";
 import { useState, useEffect } from "react";
 import { socket } from "../socket/socket";
 import useUserStore from "@/store/userStore";
+import { useRouter } from "next/router";
 
 interface BgColorBox {
   color: string;
@@ -81,6 +82,7 @@ const PlayerResult = ({ name, score, color, position }: Player) => {
 
 const GameResult = () => {
   const matchInfo = useGameStore((store) => store.matchInfo);
+  const router = useRouter();
   const players = {
     p1: {
       name: matchInfo.playerOne?.nickName || "",
@@ -128,6 +130,7 @@ const GameResult = () => {
         onClick={() => {
           updateGameStatus("NoGame");
           updateView("Lobby");
+          router.push("/");
         }}
       >
         Continue
