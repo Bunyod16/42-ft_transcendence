@@ -19,6 +19,7 @@ import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
 import { GameStream } from './entities/game_stream.entity';
 import { User } from 'src/user/entities/user.entity';
+import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
@@ -32,8 +33,9 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   ) {}
 
   @UseGuards(UserAuthGuard)
-  async handleDisconnect(socket: Socket) {
-    const match = await this.matchService.findCurrentByUser(socket.data.user);
+  async handleDisconnect(socket: SocketWithAuthData) {
+    const match = await this.matchService.findCurrentByUser(socket.user);
+    console.log(`User ${socket.user.nickName} has disconnected, their match is ${match}`);
     if (!match) return;
     await this.stop_game(socket);
   }
@@ -48,8 +50,8 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     }
   }
 
-  async stop_game(socket: Socket) {
-    const user = socket.data.user;
+  async stop_game(socket: SocketWithAuthData) {
+    const user = socket.user;
     const match = await this.matchService.findCurrentByUser(user);
     if (!match) return;
 
@@ -105,37 +107,38 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('playerUp')
-  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-    if (!socket.data.user) {
+  playerUp(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
+    if (!socket.user) {
       socket.emit('exception', {
         errorMessage: 'Undefined user in the socket, need to authenticate',
       });
       return;
     }
-    this.gameStateService.playerUp(socket.data.user, body.gameId);
+    this.gameStateService.playerUp(socket.user, body.gameId);
   }
 
   @SubscribeMessage('playerDown')
-  playerDown(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
-    if (!socket.data.user) {
+  playerDown(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
+    if (!socket.user) {
       socket.emit('exception', {
         errorMessage: 'Undefined user in the socket, need to authenticate',
       });
       return;
     }
-    this.gameStateService.playerDown(socket.data.user, body.gameId);
+    this.gameStateService.playerDown(socket.user, body.gameId);
   }
 
   @SubscribeMessage('userConnected')
-  async userConnected(@ConnectedSocket() socket: Socket) {
-    var match = await this.matchService.findCurrentByUser(socket.data.user);
+  async userConnected(@ConnectedSocket() socket: SocketWithAuthData) {
+    var match = await this.matchService.findCurrentByUser(socket.user);
     if (!match) {
       return;
     }
-    await this.gameStateService.connectUser(match.id, socket.data.user);
+    await this.gameStateService.connectUser(match.id, socket.user);
+    console.log(`${socket.user.nickName} has connected to game`); // todo
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
-      console.log("both players have connected to the game");
+      console.log('both players have connected to the game');
       await this.server.to(`${match.id}`).emit('matchBegin');
       await this.addInterval(match);
       await this.gameStateService.setRandomBallDirection(match.id);
@@ -144,7 +147,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userDisconnected')
-  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: Socket) {
+  async leaveGame(@MessageBody() body: any, @ConnectedSocket() socket: SocketWithAuthData) {
     await this.stop_game(socket);
   }
 
