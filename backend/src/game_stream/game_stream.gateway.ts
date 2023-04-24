@@ -19,6 +19,7 @@ import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
 import { GameStream } from './entities/game_stream.entity';
 import { User } from 'src/user/entities/user.entity';
+import { GameState } from 'src/game_state/gameState.class';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
