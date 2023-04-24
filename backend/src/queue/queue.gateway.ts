@@ -23,6 +23,7 @@ import { CreateMatchDto } from 'src/match/dto/create-match.dto';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { GameStreamService } from 'src/game_stream/game_stream.service';
 import { GameStreamGateway } from 'src/game_stream/game_stream.gateway';
+import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -38,8 +39,8 @@ export class QueueGateway implements OnGatewayDisconnect {
   ) {}
 
   @UseGuards(UserAuthGuard)
-  async handleDisconnect(socket) {
-    await this.queueService.removePlayerFromQueue(socket.data.user); //TODO: find by socketid
+  async handleDisconnect(socket: SocketWithAuthData) {
+    await this.queueService.removePlayerFromQueue(socket.user); //TODO: find by socketid
   }
 
   @UseGuards(UserAuthGuard)
@@ -77,14 +78,16 @@ export class QueueGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('queueLeave')
   async queueLeave(
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: SocketWithAuthData,
     @MessageBody() body: any,
   ) {
     try {
       const game = await this.queueService.removePlayerFromQueue(
-        socket.data.user,
+        socket.user,
       );
       socket.emit('queueLeaveSuccess', game);
+      const queue = await this.queueService.getQueue();
+      console.log(`QUEUE: ${queue.length}`);
     } catch (error) {
       console.log(error);
       socket.emit('queueLeaveFail');

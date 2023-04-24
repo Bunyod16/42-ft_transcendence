@@ -1,8 +1,6 @@
 import React from "react";
 
-import DefaultLayout from "@/components/layout/DefaultLayout";
 import useUserStore from "@/store/userStore";
-import { Typography } from "@mui/material";
 import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "./login";
@@ -62,15 +60,6 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-  return (
-    <>
-      {isLoggedIn ? (
-        <DefaultLayout>
-          <Lobby />
-        </DefaultLayout>
-      ) : (
-        <Login />
-      )}
-    </>
-  );
+
+  return <>{isLoggedIn ? <Lobby /> : <Login />}</>;
 }

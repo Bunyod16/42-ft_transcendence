@@ -1,20 +1,25 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Box, Grid } from "@mui/material";
 import { socket } from "./socket/socket";
 import React from "react";
 import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
-import { useRouter } from "next/router";
 import { MatchInfo } from "@/types/game-types";
+import DefaultLayout from "./layout/DefaultLayout";
+import { useRouter } from "next/router";
 
 const Lobby = () => {
-  const { updateView } = useUserStore();
-  const { setMatchInfo } = useGameStore();
+  const updateView = useUserStore((state) => state.updateView);
+  const setMatchInfo = useGameStore((state) => state.setMatchInfo);
+  const updateStatus = useGameStore((state) => state.updateGameStatus);
   const [isQueueing, setIsQueueing] = React.useState(false);
   const router = useRouter();
 
   // *start queue here
   const handleQueue = () => {
     socket.emit("queueEnter");
+
+    // updateView("Game");
+    // updateStatus("InGame");
     console.log("trying to queue");
     // setTimeout(() => onMatchFound(null), 3000); // for development
   };
@@ -25,19 +30,22 @@ const Lobby = () => {
     setIsQueueing(false);
   };
 
-  function onMatchFound(data: any) {
+  function onMatchFound(data: MatchInfo) {
     alert("match found");
 
-    const state: MatchInfo = {
+    const matchInfo: MatchInfo = {
       playerOne: data.playerOne,
       playerTwo: data.playerTwo,
-      gameId: data.id,
+      id: data.id,
     };
-    setMatchInfo(state);
-    // updateState("InGame");
+    setMatchInfo(matchInfo);
     updateView("Game");
+    updateStatus("InGame");
     router.push("/game");
   }
+
+  // https://nextjs.org/docs/api-reference/next/router#routerbeforepopstate
+  // TODO implement this thing ^^
 
   React.useEffect(() => {
     function onQueueEnterSuccess() {
@@ -46,38 +54,46 @@ const Lobby = () => {
 
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);
-    // socket.on("matchFound", onMatchFound);
-    // socket.on("matchFound", onMatchFound);
 
     return () => {
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
       socket.off("matchFound", onMatchFound);
     };
+    // esl'int-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Grid
-      container
-      alignContent="center"
-      justifyContent={"center"}
-      height={"100%"}
-    >
-      <Grid>
-        <Button
-          variant="contained"
-          color="secondary"
+    <>
+      <DefaultLayout>
+        <Box
+          // container
+          component={"div"}
           sx={{
-            typography: "h4",
-            fontWeight: "medium",
-            width: "300px",
-            padding: 2,
+            // alignContent:"center",
+            // justifyContent:"center",
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-          onClick={isQueueing ? handleQueueLeave : handleQueue}
         >
-          {isQueueing ? "Cancel" : "Quick Play"}
-        </Button>
-      </Grid>
-    </Grid>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              typography: "h4",
+              fontWeight: "medium",
+              width: "300px",
+              padding: 2,
+            }}
+            onClick={isQueueing ? handleQueueLeave : handleQueue}
+          >
+            {isQueueing ? "Cancel" : "Quick Play"}
+          </Button>
+        </Box>
+      </DefaultLayout>
+    </>
   );
 };
 

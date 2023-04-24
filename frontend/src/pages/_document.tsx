@@ -1,11 +1,11 @@
 import * as React from "react";
 import Document, {
-  Html,
+  DocumentContext,
+  DocumentProps,
   Head,
+  Html,
   Main,
   NextScript,
-  DocumentProps,
-  DocumentContext,
 } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";

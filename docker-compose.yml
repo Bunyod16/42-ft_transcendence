@@ -59,6 +59,8 @@ services:
     restart: unless-stopped
     networks:
       - ft_trancendence
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
 
   nextjs:
     container_name: frontend

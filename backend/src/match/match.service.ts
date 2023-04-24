@@ -84,6 +84,24 @@ export class MatchService {
     // });
   }
 
+  async find(match_id: number): Promise<Match> {
+    return await this.matchRepository
+      .createQueryBuilder('Match')
+      .where([{ id: match_id }])
+      .select([
+        'Match',
+        'playerOne.id',
+        'playerOne.nickName',
+        'playerOnScore',
+        'playerTwo.id',
+        'playerTwo.nickName',
+        'playerTwoScore',
+      ])
+      .leftJoin('Match.playerOne', 'playerOne')
+      .leftJoin('Match.playerTwo', 'playerTwo')
+      .getOne();
+  }
+
   async findCurrentByUser(user: User): Promise<Match> {
     return await this.matchRepository
       .createQueryBuilder('Match')
