@@ -6,6 +6,7 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "./login";
+import Lobby from "@/components/Lobby";
 
 export default function Home() {
   const { isLoggedIn, logout, login } = useUserStore();
@@ -61,5 +62,15 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-  return <>{isLoggedIn ? <DefaultLayout></DefaultLayout> : <Login />}</>;
+  return (
+    <>
+      {isLoggedIn ? (
+        <DefaultLayout>
+          <Lobby />
+        </DefaultLayout>
+      ) : (
+        <Login />
+      )}
+    </>
+  );
 }
