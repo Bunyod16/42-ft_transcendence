@@ -28,7 +28,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   }, []);
 
   useFrame((state, delta) => {
-    if (body.current) {
+    if (body.current && matchInfo.gameStatus == "InGame") {
       if (isPlayer) {
         const keys = getKeys();
         lastEmit.current += delta;
