@@ -25,6 +25,9 @@ dependencies:
   '@react-three/fiber':
     specifier: ^8.12.0
     version: 8.12.0(react-dom@18.2.0)(react@18.2.0)(three@0.151.1)
+  '@react-three/flex':
+    specifier: ^1.0.1
+    version: 1.0.1(@react-three/fiber@8.12.0)(react@18.2.0)(three@0.151.1)
   '@react-three/rapier':
     specifier: ^0.14.0
     version: 0.14.0(@react-three/fiber@8.12.0)(react@18.2.0)(three@0.151.1)
@@ -48,7 +51,7 @@ dependencies:
     version: 18.2.0(react@18.2.0)
   react-hot-toast:
     specifier: ^2.4.0
-    version: 2.4.0(csstype@3.1.1)(react-dom@18.2.0)(react@18.2.0)
+    version: 2.4.0(react-dom@18.2.0)(react@18.2.0)
   socket.io-client:
     specifier: ^4.6.1
     version: 4.6.1
@@ -962,6 +965,12 @@ packages:
       '@babel/runtime': 7.21.0
     dev: false
 
+  /@react-pdf/yoga@2.0.4:
+    resolution: {integrity: sha512-bsU48GQ8E4LEQ38AtyQPQZ9oEATMpolGPFewgI4sBXOZBNH2miLtoBTbyB/xEOMuBcyqtvJQwSNg2czSZjrlyQ==}
+    dependencies:
+      '@types/yoga-layout': 1.9.4
+    dev: false
+
   /@react-spring/animated@9.6.1(react@18.2.0):
     resolution: {integrity: sha512-ls/rJBrAqiAYozjLo5EPPLLOb1LM0lNVQcXODTC1SMtS6DbuBCPaKco5svFUQFMP2dso3O+qcC4k9FsKc0KxMQ==}
     peerDependencies:
@@ -1092,6 +1101,20 @@ packages:
       zustand: 3.7.2(react@18.2.0)
     dev: false
 
+  /@react-three/flex@1.0.1(@react-three/fiber@8.12.0)(react@18.2.0)(three@0.151.1):
+    resolution: {integrity: sha512-m1zcuE0BWyUP6ASX09SGYZWHkyMS9GVcP4WGXjdSdxWi228D0p8hti9nHlnv+fpZvQO8v+Qz4EXmrf302mEzXQ==}
+    peerDependencies:
+      '@react-three/fiber': '>=8.0'
+      react: ^18.0.0
+      three: '>=0.137'
+    dependencies:
+      '@react-pdf/yoga': 2.0.4
+      '@react-three/fiber': 8.12.0(react-dom@18.2.0)(react@18.2.0)(three@0.151.1)
+      react: 18.2.0
+      react-merge-refs: 1.1.0
+      three: 0.151.1
+    dev: false
+
   /@react-three/rapier@0.14.0(@react-three/fiber@8.12.0)(react@18.2.0)(three@0.151.1):
     resolution: {integrity: sha512-8edoz4Rq2SO/bxiQCsdRK6ELHg7hWO2Vu3Ybjo2t4HaMzPs66xrqGDFk6d9iKeGwB/KnM6q29jzmGewXJex6Lw==}
     peerDependencies:
@@ -1209,6 +1232,10 @@ packages:
 
   /@types/webxr@0.5.1:
     resolution: {integrity: sha512-xlFXPfgJR5vIuDefhaHuUM9uUgvPaXB6GKdXy2gdEh8gBWQZ2ul24AJz3foUd8NNKlSTQuWYJpCb1/pL81m1KQ==}
+
+  /@types/yoga-layout@1.9.4:
+    resolution: {integrity: sha512-RRHc1+8Hc5mf/2lZKnom6kCnqcNS07s8keahniWTOva0KELF6RgDJmaEcvGEKUUJgN4UgessmEsWuidaOycIOw==}
+    dev: false
 
   /@typescript-eslint/eslint-plugin@5.57.0(@typescript-eslint/parser@5.57.0)(eslint@8.36.0)(typescript@5.0.2):
     resolution: {integrity: sha512-itag0qpN6q2UMM6Xgk6xoHa0D0/P+M17THnr4SVgqn9Rgam5k/He33MA7/D7QoJcdMxHFyX7U9imaBonAX/6qA==}
@@ -2499,12 +2526,10 @@ packages:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
     dev: false
 
-  /goober@2.1.12(csstype@3.1.1):
+  /goober@2.1.12:
     resolution: {integrity: sha512-yXHAvO08FU1JgTXX6Zn6sYCUFfB/OJSX8HHjDSgerZHZmFKAb08cykp5LBw5QnmyMcZyPRMqkdyHUSSzge788Q==}
     peerDependencies:
       csstype: ^3.0.10
-    dependencies:
-      csstype: 3.1.1
     dev: false
 
   /gopd@1.0.1:
@@ -3399,14 +3424,14 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-hot-toast@2.4.0(csstype@3.1.1)(react-dom@18.2.0)(react@18.2.0):
+  /react-hot-toast@2.4.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-qnnVbXropKuwUpriVVosgo8QrB+IaPJCpL8oBI6Ov84uvHZ5QQcTp2qg6ku2wNfgJl6rlQXJIQU5q+5lmPOutA==}
     engines: {node: '>=10'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      goober: 2.1.12(csstype@3.1.1)
+      goober: 2.1.12
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:

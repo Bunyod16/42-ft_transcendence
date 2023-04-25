@@ -20,7 +20,7 @@ export interface GameState {
   };
 }
 
-export type GameStatus = "InGame" | "Ended" | "NoGame";
+export type GameStatus = "NoGame"| "Customize" |"InGame" | "Ended" ;
 
 export interface MatchInfo {
   id: string;
@@ -30,4 +30,13 @@ export interface MatchInfo {
   playerTwoScore?: number;
   gameStatus?: GameStatus;
   isWinner?: boolean;
+  selectedSkin?: number;
+}
+
+export interface Textures {
+  map: string;
+  // displacementMap: string;
+  normalMap: string;
+  roughnessMap: string;
+  aoMap: string;
 }
