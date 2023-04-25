@@ -13,6 +13,7 @@ interface UserStore {
   view: Views;
   login: (name: string, id: number) => void;
   logout: () => void;
+  updateName: (name: string) => void;
   updateState: (state: States) => void;
   updateView: (view: Views) => void;
 }
@@ -39,6 +40,11 @@ const useUserStore = create<UserStore>()(
         set(() => ({
           isLoggedIn: true,
           id,
+          name,
+        }));
+      },
+      updateName: (name: string) => {
+        set(() => ({
           name,
         }));
       },

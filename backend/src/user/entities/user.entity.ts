@@ -19,10 +19,13 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   nickName: string;
 
-  @Column({ default: 'default-stormtrooper.png'})
+  @Column()
+  intraName: string;
+
+  @Column({ default: 'default-stormtrooper.png' })
   avatar: string;
 
   @CreateDateColumn({ name: 'created_at' })
