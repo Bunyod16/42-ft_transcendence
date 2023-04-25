@@ -3,11 +3,12 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
 import { GameState } from "@/types/game-types";
+import { match } from "assert";
 
 THREE.ColorManagement.enabled = true;
 
@@ -38,10 +39,7 @@ function Pong() {
   // const setGameState = useGameStore((state) => state.setGameState);
   const { name } = useUserStore();
 
-  socket.emit("userConnected");
   useEffect(() => {
-    console.log(matchInfo, name);
-
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
       setMatchInfo({
@@ -60,10 +58,18 @@ function Pong() {
       socket.off("gameEnded", onGameEnded);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (matchInfo.gameStatus == "InGame") socket.emit("userConnected");
   }, [matchInfo]);
 
   return (
-    <group visible={matchInfo.gameStatus != "NoGame"}>
+    <group
+      visible={
+        matchInfo.gameStatus == "InGame" || matchInfo.gameStatus == "Ended"
+      }
+    >
       <Table tableSize={tableSize} />
 
       <Player
