@@ -4,6 +4,8 @@ import { UserAchievement } from 'src/user_achievement/entities/user_achievement.
 
 export class CreateUserDto {
   @ApiProperty()
+  intraName: string;
+
   nickName: string;
 
   createdAt: Date;
