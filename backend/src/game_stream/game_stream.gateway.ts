@@ -6,7 +6,13 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { GameStreamService } from './game_stream.service';
-import { OnModuleDestroy, OnModuleInit, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  OnModuleDestroy,
+  OnModuleInit,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { Server, Socket } from 'socket.io';
@@ -146,18 +152,20 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userConnected')
-  async userConnected(@ConnectedSocket() socket: SocketWithAuthData) {
+  async userConnected(
+    @ConnectedSocket() socket: SocketWithAuthData,
+    @Body() body: any,
+  ) {
     const match = await this.matchService.findCurrentByUser(socket.user);
     if (!match) {
       return;
     }
-    await this.gameStateService.connectUser(match.id, socket.user);
-    console.log(`${socket.user.nickName} has connected to game`); // todo
+    await this.gameStateService.connectUser(match.id, socket.user, body.skin);
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
       console.log('both players have connected to the game');
-      await this.server.to(`${match.id}`).emit('matchBegin');
-      await this.addInterval(match);
+      this.server.to(`${match.id}`).emit('matchBegin', game);
+      this.addInterval(match);
       await this.gameStateService.setRandomBallDirection(match.id);
     }
     return game;
