@@ -97,8 +97,9 @@ const GameResult = () => {
   };
   const updateGameStatus = useGameStore((state) => state.updateGameStatus);
   const updateView = useUserStore((state) => state.updateView);
+  const gameStatus = useGameStore((state) => state.gameStatus);
 
-  if (matchInfo.gameStatus != "Ended") return <></>;
+  if (gameStatus != "Ended") return <></>;
   return (
     <Box
       component={"div"}
@@ -162,7 +163,7 @@ const Score = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (matchInfo.gameStatus != "InGame") return <></>;
+  if (gameStatus != "InGame") return <></>;
 
   return (
     <Box
@@ -241,7 +242,7 @@ const Score = () => {
 };
 
 const Overlay = () => {
-  const gameStatus = useGameStore((state) => state.matchInfo.gameStatus);
+  const gameStatus = useGameStore((state) => state.gameStatus);
 
   if (gameStatus == "NoGame") return <></>;
   return (

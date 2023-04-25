@@ -10,18 +10,20 @@ import * as THREE from "three";
 interface PlayerSkinProp {
   size: number[];
   material: Textures;
+  index: number;
 }
-const PlayerSkin = ({ size, material }: PlayerSkinProp) => {
+const PlayerSkin = ({ size, material, index }: PlayerSkinProp) => {
   const prop = useTexture({ ...material });
-  const [hover, setHover] = useState(false);
   const ref = useRef<Mesh>(null);
+  const selectedSkin = useGameStore((state) => state.selectedSkin);
+  const setSelectedSkin = useGameStore((state) => state.setSelectedSkin);
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (ref.current) {
       ref.current.position.z = THREE.MathUtils.lerp(
         ref.current.position.z,
-        hover ? 15 : 0,
-        0.075 - Math.abs(50) / 2000,
+        selectedSkin === index ? 0.2 : 0,
+        0.075 - Math.abs(1) / 2000,
       );
     }
   });
@@ -29,9 +31,11 @@ const PlayerSkin = ({ size, material }: PlayerSkinProp) => {
     <Box centerAnchor margin={0.1}>
       <mesh
         rotation={[0, 0, 0]}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
         ref={ref}
+        onClick={() => {
+          setSelectedSkin(index);
+          console.log(index);
+        }}
       >
         <boxGeometry args={[size[2], size[0], size[1]]} />
         <meshStandardMaterial {...prop} />
@@ -42,16 +46,16 @@ const PlayerSkin = ({ size, material }: PlayerSkinProp) => {
 
 const CustomizeStep = () => {
   const material = useGameStore((state) => state.material);
-  const gameStatus = useGameStore((state) => state.matchInfo.gameStatus);
+  const gameStatus = useGameStore((state) => state.gameStatus);
   const size = [0.1, 0.2, 0.6];
+
   return (
     <group visible={gameStatus == "Customize"}>
       <Center>
         <Flex justifyContent="center" alignItems="center" flexDirection={"row"}>
-          <PlayerSkin size={size} material={material[0]} />
-          <PlayerSkin size={size} material={material[1]} />
-          <PlayerSkin size={size} material={material[2]} />
-          <PlayerSkin size={size} material={material[3]} />
+          {material.map((mat, index) => (
+            <PlayerSkin key={index} size={size} material={mat} index={index} />
+          ))}
         </Flex>
       </Center>
     </group>

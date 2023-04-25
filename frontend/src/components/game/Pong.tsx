@@ -35,8 +35,9 @@ function Pong() {
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
+  const gameStatus = useGameStore((state) => state.gameStatus);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
-  // const setGameState = useGameStore((state) => state.setGameState);
+  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
   const { name } = useUserStore();
 
   useEffect(() => {
@@ -46,8 +47,8 @@ function Pong() {
         ...matchInfo,
         playerOneScore: data.playerOne.score,
         playerTwoScore: data.playerTwo.score,
-        gameStatus: "Ended",
       });
+      updateGameStatus("Ended");
     }
 
     // socket.on("updateGame", onUpdateGame);
@@ -61,15 +62,11 @@ function Pong() {
   }, []);
 
   useEffect(() => {
-    if (matchInfo.gameStatus == "InGame") socket.emit("userConnected");
-  }, [matchInfo]);
+    if (gameStatus == "InGame") socket.emit("userConnected");
+  }, [gameStatus]);
 
   return (
-    <group
-      visible={
-        matchInfo.gameStatus == "InGame" || matchInfo.gameStatus == "Ended"
-      }
-    >
+    <group visible={gameStatus == "InGame" || gameStatus == "Ended"}>
       <Table tableSize={tableSize} />
 
       <Player

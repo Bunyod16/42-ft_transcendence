@@ -5,8 +5,11 @@ import { create } from "zustand";
 
 interface GameStore {
   material: Textures[];
+  selectedSkin: number;
+  gameStatus: GameStatus;
   matchInfo: MatchInfo;
   gameState: GameState;
+  setSelectedSkin: (selectedSkin:number) => void;
   setGameState: (state: GameState) => void;
   setMatchInfo: (matchInfo: MatchInfo) => void;
   updateGameStatus: (gameStatus: GameStatus) => void;
@@ -56,17 +59,16 @@ const useGameStore = create<GameStore>()((set, get) => ({
     playerOne: undefined,
     playerTwo: undefined,
     id: "",
-    gameStatus: "NoGame",
     isWinner: false,
   },
   setMatchInfo: (matchInfo: MatchInfo) =>
     set(() => ({
       matchInfo,
     })),
+    gameStatus:"NoGame",
   updateGameStatus: (gameStatus: GameStatus) =>
-    set(() => ({
-      matchInfo: { ...get().matchInfo, gameStatus },
-    })),
+    set(() => ({ gameStatus }
+    )),
   gameState: {
     playerOne: { y: 0, isConnected: false, score: 0 },
     playerTwo: { y: 0, isConnected: false, score: 0 },
@@ -76,6 +78,9 @@ const useGameStore = create<GameStore>()((set, get) => ({
     set(() => ({
       gameState: state,
     })),
+    selectedSkin: 0,
+    setSelectedSkin: (selectedSkin: number ) => 
+    set(() => ({selectedSkin}))
 }));
 
 // Persist state changes to localStorage

@@ -28,7 +28,6 @@ export interface MatchInfo {
   playerTwo: Player | undefined;
   playerOneScore?: number;
   playerTwoScore?: number;
-  gameStatus?: GameStatus;
   isWinner?: boolean;
   selectedSkin?: number;
 }

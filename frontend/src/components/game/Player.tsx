@@ -20,6 +20,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   console.log("player render");
   const body = useRef<Mesh>(null);
   const matchInfo = useGameStore((state) => state.matchInfo);
+  const gameStatus = useGameStore((state) => state.gameStatus);
   const lastEmit = useRef<number>(0);
   const gameState = useGameState();
 
@@ -28,7 +29,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   }, []);
 
   useFrame((state, delta) => {
-    if (body.current && matchInfo.gameStatus == "InGame") {
+    if (body.current && gameStatus == "InGame") {
       if (isPlayer) {
         const keys = getKeys();
         lastEmit.current += delta;
