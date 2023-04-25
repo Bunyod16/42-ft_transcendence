@@ -26,14 +26,16 @@ export class GameStateService {
     return this.createGame(id, playerOneId, playerTwoId);
   }
 
-  async connectUser(gameId: number, user: User) {
+  async connectUser(gameId: number, user: User, skin: number = 0) {
     const game = await this.getGame(gameId);
     console.log(game.playerOne.id);
     // console.log(user, game.playerOne);
     if (user.id == game.playerOne.id) {
       game.playerOne.isConnected = true;
+      game.playerOne.skin = skin;
     } else if (user.id == game.playerTwo.id) {
       game.playerTwo.isConnected = true;
+      game.playerTwo.skin = skin;
     }
     return this.updateGame(gameId, game);
   }
