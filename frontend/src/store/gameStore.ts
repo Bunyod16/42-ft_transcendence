@@ -1,15 +1,13 @@
 import { GameState, GameStatus, MatchInfo, Textures } from "@/types/game-types";
 import { create } from "zustand";
 
-
-
 interface GameStore {
   material: Textures[];
   selectedSkin: number;
   gameStatus: GameStatus;
   matchInfo: MatchInfo;
   gameState: GameState;
-  setSelectedSkin: (selectedSkin:number) => void;
+  setSelectedSkin: (selectedSkin: number) => void;
   setGameState: (state: GameState) => void;
   setMatchInfo: (matchInfo: MatchInfo) => void;
   updateGameStatus: (gameStatus: GameStatus) => void;
@@ -17,6 +15,14 @@ interface GameStore {
 
 const useGameStore = create<GameStore>()((set, get) => ({
   material: [
+    {
+      map: "/asset/material/Quartz-001/Quartz_003_COLOR.jpg",
+      // displacementMap:
+      //   "/asset/material/Quartz-001/Quartz_003_DISP.jpg",
+      normalMap: "/asset/material/Quartz-001/Quartz_003_NORM.jpg",
+      roughnessMap: "/asset/material/Quartz-001/Quartz_003_ROUGH.jpg",
+      aoMap: "/asset/material/Quartz-001/Quartz_003_OCC.jpg",
+    },
     {
       map: "/asset/material/Agate_001_SD/Agate_001_COLOR.jpg",
       // displacementMap: "/asset/material/Agate_001_SD/Agate_001_DISP.",
@@ -38,21 +44,9 @@ const useGameStore = create<GameStore>()((set, get) => ({
       map: "/asset/material/Metal-001/Metal_006_COLOR.jpg",
       // displacementMap:
       //   "/asset/material/Metal-001/Metal_006_DISP.jpg",
-      normalMap:
-        "/asset/material/Metal-001/Metal_006_NORM.jpg",
-      roughnessMap:
-        "/asset/material/Metal-001/Metal_006_ROUGH.jpg",
+      normalMap: "/asset/material/Metal-001/Metal_006_NORM.jpg",
+      roughnessMap: "/asset/material/Metal-001/Metal_006_ROUGH.jpg",
       aoMap: "/asset/material/Metal-001/Metal_006_OCC.jpg",
-    },
-    {
-      map: "/asset/material/Quartz-001/Quartz_003_COLOR.jpg",
-      // displacementMap:
-      //   "/asset/material/Quartz-001/Quartz_003_DISP.jpg",
-      normalMap:
-        "/asset/material/Quartz-001/Quartz_003_NORM.jpg",
-      roughnessMap:
-        "/asset/material/Quartz-001/Quartz_003_ROUGH.jpg",
-      aoMap: "/asset/material/Quartz-001/Quartz_003_OCC.jpg",
     },
   ],
   matchInfo: {
@@ -65,10 +59,8 @@ const useGameStore = create<GameStore>()((set, get) => ({
     set(() => ({
       matchInfo,
     })),
-    gameStatus:"NoGame",
-  updateGameStatus: (gameStatus: GameStatus) =>
-    set(() => ({ gameStatus }
-    )),
+  gameStatus: "NoGame",
+  updateGameStatus: (gameStatus: GameStatus) => set(() => ({ gameStatus })),
   gameState: {
     playerOne: { y: 0, isConnected: false, score: 0 },
     playerTwo: { y: 0, isConnected: false, score: 0 },
@@ -78,9 +70,8 @@ const useGameStore = create<GameStore>()((set, get) => ({
     set(() => ({
       gameState: state,
     })),
-    selectedSkin: 0,
-    setSelectedSkin: (selectedSkin: number ) => 
-    set(() => ({selectedSkin}))
+  selectedSkin: 0,
+  setSelectedSkin: (selectedSkin: number) => set(() => ({ selectedSkin })),
 }));
 
 // Persist state changes to localStorage

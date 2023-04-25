@@ -18,12 +18,12 @@ const PlayerSkin = ({ size, material, index }: PlayerSkinProp) => {
   const selectedSkin = useGameStore((state) => state.selectedSkin);
   const setSelectedSkin = useGameStore((state) => state.setSelectedSkin);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (ref.current) {
       ref.current.position.z = THREE.MathUtils.lerp(
         ref.current.position.z,
         selectedSkin === index ? 0.2 : 0,
-        0.075 - Math.abs(1) / 2000,
+        delta * 0.5,
       );
     }
   });
