@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export default function Profile() {
   const router = useRouter();
   const { username } = router.query;
-  const [user, setUser] = useState<UserProfile>();
+  const [user, setUser] = useState<UserProfile | undefined>(undefined);
   const [userExists, setUserExists] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -37,6 +37,7 @@ export default function Profile() {
   useEffect(() => {
     if (!router.isReady) return;
     getUserProfile(username as string);
+    //eslint-disable-next-line
   }, [router.isReady]);
 
   return (
@@ -45,8 +46,12 @@ export default function Profile() {
         <>loading</>
       ) : userExists ? (
         <>
-          <ProfileIconBox {...user}></ProfileIconBox>
-          <StatsBox {...user}></StatsBox>
+          {user !== undefined && (
+            <>
+              <ProfileIconBox {...user}></ProfileIconBox>
+              <StatsBox {...user}></StatsBox>
+            </>
+          )}
         </>
       ) : (
         <>User {username} Doesnt Exists</>

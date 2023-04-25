@@ -66,9 +66,9 @@ export default function StatsBox(user: UserProfile) {
           sx={{
             backgroundColor: "primary.200",
             height: "100%",
-            padding: "10px 20px",
+            padding: "10px 10px 30px 20px",
             borderRadius: "8px",
-            overflow: "scroll",
+            overflow: "hidden",
           }}
         >
           <Typography sx={{ fontSize: "1.5em", fontWeight: "600" }}>
@@ -78,6 +78,8 @@ export default function StatsBox(user: UserProfile) {
             component="div"
             sx={{
               width: "100%",
+              overflow: "scroll",
+              height: "92%",
             }}
           >
             {user.achievements.map((userAchievement) => {
@@ -91,6 +93,7 @@ export default function StatsBox(user: UserProfile) {
                     borderRadius: "8px",
                     margin: "10px 0px",
                     padding: "7px 10px",
+                    width: "calc(100% - 10px)",
                   }}
                 >
                   <Typography
@@ -124,7 +127,8 @@ export default function StatsBox(user: UserProfile) {
           width: "70%",
           marginLeft: "20px",
           height: "100%",
-          overflow: "scroll",
+          overflow: "hidden",
+          borderRadius: "8px",
         }}
       >
         <Typography
@@ -137,6 +141,8 @@ export default function StatsBox(user: UserProfile) {
           sx={{
             width: "100%",
             padding: "0px 20px",
+            overflow: "scroll",
+            height: "87%",
           }}
         >
           {user.matches.map((match) => {

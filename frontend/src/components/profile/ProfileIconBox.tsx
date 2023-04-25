@@ -7,6 +7,45 @@ export default function ProfileIconBox(user: UserProfile) {
     console.log(`Profile Page of in iconbox:${user.nickName}`);
   }, [user]);
 
+  /*
+   * Wins worth 2 points
+   * Losses worth 1 point
+   *
+   * expIncreasePerLevel means
+   * level 1 -> 2 points
+   * level 2 -> 4 points
+   * level 3 -> 6 points
+   * ...
+   *
+   * extra points left gets turned into fraction over next level.
+   * */
+
+  function calculateUserLevel(wins: number, losses: number): string {
+    let totalPoints: number = wins * 2 + losses;
+    let finalLevel = 0.0;
+    let expIncreasePerLevel = 2;
+
+    while (totalPoints > 0) {
+      totalPoints -= expIncreasePerLevel;
+      expIncreasePerLevel++;
+      finalLevel++;
+    }
+
+    //calculate float if theres extra exp
+    if (totalPoints !== 0) {
+      finalLevel +=
+        (totalPoints + (expIncreasePerLevel - 1)) / expIncreasePerLevel;
+    }
+
+    //round to 3dp
+    return finalLevel.toFixed(3);
+  }
+
+  function calculateUserMMR(wins: number, losses: number): number {
+    const mmr = wins - losses > 0 ? (wins - losses) * 25 : 0;
+    return mmr;
+  }
+
   return (
     <Box
       component="div"
@@ -35,8 +74,9 @@ export default function ProfileIconBox(user: UserProfile) {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            margin: "0px 20px",
+            marginLeft: "20px",
             padding: "0px",
+            width: "100%",
           }}
         >
           <Typography
@@ -52,22 +92,47 @@ export default function ProfileIconBox(user: UserProfile) {
           >
             {user.nickName}
           </Typography>
-          <Typography
+          <Box
+            component="div"
             sx={{
-              textTransform: "uppercase",
-              textAlign: "center",
-              lineHeight: "50px",
-              backgroundColor: "primary.200",
-              borderRadius: "8px",
-              padding: "5px 5px",
-              width: "150px",
-              fontWeight: "700",
-              fontSize: "1.5em",
-              margin: "0px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
           >
-            Lvl 9.23
-          </Typography>
+            <Typography
+              sx={{
+                textTransform: "uppercase",
+                textAlign: "center",
+                lineHeight: "50px",
+                backgroundColor: "primary.200",
+                borderRadius: "8px",
+                padding: "5px 5px",
+                width: "150px",
+                fontWeight: "700",
+                fontSize: "1.5em",
+                margin: "0px",
+              }}
+            >
+              Lvl {calculateUserLevel(user.wins, user.losses)}
+            </Typography>
+            <Typography
+              sx={{
+                textTransform: "uppercase",
+                textAlign: "center",
+                lineHeight: "50px",
+                backgroundColor: "primary.200",
+                borderRadius: "8px",
+                padding: "5px 5px",
+                width: "150px",
+                fontWeight: "700",
+                fontSize: "1.5em",
+                margin: "0px",
+              }}
+            >
+              {calculateUserMMR(user.wins, user.losses)} MMR
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </Box>

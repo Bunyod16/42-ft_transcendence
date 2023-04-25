@@ -22,7 +22,7 @@ const useUserStore = create<UserStore>()(
     (set) => ({
       isLoggedIn: false,
       id: null,
-      name: "",
+      nickName: "",
       state: "Idle",
       view: "Lobby",
       // Persist state to localStorage
