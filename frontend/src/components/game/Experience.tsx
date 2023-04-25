@@ -1,3 +1,4 @@
+import CustomizeStep from "./CustomizeStep";
 import Pong from "./Pong";
 import VictoryDefeat from "./VictoryDefeat";
 import useGameStore from "@/store/gameStore";
@@ -29,6 +30,7 @@ function Experience() {
     InGame: button(() => updateGameStatus("InGame")),
     Ended: button(() => updateGameStatus("Ended")),
     NoGame: button(() => updateGameStatus("NoGame")),
+    Customize: button(() => updateGameStatus("Customize")),
   });
   return (
     <>
@@ -37,6 +39,7 @@ function Experience() {
       {/* <Physics gravity={[0, 0, 0]}> */}
       {/* <Debug /> */}
       <Lights />
+      <CustomizeStep />
       <Pong />
       <VictoryDefeat />
       {/* </Physics> */}

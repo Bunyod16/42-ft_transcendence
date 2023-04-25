@@ -40,7 +40,7 @@ const Lobby = () => {
     };
     setMatchInfo(matchInfo);
     updateView("Game");
-    updateStatus("InGame");
+    updateStatus("Customize");
     router.push("/game");
   }
 
