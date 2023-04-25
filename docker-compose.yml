@@ -38,7 +38,7 @@ services:
     expose:
       - ${CDN_PORT}
     ports:
-      - "7001:${CDN_PORT}"
+      - "${CDN_PORT}:${CDN_PORT}"
     environment:
       CDN_PORT: ${CDN_PORT}
       CDN_DOMAIN_NAME: ${CDN_DOMAIN_NAME}
@@ -59,6 +59,8 @@ services:
     restart: unless-stopped
     networks:
       - ft_trancendence
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
 
   nextjs:
     container_name: frontend

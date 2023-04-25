@@ -7,7 +7,8 @@ const URL = "http://localhost:3000";
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   URL,
   {
-    withCredentials: true,
+    withCredentials: true, 
+    // temporarily remove to avoid the socket error
     autoConnect: false,
   },
 );

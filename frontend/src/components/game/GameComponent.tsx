@@ -2,30 +2,25 @@ import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience";
 import { Perf } from "r3f-perf";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import Overlay from "./Overlay";
 import useUserStore from "@/store/userStore";
-import { socket } from "../socket/socket";
 
 function GameComponent() {
-  const { updateState } = useUserStore();
-
-  const handleQuit = () => {
-    socket.emit("leaveGame");
-    updateState("Idle");
-  };
-
+  const view = useUserStore((state) => state.view);
   return (
     <Box
       component={"div"}
-      sx={{ width: "100vw", height: "100vh", position: "relative" }}
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        display: view == "Game" ? "block" : "none",
+        // zIndex: -100,
+      }}
     >
-      <Button
-        variant="contained"
-        sx={{ position: "absolute", bottom: 0, zIndex: 100 }}
-        onClick={handleQuit}
-      >
-        Quit
-      </Button>
       <KeyboardControls
         map={[
           { name: "up", keys: ["ArrowUp", "KeyW"] },
@@ -36,18 +31,19 @@ function GameComponent() {
           // orthographic
           shadows
           camera={{
-            position: [0, -400, 100],
+            position: [0, -4, 2],
             // zoom: 200,
             // fov: 45,
             near: 0.1,
             far: 1000,
           }}
         >
-          <Perf position="top-left" />
+          <Perf position="bottom-left" />
 
           <Experience />
           <OrbitControls />
         </Canvas>
+        <Overlay />
       </KeyboardControls>
     </Box>
   );

@@ -1,5 +1,5 @@
-import { Oswald, Inconsolata } from "next/font/google";
-import { createTheme, PaletteColor } from "@mui/material/styles";
+import { Inconsolata, Oswald } from "next/font/google";
+import { createTheme } from "@mui/material/styles";
 
 export const oswald = Oswald({
   subsets: ["latin"],
@@ -38,6 +38,7 @@ const theme = createTheme({
       light: "#4089A5",
       // contrastText: "#FFF",
       // hover: "#AC0436",
+      dark:"#58021c"
     },
   },
   typography: {

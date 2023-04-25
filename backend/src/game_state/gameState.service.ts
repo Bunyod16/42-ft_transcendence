@@ -3,7 +3,6 @@ import { RedisService } from './redis.service';
 import { GameState } from './gameState.class';
 import { User } from 'src/user/entities/user.entity';
 import { racketMoveDistance } from './gameState.constats';
-import { match } from 'assert';
 import { planeSize, racketSize } from './gameState.constats';
 
 @Injectable()
@@ -89,38 +88,78 @@ export class GameStateService {
   }
 
   bounceRacket(gameState: GameState) {
+    const playerOneRacketTop = gameState.playerOne.y + racketSize.y / 2;
+    const playerOneRacketBottom = gameState.playerOne.y - racketSize.y / 2;
+    const playerTwoRacketTop = gameState.playerTwo.y + racketSize.y / 2;
+    const playerTwoRacketBottom = gameState.playerTwo.y - racketSize.y / 2;
     if (
-      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 30 &&
-      gameState.ballProperties.y <= gameState.playerTwo.y + racketSize.y / 2 &&
-      gameState.ballProperties.y >= gameState.playerTwo.y - racketSize.y / 2
+      gameState.ballProperties.x <= (planeSize.x / 2) * -1 + 20 && // if the ball is right infront of the racket
+      gameState.ballProperties.x >= (planeSize.x / 2) * -1 + 10 && // ^
+      gameState.ballProperties.y <= playerTwoRacketTop + 10 && // ball below the top of the racket
+      gameState.ballProperties.y >= playerTwoRacketBottom - 10 // ball above the racket
     ) {
-      gameState.ballProperties.dx *= -1;
+      if (
+        gameState.ballProperties.y >= playerTwoRacketTop - 10 ||
+        gameState.ballProperties.y <= playerTwoRacketBottom + 10 // the ball is on the edge
+      ) {
+        gameState.ballProperties.dy *= -1; // flip the y
+      } else {
+        gameState.ballProperties.x = (planeSize.x / 2) * -1 + 20; // this is to stop the bug where the ball gets stuck bouncing "inside" the racket
+      }
+      gameState.ballProperties.dx *= -1; // flip x regardless
     }
     if (
-      gameState.ballProperties.x >= planeSize.x / 2 - 30 &&
-      gameState.ballProperties.y <= gameState.playerOne.y + racketSize.y / 2 &&
-      gameState.ballProperties.y >= gameState.playerOne.y - racketSize.y / 2
+      gameState.ballProperties.x >= planeSize.x / 2 - 20 && // if the ball is right infront of the racket
+      gameState.ballProperties.x <= planeSize.x / 2 - 10 && // ^
+      gameState.ballProperties.y <= playerOneRacketTop + 10 && // ball below the top of the racket
+      gameState.ballProperties.y >= playerOneRacketBottom - 10 // ball above the top of the racket
     ) {
-      gameState.ballProperties.dx *= -1;
+      if (
+        gameState.ballProperties.y >= playerOneRacketTop - 10 ||
+        gameState.ballProperties.y <= playerOneRacketBottom + 10 // the ball is on the edge
+      ) {
+        gameState.ballProperties.dy *= -1; // flip the y
+      } else {
+        gameState.ballProperties.x = planeSize.x / 2 - 20; // this is to stop the bug where the ball gets stuck bouncing "inside" the racket
+      }
+      gameState.ballProperties.dx *= -1; // flip x regardless
     }
 
     return gameState;
   }
 
   checkBallOutOfBounds(gameState: GameState) {
-    if (
-      gameState.ballProperties.x < (planeSize.x / 2) * -1 ||
-      gameState.ballProperties.x > planeSize.x / 2
-    ) {
-      gameState.ballProperties.x = 0;
-      gameState.ballProperties.y = 0;
+    if (gameState.ballProperties.x < (planeSize.x / 2) * -1 + 18) {
+      const min = Math.ceil(3);
+      const max = Math.floor(1);
+      gameState.ballProperties.dx = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.ballProperties.dy = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.playerOne.score += 1;
+    } else if (gameState.ballProperties.x > planeSize.x / 2 - 18) {
+      const min = Math.ceil(-1);
+      const max = Math.floor(-3);
+      gameState.ballProperties.dx = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.ballProperties.dy = Math.floor(
+        Math.random() * (max - min) + min,
+      );
+      gameState.playerTwo.score += 1;
+    } else {
+      return gameState;
     }
+    gameState.ballProperties.x = 0;
+    gameState.ballProperties.y = 0;
     return gameState;
   }
 
   checkPlayerOutOfBounds(gameState: GameState) {
     const upperBound = planeSize.y / 2 - racketSize.y / 2;
-    const lowerBound = (planeSize.y / 2 * -1) + racketSize.y / 2;
+    const lowerBound = (planeSize.y / 2) * -1 + racketSize.y / 2;
     if (gameState.playerOne.y > upperBound) {
       gameState.playerOne.y = upperBound;
     }
@@ -137,8 +176,9 @@ export class GameStateService {
   }
 
   bounceBall(gameState: GameState) {
-    var updatedGameState = this.bounceRacket(gameState);
+    let updatedGameState = this.bounceRacket(gameState);
     updatedGameState = this.checkBallOutOfBounds(gameState);
+
     if (
       updatedGameState.ballProperties.y >= planeSize.y / 2 ||
       updatedGameState.ballProperties.y <= (planeSize.y / 2) * -1
@@ -152,7 +192,7 @@ export class GameStateService {
   async moveBall(gameState: GameState, matchId: number) {
     gameState.ballProperties.x += gameState.ballProperties.dx;
     gameState.ballProperties.y += gameState.ballProperties.dy;
-    var updatedGameState = this.bounceBall(gameState);
+    const updatedGameState = this.bounceBall(gameState);
 
     await this.updateGame(matchId, updatedGameState);
     return this.getGame(matchId);
