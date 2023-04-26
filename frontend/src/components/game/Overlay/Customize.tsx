@@ -1,9 +1,9 @@
+import { socket } from "@/components/socket/socket";
 import useGameStore from "@/store/gameStore";
 import { Box, Button } from "@mui/material";
 
 const Customize = () => {
   const gameStatus = useGameStore((state) => state.gameStatus);
-  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
 
   if (gameStatus != "Customize") return <></>;
   return (
@@ -19,7 +19,7 @@ const Customize = () => {
       <Button
         variant="contained"
         sx={{ pointerEvents: "all", fontSize: 40, width: "max-content" }}
-        onClick={() => updateGameStatus("InGame")}
+        onClick={() => socket.emit("userConnected", { skin: selectedSkin })}
       >
         Ready
       </Button>

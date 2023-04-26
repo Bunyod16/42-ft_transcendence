@@ -1,3 +1,4 @@
+import { socket } from "../socket/socket";
 import CustomizeStep from "./CustomizeStep";
 import Pong from "./Pong";
 import VictoryDefeat from "./VictoryDefeat";
@@ -24,14 +25,17 @@ function Lights() {
   );
 }
 function Experience() {
-  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+  // const updateGameStatus = useGameStore((state) => state.updateGameStatus);
 
-  useControls({
-    InGame: button(() => updateGameStatus("InGame")),
-    Ended: button(() => updateGameStatus("Ended")),
-    NoGame: button(() => updateGameStatus("NoGame")),
-    Customize: button(() => updateGameStatus("Customize")),
-  });
+  // useControls({
+  //   InGame: button(() => updateGameStatus("InGame")),
+  //   Ended: button(() => {
+  //     updateGameStatus("Ended");
+  //     socket.emit("userDisconnected");
+  //   }),
+  //   NoGame: button(() => updateGameStatus("NoGame")),
+  //   Customize: button(() => updateGameStatus("Customize")),
+  // });
   return (
     <>
       <color args={["#26333A"]} attach="background" />

@@ -3,12 +3,11 @@ import { ISize } from "./types";
 import { boxGeometry, tableMaterial } from "./resource";
 import Player from "./Player";
 import Ball from "./Ball";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
 import { GameState } from "@/types/game-types";
-import { match } from "assert";
 
 THREE.ColorManagement.enabled = true;
 
@@ -38,9 +37,13 @@ function Pong() {
   const gameStatus = useGameStore((state) => state.gameStatus);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   const updateGameStatus = useGameStore((state) => state.updateGameStatus);
-  const { name } = useUserStore();
-
+  const name = useUserStore((state) => state.name);
+  const updateGameSkin = useGameStore((state) => state.updateGameSkin);
   useEffect(() => {
+    function onMatchBegin(data: GameState) {
+      updateGameSkin(data.playerOne.skin, data.playerTwo.skin);
+      updateGameStatus("InGame");
+    }
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
       setMatchInfo({
@@ -53,17 +56,15 @@ function Pong() {
 
     // socket.on("updateGame", onUpdateGame);
     socket.on("gameEnded", onGameEnded);
+    socket.on("matchBegin", onMatchBegin);
 
     return () => {
       // socket.off("updateGame", onUpdateGame);
       socket.off("gameEnded", onGameEnded);
+      socket.off("matchBegin", onMatchBegin);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (gameStatus == "InGame") socket.emit("userConnected");
-  }, [gameStatus]);
 
   return (
     <group visible={gameStatus == "InGame" || gameStatus == "Ended"}>
