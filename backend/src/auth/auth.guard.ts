@@ -9,6 +9,7 @@ import { parse } from 'cookie';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { Socket } from 'socket.io';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
+import RequestWithUser from './requestWithUser.interace';
 
 interface Token {
   refresh: string,
@@ -45,8 +46,8 @@ export class UserAuthGuard implements CanActivate {
       // Not sure if guards should have greater than 1 responsibility, perhaps appending user can be done in an interceptor.
       // Feels like redundant code as a result..
       if (context.getType() === 'http'){
-        let request: Request = context.switchToHttp().getRequest();
-        request['user'] = payload;
+        let request: RequestWithUser = context.switchToHttp().getRequest();
+        request.user = payload;
       }
       else if (context.getType() === 'ws'){
         let socket: SocketWithAuthData = context.switchToWs().getClient();
