@@ -8,13 +8,22 @@ import {
   Delete,
   ParseIntPipe,
   Logger,
-  HttpCode,
+  UseGuards,
+  Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
+import { UserAuthGuard } from 'src/auth/auth.guard';
+import RequestWithUser from 'src/auth/requestWithUser.interace';
+
+export class temp {
+  nickName?: string;
+}
 
 @ApiTags('user')
 @Controller('user')
@@ -65,6 +74,15 @@ export class UserController {
     // return user;
   }
 
+  @Get('check-nickname/:nickName')
+  async checkUsername(@Param('nickName') nickName: string) {
+    const user = await this.userService.findOneByUsername(nickName);
+
+    Logger.log(`Finding user with nickName = [${nickName}]`);
+
+    return user ? true : false;
+  }
+
   @Get(':id/matches')
   async getMatches(@Param('id', ParseIntPipe) id: number) {
     const userMatches = await this.userService.getMatches(id);
@@ -77,9 +95,19 @@ export class UserController {
     return userMatches;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch()
+  @UseGuards(UserAuthGuard)
+  update(@Req() req: RequestWithUser, @Body() body: UpdateUserDto) {
+    const updateUserDto = new UpdateUserDto(req.body);
+    updateUserDto.nickName = req.body.nickName;
+    updateUserDto.avatar = req.body.avatar;
+    const reg = /^[a-z0-9]+$/i;
+    return reg.test(updateUserDto.nickName)
+      ? this.userService.update(req.user.id, updateUserDto)
+      : new HttpException(
+          'Nickname may only contain alphanumerical characters',
+          HttpStatus.BAD_REQUEST,
+        );
   }
 
   @Delete(':id')
