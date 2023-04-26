@@ -2,15 +2,22 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface RequestType {
-  id: number;
-  nickName: string;
-  online: boolean;
+  friend: {
+    id: number;
+    nickName: string;
+    online: boolean;
+  };
+}
+
+interface PendingRequest {
+  incomingRequests: RequestType[];
+  outgoingRequests: RequestType[];
 }
 
 interface pendingFriendStoreType {
   incomingRequests: RequestType[];
   outgoingRequests: RequestType[];
-  setRequests: (pendingRequest: any) => void;
+  setRequests: (pendingRequest: PendingRequest) => void;
   resetRequests: () => void;
 }
 
@@ -19,23 +26,19 @@ const usePendingFriendStore = create<pendingFriendStoreType>()(
     (set) => ({
       incomingRequests: [],
       outgoingRequests: [],
-      setRequests: (pendingRequest: any) => {
-        let inReq: RequestType[];
-        let outReq: RequestType[];
-        pendingRequest.incomingRequest.map((req: any) => {
-          inReq.push({
-            id: req.friend.id,
-            nickName: req.friend.nickName,
-            online: req.friend.online,
+      setRequests: (pendingRequest: PendingRequest) => {
+        const inReq: RequestType[] = [];
+        const outReq: RequestType[] = [];
+        console.log(pendingRequest);
+        if (pendingRequest.incomingRequests.length) {
+          pendingRequest.incomingRequests.map((req) => {
+            inReq.push({ friend: req.friend });
           });
-        });
-        pendingRequest.outgoingRequest.map((req: any) => {
-          outReq.push({
-            id: req.friend.id,
-            nickName: req.friend.nickName,
-            online: req.friend.online,
+        }
+        if (pendingRequest.outgoingRequests.length)
+          pendingRequest.outgoingRequests.map((req) => {
+            outReq.push({ friend: req.friend });
           });
-        });
         set(() => ({
           incomingRequests: inReq,
           outgoingRequests: outReq,
