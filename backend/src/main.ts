@@ -44,6 +44,9 @@ async function bootstrap() {
   // Commented out for the time being
   // Custom socketIO adapter for custom cors on all websockets
   app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
-  await app.listen(3000);
+
+  const port: number = parseInt(configService.get('HOST')) || parseInt(process.env.HOST) || 3000;
+
+  await app.listen(port);
 }
 bootstrap();
