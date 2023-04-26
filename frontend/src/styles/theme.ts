@@ -29,6 +29,7 @@ const theme = createTheme({
       main: "#26333A",
       "100": "#1b2429",
       "200": "rgba(0,0,0,0.2)",
+      "300": "#00000066",
     },
     secondary: {
       main: "#048BA8",
@@ -38,7 +39,7 @@ const theme = createTheme({
       light: "#4089A5",
       // contrastText: "#FFF",
       // hover: "#AC0436",
-      dark:"#58021c"
+      dark: "#58021c",
     },
   },
   typography: {
