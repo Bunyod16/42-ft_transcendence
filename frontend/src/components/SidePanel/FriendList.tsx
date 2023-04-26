@@ -8,10 +8,9 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { io } from "socket.io-client";
 import useFriendsStore, { FriendType } from "@/store/friendsStore";
 
 const inlineStyle = {
@@ -19,39 +18,6 @@ const inlineStyle = {
   height: "32px",
   borderRadius: "50px",
 };
-
-const sampleData = [
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Jakoh",
-    alt: "some text",
-    status: true,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Bunyod",
-    alt: "some more text",
-    status: true,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Jaclyn",
-    alt: "some more more text",
-    status: false,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Al Kapitan",
-    alt: "some more more more text",
-    status: false,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Davidto",
-    alt: "some more more more more text",
-    status: true,
-  },
-];
 
 interface FriendPanelType {
   setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
@@ -63,15 +29,6 @@ interface FriendPanelType {
 // });
 function FriendBox({ setPanel }: FriendPanelType) {
   const friends = useFriendsStore((state) => state.friends);
-  console.log("friends", friends);
-  // const socket = io();
-  function handleDirectMessage() {
-    // socket.emit("joinRoomDirectMessage", {
-    //   // have to check if id is me or not for resquester and responder
-    //   friendId: directMessage.id | friend.id,
-    // });
-  }
-
   return (
     <List
       sx={{

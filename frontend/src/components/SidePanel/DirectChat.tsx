@@ -17,59 +17,37 @@ interface DirectChatPropsType {
   setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
 }
 
-interface ChatType {
-  createdAt: Date;
+export interface ChatType {
+  id?: number;
+  createdAt?: Date;
   text: string;
   sender: {
-    id: number;
+    id?: number;
     nickName: string;
   };
 }
 
 export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   const chatLineOffset = 100;
-  const [chats, setChats] = useState<ChatType[] | []>();
+  const [chats, setChats] = useState<ChatType[] | []>([]);
   useEffect(() => {
     if (panel === undefined) return;
     axios
       .get(`/chat-line/getNextChatLines/90?chatLineOffset=${chatLineOffset}`)
       .then((response) => {
-        console.log(response.data);
-        response.data.map((chats, index) => {
-          console.log("chats", index, chats);
-        });
-        // [
-        //   {
-        //         "id": 65,
-        //         "createdAt": "2023-04-17T02:27:28.770Z",
-        //         "text": "hello from david 1",
-        //         "sender": {
-        //             "id": 12,
-        //             "nickName": "kwang"
-        //         }
-        //     },
-        //     {
-        //         "id": 63,
-        //         "createdAt": "2023-04-17T01:41:14.749Z",
-        //         "text": "send message from room 90",
-        //         "sender": {
-        //             "id": 11,
-        //             "nickName": "nfernand"
-        //         }
-        //     },
-        // ]
+        setChats(response.data);
       });
     function handleDirectMessage() {
-      console.log(panel);
       chatSocket.emit("joinRoomDirectMessage", {
         channelId: panel?.directMessage?.chatChannel?.id || -1,
       });
     }
     handleDirectMessage();
   }, [panel]);
-  useEffect(() => {
-    // listenToSomethingSoPeepoCanSendMeSomething
-  }, []);
+
+  // useEffect(() => {
+  //   // listenToSomethingSoPeepoCanSendMeSomething
+  // }, []);
 
   return (
     <Box
@@ -152,7 +130,12 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
           border: "1px solid #048BA8",
         }}
       >
-        <ChatBox height="100%" />
+        <ChatBox
+          chats={chats}
+          setChats={setChats}
+          nickName={panel?.nickName}
+          height="100%"
+        />
       </Box>
     </Box>
   );

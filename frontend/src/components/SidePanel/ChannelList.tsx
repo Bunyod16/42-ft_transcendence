@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import ChatBox from "./ChatBox";
+import { ChatType } from "./DirectChat";
 /**
  * Chat Data Array of =
  * {
@@ -13,17 +14,9 @@ import ChatBox from "./ChatBox";
  */
 
 export default function ChannelList() {
-  const [chats, setChats] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
+  const [chats, setChats] = useState<ChatType[]>([]);
   const [channels, setChannels] = useState<string[]>([]);
   const [curChannel, setCurChannel] = useState<string>("");
-
-  function handleMessageSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-    if (message === "") return;
-    setChats((prevState) => [...prevState, message]);
-    setMessage("");
-  }
 
   function handleChannel() {
     const channel: string = prompt("Enter Channel Name") || "";
@@ -57,6 +50,7 @@ export default function ChannelList() {
             width: "100%",
             height: "56px",
             border: "2px solid #fefefe",
+            color: "#fefefe",
           }}
           onClick={handleChannel}
         >
@@ -94,7 +88,7 @@ export default function ChannelList() {
           ))}
         </ToggleButtonGroup>
       </Box>
-      <ChatBox height="50%" />
+      <ChatBox chats={chats} setChats={setChats} height="50%" />
     </Box>
   );
 }

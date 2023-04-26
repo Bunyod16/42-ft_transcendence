@@ -1,20 +1,29 @@
 import { Box, Typography, TextField } from "@mui/material";
-import { useState } from "react";
-
-interface chatType {
-  user: string;
-  message: string;
+import React, { useState } from "react";
+import { ChatType } from "./DirectChat";
+import { FriendType } from "@/store/friendsStore";
+interface ChatBoxProps {
+  chats: ChatType[];
+  setChats: React.Dispatch<React.SetStateAction<[] | ChatType[]>>;
+  nickName?: string;
+  height: string;
 }
 
-export default function ChatBox({ height }: { height: string }) {
-  const [chats, setChats] = useState<chatType[]>([]);
+export default function ChatBox({
+  chats,
+  setChats,
+  nickName,
+  height,
+}: ChatBoxProps) {
   const [message, setMessage] = useState<string>("");
 
   function handleMessageSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    const user = "Jakoh";
     if (message === "") return;
-    setChats((prevState: chatType[]) => [...prevState, { user, message }]);
+    setChats((prevState: ChatType[]) => [
+      ...prevState,
+      { text: message, sender: { nickName: nickName || "Unknown User" } },
+    ]);
     setMessage("");
   }
   return (
@@ -37,7 +46,7 @@ export default function ChatBox({ height }: { height: string }) {
         }}
       >
         {chats
-          .map((x, i) => (
+          .map((chat, i) => (
             <Box
               component="div"
               sx={{
@@ -49,9 +58,11 @@ export default function ChatBox({ height }: { height: string }) {
               }}
               key={i}
             >
-              <Typography sx={{ fontSize: "14px" }}>{`${x.user}:`}</Typography>
+              <Typography
+                sx={{ fontSize: "14px" }}
+              >{`${chat.sender.nickName}:`}</Typography>
               <Typography sx={{ fontSize: "14px", ml: "4px" }}>
-                {x.message}
+                {chat.text}
               </Typography>
             </Box>
           ))
