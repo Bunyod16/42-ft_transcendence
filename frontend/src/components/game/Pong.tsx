@@ -39,6 +39,20 @@ function Pong() {
   const updateGameStatus = useGameStore((state) => state.updateGameStatus);
   const name = useUserStore((state) => state.name);
   const updateGameSkin = useGameStore((state) => state.updateGameSkin);
+
+  const checkIsWinner = (data: GameState) => {
+    if (
+      name === matchInfo.playerOne.nickName &&
+      data.playerOne.score > data.playerTwo.score
+    )
+      return true;
+    if (
+      name === matchInfo.playerTwo.nickName &&
+      data.playerTwo.score > data.playerOne.score
+    )
+      return true;
+    return false;
+  };
   useEffect(() => {
     function onMatchBegin(data: GameState) {
       updateGameSkin(data.playerOne.skin, data.playerTwo.skin);
@@ -50,6 +64,7 @@ function Pong() {
         ...matchInfo,
         playerOneScore: data.playerOne.score,
         playerTwoScore: data.playerTwo.score,
+        isWinner: checkIsWinner(data),
       });
       updateGameStatus("Ended");
     }

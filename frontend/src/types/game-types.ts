@@ -30,7 +30,7 @@ export interface MatchInfo {
   playerTwo: Player;
   playerOneScore?: number;
   playerTwoScore?: number;
-  isWinner?: boolean;
+  isWinner: boolean;
   selectedSkin?: number;
 }
 
