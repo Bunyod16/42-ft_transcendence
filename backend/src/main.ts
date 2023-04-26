@@ -34,8 +34,12 @@ async function bootstrap() {
   app.useGlobalFilters(new CustomExceptionFilter());
   //adds a global filter so that Catch(CustomWSException) doesnt need to be called everywhere
   app.useGlobalFilters(new CustomWSExceptionFilter());
+
   // prune unnecessary data fields from dto when using validators
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    skipMissingProperties: true,
+  }));
 
   // Commented out for the time being
   // Custom socketIO adapter for custom cors on all websockets
