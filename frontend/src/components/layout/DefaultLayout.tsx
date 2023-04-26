@@ -22,7 +22,7 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
         flexDirection: "row",
       }}
     >
-      {/* <SidePanel sx={{ overflow: "hidden" }} /> */}
+      <SidePanel sx={{ overflow: "hidden" }} />
       <Box
         component={"div"}
         sx={{

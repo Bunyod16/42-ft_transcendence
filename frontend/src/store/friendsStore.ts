@@ -1,23 +1,24 @@
 import { create } from 'zustand';
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface DirectMessageType {
-	id: number;
-	chatChannel: {
-		id: number;
-		name: string | null;
-		channelType: string;
-		chatType: string;
+	id?: number;
+	chatChannel?: {
+		id?: number;
+		name?: string | null;
+		channelType?: string;
+		chatType?: string;
 	}
 }
 
-interface FriendType {
+export interface FriendType {
 	id: number;
 	nickName: string;
+	avatar: string;
 	wins: number;
 	losses: number;
 	online: boolean;
-	directMessage: DirectMessageType;
+	directMessage?: DirectMessageType | null;
 }
 
 interface FriendsStoreType {
@@ -30,16 +31,16 @@ const useFriendsStore = create<FriendsStoreType>()(
 	persist((set) => ({
 		friends: [],
 		setFriendList: (friendQuery : any) => {
-			let friendList: FriendType[];
-
+			const friendList: FriendType[] = [];
 			friendQuery.map((query: any) => {
 				friendList.push({
 					id: query.friend.id,
 					nickName: query.friend.nickName,
+					avatar: query.friend.avatar,
 					wins: query.friend.wins,
 					losses: query.friend.losses,
 					online: query.friend.online,
-					directMessage: {
+					directMessage: query.directMessage ? {
 						id: query.directMessage.id,
 						chatChannel: {
 							id: query.directMessage.chatChannel.id,
@@ -47,8 +48,8 @@ const useFriendsStore = create<FriendsStoreType>()(
 							channelType: query.directMessage.chatChannel.channelType,
 							chatType: query.directMessage.chatChannel.chatType,
 						}
-					}
-				})
+					} : null
+				 });
 			})
 			set(()=>({
 				friends: friendList,
@@ -60,7 +61,8 @@ const useFriendsStore = create<FriendsStoreType>()(
 			}))
 		}
 	}),{
-		name:"rgm-friend-state"
+		name:"rgm-friend-state",
+		storage: createJSONStorage(() => sessionStorage)
 	})
 )
 

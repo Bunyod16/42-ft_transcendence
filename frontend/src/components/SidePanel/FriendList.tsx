@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { io } from "socket.io-client";
+import useFriendsStore, { FriendType } from "@/store/friendsStore";
+
 const inlineStyle = {
   width: "32px",
   height: "32px",
@@ -51,19 +53,17 @@ const sampleData = [
   },
 ];
 
-// not sure something.
+interface FriendPanelType {
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+}
+
 // data acpt from here, friend msg etc
 // socket.on("serverMessage", (data) => {
 //   data;
 // });
-function FriendBox({
-  setPanel,
-}: {
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  /**
-   * useState to store friend;
-   */
+function FriendBox({ setPanel }: FriendPanelType) {
+  const friends = useFriendsStore((state) => state.friends);
+  console.log("friends", friends);
   // const socket = io();
   function handleDirectMessage() {
     // socket.emit("joinRoomDirectMessage", {
@@ -83,7 +83,7 @@ function FriendBox({
       aria-label="contacts"
     >
       {/** map new friend state */}
-      {sampleData.map((friend, index) => (
+      {friends.map((friend, index) => (
         <ListItem
           key={index}
           disablePadding
@@ -95,18 +95,19 @@ function FriendBox({
             borderRadius: "8px",
           }}
         >
-          <ListItemButton onClick={() => setPanel(friend.username)}>
+          {/** Need to change src to img thingy */}
+          <ListItemButton onClick={() => setPanel(friend)}>
             <Image
-              src={friend.img}
-              alt={friend.alt}
+              src={"/jakoh_smol.jpg"}
+              alt={friend.avatar}
               width={32}
               height={32}
               style={inlineStyle}
             />
-            <ListItemText sx={{ ml: "12px" }} primary={friend.username} />
+            <ListItemText sx={{ ml: "12px" }} primary={friend.nickName} />
             <CircleIcon
               sx={{
-                fill: friend.status ? "green" : "red",
+                fill: friend.online ? "green" : "red",
                 mr: "12px",
                 width: "12px",
                 height: "12px",
@@ -119,17 +120,37 @@ function FriendBox({
   );
 }
 
-export default function FriendList({
-  setPanel,
-}: {
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  const [friend, setFriend] = useState<string>("");
+export default function FriendList({ setPanel }: FriendPanelType) {
+  const setFriendList = useFriendsStore((state) => state.setFriendList);
+  useEffect(() => {
+    axios
+      .get("/friend-request/findUserFriendsWithDirectMessage")
+      .then((response) => {
+        setFriendList(response.data);
+        // alert("YOU NOW HAVE FRENS");
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+        // alert("KENOT SET FRIEND");
+      });
+  }, []);
+
   function handleFriend() {
     const promptFriend: string = prompt("Enter friend Name") || "";
-    setFriend(promptFriend);
-    console.log(friend);
+    axios
+      .post("/friend-request/addFriendByNickName", {
+        nickName: promptFriend,
+      })
+      .then((response) => {
+        alert("BEFRIENDING SUCCESSFUL");
+        console.log(response);
+      })
+      .catch((err) => {
+        alert("BEFRIENDING FAIL");
+        console.log(err);
+      });
   }
+
   return (
     <Box
       component="div"
