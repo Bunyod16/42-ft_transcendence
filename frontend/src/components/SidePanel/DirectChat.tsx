@@ -3,17 +3,52 @@ import Image from "next/image";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
-
+import { useEffect, useState } from "react";
+import { chatSocket } from "../socket/socket";
+import { FriendType } from "@/store/friendsStore";
+import axios from "axios";
 const StyleImage = {
   borderRadius: "50px",
   margin: "0 25px",
 };
 
-export default function DirectChat({
-  setPanel,
-}: {
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
-}) {
+interface DirectChatPropsType {
+  panel: FriendType | undefined;
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+}
+
+export interface ChatType {
+  id?: number;
+  createdAt?: Date;
+  text: string;
+  sender: {
+    id?: number;
+    nickName: string;
+  };
+}
+
+export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
+  const chatLineOffset = 100;
+  const [chats, setChats] = useState<ChatType[] | []>([]);
+  useEffect(() => {
+    if (panel === undefined) return;
+    axios
+      .get(`/chat-line/getNextChatLines/90?chatLineOffset=${chatLineOffset}`)
+      .then((response) => {
+        setChats(response.data);
+      });
+    function handleDirectMessage() {
+      chatSocket.emit("joinRoomDirectMessage", {
+        channelId: panel?.directMessage?.chatChannel?.id || -1,
+      });
+    }
+    handleDirectMessage();
+  }, [panel]);
+
+  // useEffect(() => {
+  //   // listenToSomethingSoPeepoCanSendMeSomething
+  // }, []);
+
   return (
     <Box
       component="div"
@@ -32,7 +67,7 @@ export default function DirectChat({
       >
         <Button
           sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
-          onClick={() => setPanel("")}
+          onClick={() => setPanel(undefined)}
         >
           <ArrowBackIcon sx={{ m: 0, p: 0, fill: "white" }} />
         </Button>
@@ -44,17 +79,19 @@ export default function DirectChat({
           alt="profile pic"
         />
         <Box component="div">
-          <Typography variant="h4">Jakohhhhhh</Typography>
+          <Typography variant="h4">{panel?.nickName}</Typography>
           <Box component="div">
             <Button
               variant="outlined"
               sx={{ color: "white", border: "1px solid #93032E", mr: "5px" }}
+              onClick={() => console.log("Havent Connect Profile Page")}
             >
               Profile
             </Button>
             <Button
               variant="outlined"
               sx={{ color: "white", border: "1px solid #93032E" }}
+              onClick={() => console.log("Havent Connect Send Invite")}
             >
               Invite
             </Button>
@@ -70,13 +107,15 @@ export default function DirectChat({
         <Button>
           <CircleIcon
             sx={{
-              fill: "green",
+              fill: panel?.online ? "green" : "red",
               mr: "12px",
               width: "12px",
               height: "12px",
             }}
           />
-          <Typography sx={{ color: "white" }}>Online</Typography>
+          <Typography sx={{ color: "white" }}>
+            {panel?.online ? "Online" : "Offline"}
+          </Typography>
         </Button>
       </Box>
       <Box
@@ -91,7 +130,12 @@ export default function DirectChat({
           border: "1px solid #048BA8",
         }}
       >
-        <ChatBox height="100%" />
+        <ChatBox
+          chats={chats}
+          setChats={setChats}
+          nickName={panel?.nickName}
+          height="100%"
+        />
       </Box>
     </Box>
   );

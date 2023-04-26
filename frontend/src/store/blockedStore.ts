@@ -1,13 +1,46 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-interface blockedUserType {
+interface BlockedUserType {
 	id: number;
 	nickName: string;
+	img?: string;
 }
 
+interface BlockedStoreType{
+	users: BlockedUserType[] | [];
+	setUsers: (blockedQuery: any) => void;
+	clearUsers: () => void;
+}
 
+const useBlockStore = create<BlockedStoreType>()(
+	persist((set) => ({
+		users: [],
+		setUsers: (blockedQuery: any) => {
+			let blockedList: BlockedUserType[];
 
+			blockedQuery.map((query: any) => {
+				blockedList.push({
+					id: query.friend.id,
+					nickName: query.friend.nickName
+				})
+			})
+			set(()=>({
+				users: blockedList
+			}))
+		},
+		clearUsers: () => {
+			set(()=>({
+				users: [],
+			}))
+		}
+	}),{
+		name: "rgm-blocked-user-store",
+		storage: createJSONStorage(() => sessionStorage)
+	})
+)
+
+export default useBlockStore;
 //blocked user api. http://localhost:3000/friend-request/findUserBlockedFriends
 // [
 //     {

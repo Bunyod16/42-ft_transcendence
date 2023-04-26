@@ -7,10 +7,11 @@ import {
 import ChannelList from "./ChannelList";
 import FriendList from "./FriendList";
 import { TabTypes } from "../SidePanel";
+import { FriendType } from "@/store/friendsStore";
 interface generalTabProps {
   tabs: TabTypes;
   setTabs: React.Dispatch<React.SetStateAction<TabTypes>>;
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
 }
 
 export default function GeneralTab({

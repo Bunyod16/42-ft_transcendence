@@ -42,8 +42,8 @@ export default function Home() {
       .catch(() => {
         refreshToken();
       });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(isLoggedIn);
   }, [isLoggedIn]);
 
   React.useEffect(() => {
