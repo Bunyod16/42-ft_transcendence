@@ -97,7 +97,7 @@ export class UserController {
 
   @Patch()
   @UseGuards(UserAuthGuard)
-  update(@Req() req: RequestWithUser, @Body() body: UpdateUserDto) {
+  update(@Req() req: RequestWithUser) {
     const updateUserDto = new UpdateUserDto(req.body);
     updateUserDto.nickName = req.body.nickName;
     updateUserDto.avatar = req.body.avatar;
