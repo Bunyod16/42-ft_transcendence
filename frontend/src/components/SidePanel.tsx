@@ -21,7 +21,16 @@ export default function SidePanel(sx: SxProps) {
   const [panel, setPanel] = useState<FriendType | undefined>(undefined);
 
   return (
-    <Box component="div" sx={{ minWidth: "350px", width: "25%", ...sx }}>
+    <Box
+      component="div"
+      sx={{
+        minWidth: "300px",
+        width: "25%",
+        height: "100%",
+        overflow: "hidden",
+        ...sx,
+      }}
+    >
       {panel === undefined ? (
         <GeneralTab tabs={tabs} setTabs={setTabs} setPanel={setPanel} />
       ) : (

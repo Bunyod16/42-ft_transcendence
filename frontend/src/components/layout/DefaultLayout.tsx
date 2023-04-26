@@ -10,8 +10,6 @@ interface IDefaultLayoutProps {
 
 // ! side panel should add to here too
 function DefaultLayout({ children }: IDefaultLayoutProps) {
-  const view = useUserStore((state) => state.view);
-
   return (
     <Box
       component={"div"}
@@ -22,7 +20,7 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
         flexDirection: "row",
       }}
     >
-      <SidePanel sx={{ overflow: "hidden" }} />
+      <SidePanel sx={{}} />
       <Box
         component={"div"}
         sx={{

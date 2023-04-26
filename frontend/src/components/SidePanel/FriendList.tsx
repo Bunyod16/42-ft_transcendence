@@ -8,10 +8,11 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import useFriendsStore, { FriendType } from "@/store/friendsStore";
+import PendingBox from "./PendingBox";
 
 const inlineStyle = {
   width: "32px",
@@ -45,11 +46,11 @@ function FriendBox({ setPanel }: FriendPanelType) {
           key={index}
           disablePadding
           sx={{
-            backgroundColor: "#FEFEFE",
+            backgroundColor: "#00000030",
             mb: "8px",
-            width: "95%",
-            color: "black",
-            borderRadius: "8px",
+            // width: "95%",
+            // color: "black",
+            borderRadius: "4px",
           }}
         >
           {/** Need to change src to img thingy */}
@@ -79,6 +80,7 @@ function FriendBox({ setPanel }: FriendPanelType) {
 
 export default function FriendList({ setPanel }: FriendPanelType) {
   const setFriendList = useFriendsStore((state) => state.setFriendList);
+  const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
     axios
       .get("/friend-request/findUserFriendsWithDirectMessage")
@@ -111,26 +113,54 @@ export default function FriendList({ setPanel }: FriendPanelType) {
   return (
     <Box
       component="div"
-      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        px: 1,
+        gap: 1,
+      }}
     >
       <Button
         variant="outlined"
+        fullWidth
         sx={{
-          width: "95%",
-          mt: "8px",
-          mb: "15px",
+          // width: "95%",
+          mt: 2,
+          // mb: "15px",
           color: "#FEFEFE",
           border: "2px solid #A3A3A3",
-          height: "64px",
+          height: "48px",
           "&:hover": {
             border: "2px solid #626262",
           },
         }}
         onClick={handleFriend}
       >
-        <Typography variant="h6">ADD FRIENDS</Typography>
+        <Typography>ADD FRIENDS</Typography>
       </Button>
+
+      {/* <Typography>Pending</Typography> */}
+      <Button
+        // variant="outlined"
+        // color="primary"
+        fullWidth
+        sx={{
+          mt: "8px",
+          color: "#FEFEFE",
+          // border: "2px solid #A3A3A3",
+          justifyContent: "start",
+          "&:hover": {
+            backgroundColor: "#00000050",
+          },
+        }}
+        onClick={() => setPendingActive(!pendingActive)}
+      >
+        <Typography>Pending</Typography>
+      </Button>
+
       <FriendBox setPanel={setPanel} />
+      {pendingActive && <PendingBox />}
     </Box>
   );
 }

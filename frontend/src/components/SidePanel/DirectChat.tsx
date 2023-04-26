@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -12,11 +12,6 @@ const StyleImage = {
   margin: "0 25px",
 };
 
-interface DirectChatPropsType {
-  panel: FriendType | undefined;
-  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
-}
-
 export interface ChatType {
   id?: number;
   createdAt?: Date;
@@ -27,6 +22,81 @@ export interface ChatType {
   };
 }
 
+interface TopBarProps {
+  panel: FriendType;
+  handleBack: () => void;
+}
+const TopBar = ({ panel, handleBack }: TopBarProps) => {
+  return (
+    <>
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+          // padding: "10px",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <IconButton
+          // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
+          onClick={handleBack}
+        >
+          <ArrowBackIcon sx={{ fill: "white" }} />
+        </IconButton>
+        <Avatar
+          src="/jakoh_smol.jpg"
+          sx={{ width: 50, height: 50, mr: 2 }}
+          // width="80"
+          // height="80"
+          // style={StyleImage}
+          alt="profile pic"
+        />
+        <Box component="div">
+          <Typography variant="h4" paddingBottom={1}>
+            {panel.nickName}
+          </Typography>
+          <Box component="div">
+            <Button
+              variant="outlined"
+              sx={{ color: "white", border: "1px solid #93032E", mr: "5px" }}
+              onClick={() => console.log("Havent Connect Profile Page")}
+            >
+              Profile
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ color: "white", border: "1px solid #93032E" }}
+              onClick={() => console.log("Havent Connect Send Invite")}
+            >
+              Invite
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+      <Box component="div">
+        {/* <Button> */}
+        <CircleIcon
+          sx={{
+            fill: panel?.online ? "green" : "red",
+            mr: "12px",
+            width: "12px",
+            height: "12px",
+          }}
+        />
+        <Typography sx={{ color: "white", display: "inline-block" }}>
+          {panel?.online ? "Online" : "Offline"}
+        </Typography>
+        {/* </Button> */}
+      </Box>
+    </>
+  );
+};
+
+interface DirectChatPropsType {
+  panel: FriendType | undefined;
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+}
 export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   const chatLineOffset = 100;
   const [chats, setChats] = useState<ChatType[] | []>([]);
@@ -48,77 +118,24 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // useEffect(() => {
   //   // listenToSomethingSoPeepoCanSendMeSomething
   // }, []);
+  // if (panel) return <></>;
 
   return (
     <Box
       component="div"
       sx={{
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        // borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
         height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          padding: "10px",
-          flexDirection: "row",
-        }}
-      >
-        <Button
-          sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
-          onClick={() => setPanel(undefined)}
-        >
-          <ArrowBackIcon sx={{ m: 0, p: 0, fill: "white" }} />
-        </Button>
-        <Image
-          src="/jakoh_smol.jpg"
-          width="80"
-          height="80"
-          style={StyleImage}
-          alt="profile pic"
-        />
-        <Box component="div">
-          <Typography variant="h4">{panel?.nickName}</Typography>
-          <Box component="div">
-            <Button
-              variant="outlined"
-              sx={{ color: "white", border: "1px solid #93032E", mr: "5px" }}
-              onClick={() => console.log("Havent Connect Profile Page")}
-            >
-              Profile
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{ color: "white", border: "1px solid #93032E" }}
-              onClick={() => console.log("Havent Connect Send Invite")}
-            >
-              Invite
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-      <Box
-        component="div"
-        sx={{
-          ml: "15px",
-        }}
-      >
-        <Button>
-          <CircleIcon
-            sx={{
-              fill: panel?.online ? "green" : "red",
-              mr: "12px",
-              width: "12px",
-              height: "12px",
-            }}
-          />
-          <Typography sx={{ color: "white" }}>
-            {panel?.online ? "Online" : "Offline"}
-          </Typography>
-        </Button>
-      </Box>
-      <Box
+      {
+        /* top part */
+        panel && <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
+      }
+
+      {/* <Box
         component="div"
         sx={{
           display: "flex",
@@ -126,17 +143,18 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
           justifyContent: "end",
           gap: "10px",
           width: "100%",
-          height: "calc(100vh - 140px)",
+          height: "100%",
+          // height: "calc(100vh - 140px)",
           border: "1px solid #048BA8",
         }}
-      >
-        <ChatBox
-          chats={chats}
-          setChats={setChats}
-          nickName={panel?.nickName}
-          height="100%"
-        />
-      </Box>
+      > */}
+      <ChatBox
+        chats={chats}
+        setChats={setChats}
+        nickName={panel?.nickName}
+        height="100%"
+      />
+      {/* </Box> */}
     </Box>
   );
 }

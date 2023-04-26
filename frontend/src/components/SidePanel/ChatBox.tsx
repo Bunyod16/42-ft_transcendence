@@ -33,7 +33,8 @@ export default function ChatBox({
         display: "flex",
         flexDirection: "column",
         justifyContent: "end",
-        height: { height },
+        height: "100%",
+        overflow: "hidden",
       }}
     >
       <Box
@@ -41,8 +42,9 @@ export default function ChatBox({
         sx={{
           display: "flex",
           flexDirection: "column-reverse",
-          overflow: "auto",
+          overflow: "scroll",
           overflowX: "hidden",
+          // height: "100%",
         }}
       >
         {chats
@@ -68,6 +70,8 @@ export default function ChatBox({
           ))
           .reverse()}
       </Box>
+
+      {/* Textbox input here */}
       <Box component="div" sx={{ width: "100%", height: "56px" }}>
         <form onSubmit={handleMessageSubmit}>
           <TextField
