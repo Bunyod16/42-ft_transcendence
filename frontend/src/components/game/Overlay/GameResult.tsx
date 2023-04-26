@@ -115,8 +115,8 @@ const GameResult = () => {
           width: "100%",
         }}
       >
-        <PlayerResult {...players.p1} position={"left"} />
-        <PlayerResult {...players.p2} position="right" />
+        <PlayerResult {...players.p2} position="left" />
+        <PlayerResult {...players.p1} position="right" />
       </Box>
 
       <Button

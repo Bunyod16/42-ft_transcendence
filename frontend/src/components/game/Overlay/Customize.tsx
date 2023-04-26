@@ -4,6 +4,7 @@ import { Box, Button } from "@mui/material";
 
 const Customize = () => {
   const gameStatus = useGameStore((state) => state.gameStatus);
+  const selectedSkin = useGameStore((state) => state.selectedSkin);
 
   if (gameStatus != "Customize") return <></>;
   return (

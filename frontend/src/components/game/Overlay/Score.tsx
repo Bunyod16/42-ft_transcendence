@@ -59,11 +59,11 @@ const Score = () => {
         }}
       >
         <Typography variant="h3" sx={{}}>
-          {score.p1Score}
+          {score.p2Score}
         </Typography>
         <Typography>{matchInfo.playerTwo?.nickName || "noname"}</Typography>
         <Avatar
-          src={`https://source.boringavatars.com/beam/80/${matchInfo.playerOne?.nickName}`}
+          src={`https://source.boringavatars.com/beam/80/${matchInfo.playerTwo?.nickName}`}
           sx={{
             width: 80,
             height: 80,
@@ -88,7 +88,7 @@ const Score = () => {
         }}
       >
         <Typography variant="h3" sx={{}}>
-          {score.p2Score}
+          {score.p1Score}
         </Typography>
         <Typography>{matchInfo.playerOne?.nickName || "noname"}</Typography>
         <Avatar
