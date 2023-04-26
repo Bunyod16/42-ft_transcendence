@@ -1,76 +1,81 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface DirectMessageType {
-	id?: number;
-	chatChannel?: {
-		id?: number;
-		name?: string | null;
-		channelType?: string;
-		chatType?: string;
-	}
+  id?: number;
+  chatChannel: {
+    id: number;
+    name?: string | null;
+    channelType?: string;
+    chatType?: string;
+  };
 }
 
 export interface FriendType {
-	id: number;
-	nickName: string;
-	avatar: string;
-	wins: number;
-	losses: number;
-	online: boolean;
-	directMessage?: DirectMessageType | null;
+  id: number;
+  nickName: string;
+  avatar: string;
+  wins: number;
+  losses: number;
+  online: boolean;
+  directMessage: DirectMessageType | null;
 }
 
 interface FriendsStoreType {
-	friends: FriendType[] | [];
-	setFriendList: (friendQuery : any) => void;
-	resetFriendList: () => void;
+  friends: FriendType[] | [];
+  setFriendList: (friendQuery: any) => void;
+  resetFriendList: () => void;
 }
 
 const useFriendsStore = create<FriendsStoreType>()(
-	persist((set) => ({
-		friends: [],
-		setFriendList: (friendQuery : any) => {
-			const friendList: FriendType[] = [];
-			friendQuery.map((query: any) => {
-				friendList.push({
-					id: query.friend.id,
-					nickName: query.friend.nickName,
-					avatar: query.friend.avatar,
-					wins: query.friend.wins,
-					losses: query.friend.losses,
-					online: query.friend.online,
-					directMessage: query.directMessage ? {
-						id: query.directMessage.id,
-						chatChannel: {
-							id: query.directMessage.chatChannel.id,
-							name: query.directMessage.chatChannel.name,
-							channelType: query.directMessage.chatChannel.channelType,
-							chatType: query.directMessage.chatChannel.chatType,
-						}
-					} : null
-				 });
-			})
-			set(()=>({
-				friends: friendList,
-			}))
-		},
-		resetFriendList: () => {
-			set(()=>({
-				friends:[]
-			}))
-		}
-	}),{
-		name:"rgm-friend-state",
-		storage: createJSONStorage(() => sessionStorage)
-	})
-)
+  persist(
+    (set) => ({
+      friends: [],
+      setFriendList: (friendQuery: any) => {
+        const friendList: FriendType[] = [];
+        friendQuery.map((query: any) => {
+          friendList.push({
+            id: query.friend.id,
+            nickName: query.friend.nickName,
+            avatar: query.friend.avatar,
+            wins: query.friend.wins,
+            losses: query.friend.losses,
+            online: query.friend.online,
+            directMessage: query.directMessage
+              ? {
+                  id: query.directMessage.id,
+                  chatChannel: {
+                    id: query.directMessage.chatChannel.id,
+                    name: query.directMessage.chatChannel.name,
+                    channelType: query.directMessage.chatChannel.channelType,
+                    chatType: query.directMessage.chatChannel.chatType,
+                  },
+                }
+              : null,
+          });
+        });
+        set(() => ({
+          friends: friendList,
+        }));
+      },
+      resetFriendList: () => {
+        set(() => ({
+          friends: [],
+        }));
+      },
+    }),
+    {
+      name: "rgm-friend-state",
+      storage: createJSONStorage(() => sessionStorage),
+    },
+  ),
+);
 
 export default useFriendsStore;
 
 // axios get request to be made to
 // http://localhost:3000/friend-request/findUserFriendsWithDirectMessage
-// JSON Object return Looks like 
+// JSON Object return Looks like
 // {
 // 	"friendRequest": {
 // 		"id": 10,

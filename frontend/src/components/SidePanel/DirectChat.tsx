@@ -1,5 +1,12 @@
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
-import Image from "next/image";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  TextField,
+} from "@mui/material";
+// import Image from "next/image";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
@@ -7,10 +14,6 @@ import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
 import { FriendType } from "@/store/friendsStore";
 import axios from "axios";
-const StyleImage = {
-  borderRadius: "50px",
-  margin: "0 25px",
-};
 
 export interface ChatType {
   id?: number;
@@ -41,6 +44,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         <IconButton
           // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
           onClick={handleBack}
+          sx={{ display: "inline-block" }}
         >
           <ArrowBackIcon sx={{ fill: "white" }} />
         </IconButton>
@@ -58,16 +62,20 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
           </Typography>
           <Box component="div">
             <Button
-              variant="outlined"
-              sx={{ color: "white", border: "1px solid #93032E", mr: "5px" }}
+              color="secondary"
+              sx={{ color: "white", border: "2px solid #F2F4F3", mr: "5px" }}
+              size="small"
               onClick={() => console.log("Havent Connect Profile Page")}
             >
               Profile
             </Button>
             <Button
-              variant="outlined"
-              sx={{ color: "white", border: "1px solid #93032E" }}
+              sx={{
+                color: "white",
+                border: "2px solid #F2F4F3",
+              }}
               onClick={() => console.log("Havent Connect Send Invite")}
+              size="small"
             >
               Invite
             </Button>
@@ -79,7 +87,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         <CircleIcon
           sx={{
             fill: panel?.online ? "green" : "red",
-            mr: "12px",
+            mx: "12px",
             width: "12px",
             height: "12px",
           }}
@@ -98,27 +106,69 @@ interface DirectChatPropsType {
   setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
 }
 export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
-  const chatLineOffset = 100;
-  const [chats, setChats] = useState<ChatType[] | []>([]);
+  // const chatLineOffset = 100;
+  const [chats, setChats] = useState<ChatType[]>([]);
+  const [message, setMessage] = useState<string>("");
+
   useEffect(() => {
     if (panel === undefined) return;
     axios
-      .get(`/chat-line/getNextChatLines/90?chatLineOffset=${chatLineOffset}`)
+      .get(
+        `/chat-line/getNextChatLines/${panel.directMessage?.chatChannel.id}?chatLineOffset=${chats.length}`,
+      )
       .then((response) => {
-        setChats(response.data);
+        console.log(response.data);
+        const newChats: ChatType[] = response.data;
+        setChats(newChats.reverse());
       });
     function handleDirectMessage() {
+      if (panel === undefined) return;
+      console.log(panel);
       chatSocket.emit("joinRoomDirectMessage", {
-        channelId: panel?.directMessage?.chatChannel?.id || -1,
+        // frienId: panel?.directMessage?.chatChannel?.id || -1,
+        chatChannelId: panel.directMessage?.chatChannel.id || -1,
       });
     }
     handleDirectMessage();
   }, [panel]);
 
+  useEffect(() => {
+    function onChatMessage(data: {
+      text: string;
+      sender: { id: number; nickName: string };
+    }) {
+      setChats((prev: ChatType[]) => [...prev, data]);
+    }
+
+    chatSocket.on("chatMessage", onChatMessage);
+
+    return () => {
+      chatSocket.off("chatMessage", onChatMessage);
+    };
+  }, []);
+
   // useEffect(() => {
   //   // listenToSomethingSoPeepoCanSendMeSomething
   // }, []);
   // if (panel) return <></>;
+
+  function handleMessageSubmit(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (message === "") return;
+    // setChats((prevState: ChatType[]) => [
+    //   ...prevState,
+    //   {
+    //     text: message,
+    //     sender: { nickName: panel?.nickName || "Unknown User" },
+    //   },
+    // ]);
+    if (panel === undefined || panel.directMessage === null) return;
+    chatSocket.emit("sendMessage", {
+      message: message,
+      chatChannelId: panel.directMessage.chatChannel.id,
+    });
+    setMessage("");
+  }
 
   return (
     <Box
@@ -152,8 +202,26 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
         chats={chats}
         setChats={setChats}
         nickName={panel?.nickName}
-        height="100%"
+        // height="100%"
       />
+      {/* Textbox input here */}
+      <Box component="div" sx={{ width: "100%", height: "56px" }}>
+        <form onSubmit={handleMessageSubmit}>
+          <TextField
+            variant="outlined"
+            placeholder="Type Here Bishhh..."
+            autoComplete="off"
+            onChange={(event) => setMessage(event.target.value)}
+            value={message}
+            sx={{
+              width: "100%",
+              color: "#FEFEFE",
+              "&::placeholder": { color: "#FEFEFE" },
+              border: "1px solid #FEFEFE",
+            }}
+          />
+        </form>
+      </Box>
       {/* </Box> */}
     </Box>
   );

@@ -60,6 +60,7 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {},
     MuiCssBaseline: {
       styleOverrides: {
         body: {

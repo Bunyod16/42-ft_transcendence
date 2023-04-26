@@ -30,6 +30,7 @@ interface FriendPanelType {
 // });
 function FriendBox({ setPanel }: FriendPanelType) {
   const friends = useFriendsStore((state) => state.friends);
+  console.log(friends);
   return (
     <List
       sx={{

@@ -1,94 +1,71 @@
 import { Box, Typography, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatType } from "./DirectChat";
-import { FriendType } from "@/store/friendsStore";
+import { chatSocket } from "../socket/socket";
 interface ChatBoxProps {
   chats: ChatType[];
   setChats: React.Dispatch<React.SetStateAction<[] | ChatType[]>>;
   nickName?: string;
-  height: string;
 }
+export default function ChatBox({ chats, setChats, nickName }: ChatBoxProps) {
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   setChats((prevState: ChatType[]) => [
+  //     ...prevState,
+  //     { text: message, sender: { nickName: nickName || "Unknown Usepr" } },
+  //   ]);
 
-export default function ChatBox({
-  chats,
-  setChats,
-  nickName,
-  height,
-}: ChatBoxProps) {
-  const [message, setMessage] = useState<string>("");
+  //   chatSocket.emit("sendMessage", { message:message, chatChannelId:  });
+  //   setMessage("");
+  // }
 
-  function handleMessageSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-    if (message === "") return;
-    setChats((prevState: ChatType[]) => [
-      ...prevState,
-      { text: message, sender: { nickName: nickName || "Unknown User" } },
-    ]);
-    setMessage("");
-  }
   return (
+    // <Box
+    //   component="div"
+    //   sx={{
+    //     display: "flex",
+    //     flexDirection: "column",
+    //     justifyContent: "end",
+    //     height: "100%",
+    //     overflow: "hidden",
+    //   }}
+    // >
     <Box
       component="div"
       sx={{
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "end",
+        flexDirection: "column-reverse",
+        overflow: "scroll",
+        overflowX: "hidden",
         height: "100%",
-        overflow: "hidden",
+        p: 1,
       }}
     >
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column-reverse",
-          overflow: "scroll",
-          overflowX: "hidden",
-          // height: "100%",
-        }}
-      >
-        {chats
-          .map((chat, i) => (
-            <Box
-              component="div"
-              sx={{
-                padding: "10px",
-                border: "2px solid #11AAAA",
-                borderRadius: "8px",
-                margin: "10px",
-                wordWrap: "break-word",
-              }}
-              key={i}
-            >
-              <Typography
-                sx={{ fontSize: "14px" }}
-              >{`${chat.sender.nickName}:`}</Typography>
-              <Typography sx={{ fontSize: "14px", ml: "4px" }}>
-                {chat.text}
-              </Typography>
-            </Box>
-          ))
-          .reverse()}
-      </Box>
-
-      {/* Textbox input here */}
-      <Box component="div" sx={{ width: "100%", height: "56px" }}>
-        <form onSubmit={handleMessageSubmit}>
-          <TextField
-            variant="outlined"
-            placeholder="Type Here Bishhh..."
-            autoComplete="off"
-            onChange={(event) => setMessage(event.target.value)}
-            value={message}
+      {chats
+        .map((chat, i) => (
+          <Box
+            component="div"
             sx={{
-              width: "100%",
-              color: "#FEFEFE",
-              "&::placeholder": { color: "#FEFEFE" },
-              border: "1px solid #FEFEFE",
+              // padding: "10px",
+              // border: "2px solid #11AAAA",
+              // borderRadius: "8px",
+              // margin: "10px",
+              // padding: 1,
+              mb: "2px",
+              wordWrap: "break-word",
+              // textAlign:
             }}
-          />
-        </form>
-      </Box>
+            key={i}
+          >
+            <Typography
+              sx={{ color: "gray" }}
+            >{`${chat.sender.nickName}`}</Typography>
+            <Typography sx={{ lineHeight: 1 }}>{chat.text}</Typography>
+          </Box>
+        ))
+        .reverse()}
     </Box>
+    // </Box>
   );
 }
