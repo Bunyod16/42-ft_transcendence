@@ -4,6 +4,8 @@ import StatsBox from "@/components/profile/StatsBox";
 import useUserStore from "@/store/userStore";
 import { UserProfile } from "@/types/user-profile-type";
 import { useEffect, useState } from "react";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { Typography, Box } from "@mui/material";
 
 /*
  * Default page for the user themselves
@@ -51,7 +53,30 @@ export default function Profile() {
   return (
     <DefaultLayout>
       {loading ? (
-        <>loading</>
+        <Box
+          component="div"
+          sx={{ display: "flex", flexDirection: "column", margin: "auto" }}
+        >
+          <Typography variant="h2" sx={{ fontSize: "2.2em", margin: "auto" }}>
+            Loading...
+          </Typography>
+          <RestartAltIcon
+            sx={{
+              margin: "auto",
+              width: "50px",
+              height: "50px",
+              animation: "spin 2s linear infinite",
+              "@keyframes spin": {
+                "0%": {
+                  transform: "rotate(360deg)",
+                },
+                "100%": {
+                  transform: "rotate(0deg)",
+                },
+              },
+            }}
+          />
+        </Box>
       ) : userExists ? (
         <>
           {user !== undefined && (
@@ -62,7 +87,7 @@ export default function Profile() {
           )}
         </>
       ) : (
-        <>User {name} Doesnt Exists</>
+        <>User Not Logged In</>
       )}
     </DefaultLayout>
   );

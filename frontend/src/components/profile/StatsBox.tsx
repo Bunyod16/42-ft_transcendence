@@ -1,7 +1,13 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography, Button } from "@mui/material";
 import { UserProfile } from "@/types/user-profile-type";
+import { useRouter } from "next/router";
+import useUserStore from "@/store/userStore";
 
 export default function StatsBox(user: UserProfile) {
+  const router = useRouter();
+  const name = useUserStore((state) => state.name);
+  const { username } = router.query;
+
   function parseISOString(date: Date): string {
     date = new Date(date);
     const dateAsString = `${date.getUTCDay()}/${date.getUTCMonth()}/${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()}`;
@@ -147,13 +153,28 @@ export default function StatsBox(user: UserProfile) {
         >
           {user.matches.map((match) => {
             //DELETE THIS LATER PLS
+
+            console.log(match.id);
             match.playerOneScore = Math.floor(Math.random() * 5);
             match.playerTwoScore = Math.floor(Math.random() * 5);
 
+            // console.log("match.id", match.id);
+
             const isPlayerOne =
               match.playerOne.nickName === user.nickName ? true : false;
-            const wonMatch =
-              match.playerOneScore > match.playerTwoScore && isPlayerOne;
+            const playerOneWonMatch =
+              match.playerOneScore > match.playerTwoScore;
+
+            console.log(
+              match.playerTwo.nickName,
+              match.playerTwoScore,
+              ":",
+              match.playerOneScore,
+              match.playerOne.nickName,
+            );
+
+            console.log("isPlayerOne = ", isPlayerOne);
+            console.log("playerOneWonMatch = ", playerOneWonMatch);
 
             const dateAsString = parseISOString(match.createdAt);
             return (
@@ -163,7 +184,10 @@ export default function StatsBox(user: UserProfile) {
                 sx={{
                   backgroundColor: "primary.100",
                   border: "2px solid",
-                  borderColor: wonMatch ? "accent.light" : "accent.main",
+                  borderColor:
+                    playerOneWonMatch && isPlayerOne
+                      ? "accent.light"
+                      : "accent.main",
                   borderRadius: "8px",
                   height: "130px",
                   margin: "10px 0px",
@@ -178,12 +202,15 @@ export default function StatsBox(user: UserProfile) {
                     sx={{
                       fontSize: "1.4em",
                       textTransform: "uppercase",
-                      color: wonMatch ? "accent.light" : "accent.main",
+                      color:
+                        playerOneWonMatch && isPlayerOne
+                          ? "accent.light"
+                          : "accent.main",
                       fontWeight: "800",
                       letterSpacing: "2px",
                     }}
                   >
-                    {wonMatch ? "Victory" : "Defeat"}
+                    {playerOneWonMatch && isPlayerOne ? "Victory" : "Defeat"}
                   </Typography>
                 </Box>
                 <Box
@@ -213,16 +240,36 @@ export default function StatsBox(user: UserProfile) {
                       }}
                       src="/jakoh_smol.jpg"
                     ></Avatar>
-                    <Typography
+                    <Button
                       sx={{
                         margin: "0px 10px",
                         color: "text.secondary",
                         fontSize: "1.1em",
                         fontWeight: "600",
+                        transition: "0.5s",
+                        textTransform: "none",
+                        "&:hover": {
+                          color:
+                            playerOneWonMatch && isPlayerOne
+                              ? "accent.main"
+                              : "accent.light",
+                        },
+                      }}
+                      onClick={() => {
+                        const isMe = match.playerTwo.nickName === name;
+                        const onPageAlready =
+                          match.playerTwo.nickName === (username || name);
+                        if (!onPageAlready) {
+                          if (isMe) {
+                            router.push(`/profile`);
+                          } else {
+                            router.push(`/profile/${match.playerTwo.nickName}`);
+                          }
+                        }
                       }}
                     >
                       {match.playerTwo.nickName}
-                    </Typography>
+                    </Button>
                   </Box>
                   <Box
                     component="div"
@@ -258,16 +305,36 @@ export default function StatsBox(user: UserProfile) {
                       }}
                       src="/jakoh_smol.jpg"
                     ></Avatar>
-                    <Typography
+                    <Button
                       sx={{
                         margin: "0px 10px",
                         color: "text.secondary",
                         fontSize: "1.1em",
                         fontWeight: "600",
+                        transition: "0.5s",
+                        textTransform: "none",
+                        "&:hover": {
+                          color:
+                            !playerOneWonMatch && !isPlayerOne
+                              ? "accent.main"
+                              : "accent.light",
+                        },
+                      }}
+                      onClick={() => {
+                        const isMe = match.playerOne.nickName === name;
+                        const onPageAlready =
+                          match.playerOne.nickName === (username || name);
+                        if (!onPageAlready) {
+                          if (isMe) {
+                            router.push(`/profile`);
+                          } else {
+                            router.push(`/profile/${match.playerOne.nickName}`);
+                          }
+                        }
                       }}
                     >
                       {match.playerOne.nickName}
-                    </Typography>
+                    </Button>
                   </Box>
                 </Box>
                 <Box

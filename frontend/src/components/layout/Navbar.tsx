@@ -7,6 +7,7 @@ import useUserStore from "@/store/userStore";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
+import SettingsIcon from "@mui/icons-material/Settings";
 import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
@@ -60,8 +61,11 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
                 {name}
               </Typography>
-              <Avatar src="" variant="rounded" />
+              <Avatar src="/jakoh_smol.jpg" variant="rounded" />
             </Button>
+            <IconButton>
+              <SettingsIcon />
+            </IconButton>
             <IconButton onClick={handleLogout}>
               <LogoutSharpIcon />
             </IconButton>
