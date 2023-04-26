@@ -6,7 +6,6 @@ import { UserModule } from 'src/user/user.module';
 import { JwtAccessModule } from 'src/jwt_access/jwt_access.module';
 import { JwtRefreshModule } from 'src/jwt_refresh/jwt_refresh.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthGateway } from './auth.gateway';
 
 @Global()
 @Module({
@@ -20,7 +19,6 @@ import { AuthGateway } from './auth.gateway';
   ],
   providers: [
     AuthService,
-    AuthGateway,
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthGuard, //Note: we can turn this on to require all end points to be authenticated by default
