@@ -10,9 +10,11 @@ DEV_NGINX_CDN_VOLUME = dev_cdn_volume
 all : dev
 
 dev :
+	cp ./envs/dev.env .env
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 prod :
+	cp ./envs/prod.env .env
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 down :

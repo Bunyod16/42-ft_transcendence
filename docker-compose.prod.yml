@@ -2,12 +2,6 @@ version: '3.8'
 
 services:
   postgresdb:
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - trancendence_posgresdb:/var/lib/postgresql/data
     # to ensure database is alive before starting every other service
@@ -28,14 +22,6 @@ services:
       - cdn_volume:/var/www/42trancendence/avatar:ro
 
   nestjs:
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      LISTEN_PORT: ${NEST_LISTEN_PORT}
-      ENV: ${ENV}
     expose:
       - ${NEST_LISTEN_PORT}
     volumes:

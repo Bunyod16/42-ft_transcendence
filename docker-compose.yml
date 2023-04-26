@@ -10,6 +10,12 @@ services:
         target: /docker-entrypoint-initdb.d/init.sh
     networks:
       - ft_trancendence
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
 
   redis:
     container_name: redis
@@ -61,6 +67,14 @@ services:
       - ft_trancendence
     environment:
       REDIS_HOST: ${REDIS_HOST}
+      HOST: ${NEST_LISTEN_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      LISTEN_PORT: ${NEST_LISTEN_PORT}
+      ENV: ${ENV}
 
   nextjs:
     container_name: frontend
