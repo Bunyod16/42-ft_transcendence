@@ -10,7 +10,6 @@ interface ChatBoxProps {
 }
 export default function ChatBox({
   chats,
-  setChats,
   nickName,
   chatChannelId,
 }: ChatBoxProps) {
@@ -70,19 +69,21 @@ export default function ChatBox({
                 // borderRadius: "8px",
                 // margin: "10px",
                 // padding: 1,
-                mb: "2px",
+                mb: 1,
                 wordWrap: "break-word",
                 textAlign: chat.sender.nickName === nickName ? "left" : "right",
               }}
               key={i}
             >
-              <Typography
-                sx={{
-                  color: "gray",
-                  // textAlign:
-                  //   chat.sender.nickName === nickName ? "left" : "right",
-                }}
-              >{`${chat.sender.nickName}`}</Typography>
+              {chats[i ? i - 1 : i].sender.nickName != chat.sender.nickName && (
+                <Typography
+                  sx={{
+                    color: "gray",
+                    // textAlign:
+                    //   chat.sender.nickName === nickName ? "left" : "right",
+                  }}
+                >{`${chat.sender.nickName}`}</Typography>
+              )}
               <Typography sx={{ lineHeight: 1 }}>{chat.text}</Typography>
             </Box>
           ))
