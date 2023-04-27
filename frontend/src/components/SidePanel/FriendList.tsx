@@ -138,7 +138,7 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         }}
         onClick={handleFriend}
       >
-        <Typography>ADD FRIENDS</Typography>
+        ADD FRIENDS
       </Button>
 
       {/* <Typography>Pending</Typography> */}
@@ -157,7 +157,7 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         }}
         onClick={() => setPendingActive(!pendingActive)}
       >
-        <Typography>Pending</Typography>
+        Pending
       </Button>
 
       <FriendBox setPanel={setPanel} />
