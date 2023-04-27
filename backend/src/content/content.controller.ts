@@ -73,7 +73,7 @@ export class ContentController {
     file: Express.Multer.File,
   ) {
     const { user } = req;
-    const cdnURI: string = 'http://localhost:7000';
+    const cdnURI: string = 'http://localhost:7001'; //delete this later
     // const cdnURI: string =
     //   (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
     //   ':' +
