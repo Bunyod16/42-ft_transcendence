@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import axios from "axios";
-import { ChannelType } from "@/store/channelStore";
+import { Channel, PanelData } from "@/types/social-type";
 /**
  * Chat Data Array of =
  * {
@@ -40,11 +40,25 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
   });
 
   const handleCreateChannel = () => {
+    if (channelValue.name === "") return alert("Channel name is missing");
+    if (isProtected)
+      if (channelValue.password === "")
+        return alert("Channel password is missing");
     axios
       .post("/chat-channels/groupMessage", { name: channelValue.name })
       .then((res) => {
         const newChannelId = res.data.id;
-        if (isProtected) axios.patch(`/chat-channels/${newChannelId}`, {});
+        if (isProtected)
+          axios
+            .patch(`/chat-channels/${newChannelId}`, {
+              ...channelValue,
+              channelType: "Private",
+            })
+            .then((res) => console.log("success", { res }))
+            .catch((err) => console.log(err));
+        // console.log("success", { res });
+        alert("Created Channel!");
+        setOpen(false);
       });
   };
 
@@ -120,6 +134,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           sx={{
             textTransform: "none",
           }}
+          onClick={handleCreateChannel}
         >
           Create channel
         </Button>
@@ -129,11 +144,11 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
 };
 
 interface ChannelPanelProp {
-  setPanel: React.Dispatch<React.SetStateAction<ChannelType>>;
+  setPanel: React.Dispatch<React.SetStateAction<PanelData>>;
 }
 export default function ChannelList({ setPanel }: ChannelPanelProp) {
   // const [chats, setChats] = useState<ChatType[]>([]);
-  const [channels, setChannels] = useState<ChannelType[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
   // const [curChannel, setCurChannel] = useState<string>("");
   const [openModal, setOpenModal] = useState(false);
 
@@ -141,19 +156,16 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
     setOpenModal(!openModal);
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get("/chat-channel-member/usersGroupMessages")
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       // setchannelList(response.data);
-  //       // alert("YOU NOW HAVE FRENS");
-  //     })
-  //     .catch((error) => {
-  //       console.log("error: ", error);
-  //       // alert("KENOT SET channel");
-  //     });
-  // }, []);
+  useEffect(() => {
+    axios
+      .get("/chat-channel-member/usersGroupMessages")
+      .then((response) => {
+        setChannels(response.data);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
+  }, [openModal]);
 
   return (
     <Box
@@ -210,8 +222,15 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
             }}
           >
             {/** Need to change src to img thingy */}
-            <ListItemButton onClick={() => setPanel(channel)}>
-              <ListItemText sx={{ ml: "12px" }} primary={channel.name} />
+            <ListItemButton
+              onClick={() =>
+                setPanel({ friendInfo: null, chatChannel: channel })
+              }
+            >
+              <ListItemText
+                sx={{ ml: "12px" }}
+                primary={channel.chatChannel.name}
+              />
               {/* <CircleIcon
                 sx={{
                   fill: channel.online ? "green" : "red",
@@ -224,40 +243,6 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
           </ListItem>
         ))}
       </List>
-
-      {/* <ToggleButtonGroup
-        exclusive
-        value={curChannel}
-        onChange={(_event, value) => setCurChannel(value)}
-        fullWidth
-        sx={{
-          overflow: "auto",
-          overflowX: "hidden",
-          display: "Flex",
-          flexDirection: "column",
-        }}
-      >
-        {channels.map((channel, i) => (
-          <ToggleButton
-            key={i}
-            sx={{
-              padding: "10px",
-              border: "2px solid red",
-              borderRadius: "8px",
-              margin: "10px",
-              wordWrap: "break-word",
-              color: "white",
-            }}
-            value={channel}
-            disabled={curChannel === channel}
-            fullWidth
-          >
-            {channel}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup> */}
-      {/* </Box> */}
-      {/* <ChatBox chats={chats} setChats={setChats} /> */}
     </Box>
   );
 }

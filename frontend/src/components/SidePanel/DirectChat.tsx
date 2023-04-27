@@ -1,19 +1,11 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Typography,
-  TextField,
-} from "@mui/material";
-// import Image from "next/image";
+import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
-import { FriendType } from "@/store/friendsStore";
 import axios from "axios";
+import { PanelData } from "@/types/social-type";
 
 export interface ChatType {
   id?: number;
@@ -23,11 +15,6 @@ export interface ChatType {
     id?: number;
     nickName: string;
   };
-}
-
-interface TopBarProps {
-  panel: FriendType;
-  handleBack: () => void;
 }
 
 interface StatusBarProps {
@@ -58,6 +45,10 @@ const StatusBar = ({ online }: StatusBarProps) => {
   );
 };
 
+interface TopBarProps {
+  panel: PanelData;
+  handleBack: () => void;
+}
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
   return (
     <Box
@@ -87,30 +78,34 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
           width: "100%",
         }}
       >
-        <Box
-          component={"div"}
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            p: 1,
-            cursor: "pointer",
-          }}
-          onClick={() => console.log("show friend")}
-        >
-          <Avatar
-            src="/jakoh_smol.jpg"
-            sx={{ width: 50, height: 50, mr: 2, float: "left" }}
-            alt="profile pic"
-          />
-          <Box component={"div"}>
-            <Typography variant="h6">{panel.nickName}</Typography>
-            <StatusBar online={panel.online} />
-          </Box>
-          {/* TODO add block friend here!! */}
-        </Box>
+        {panel.chatChannel.chatChannel.chatType === "direct_message" ? (
+          <>
+            <Box
+              component={"div"}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                p: 1,
+                cursor: "pointer",
+              }}
+              onClick={() => console.log("show friend")}
+            >
+              <Avatar
+                src="/jakoh_smol.jpg"
+                sx={{ width: 50, height: 50, mr: 2, float: "left" }}
+                alt="profile pic"
+              />
+              <Box component={"div"}>
+                <Typography variant="h6">
+                  {panel.friendInfo?.nickName}
+                </Typography>
+                <StatusBar online={panel.friendInfo?.online || false} />
+              </Box>
+              {/* TODO add block friend here!! */}
+            </Box>
 
-        {/* <Button
+            {/* <Button
                   color="secondary"
                   sx={{ color: "white", border: "2px solid #F2F4F3", mr: 2 }}
                   size="small"
@@ -118,25 +113,44 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
                 >
                   Profile
                 </Button> */}
-        <Button
-          fullWidth
-          sx={{
-            color: "white",
-            border: "2px solid #F2F4F3",
-          }}
-          onClick={() => console.log("Havent Connect Send Invite")}
-          size="small"
-        >
-          Invite
-        </Button>
+            <Button
+              fullWidth
+              sx={{
+                color: "white",
+                border: "2px solid #F2F4F3",
+              }}
+              onClick={() => console.log("Havent Connect Send Invite")}
+              size="small"
+            >
+              Invite
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography>{panel.chatChannel.chatChannel.name}</Typography>
+            {panel.chatChannel.isAdmin && (
+              <Button
+                fullWidth
+                sx={{
+                  color: "white",
+                  border: "2px solid #F2F4F3",
+                }}
+                onClick={() => console.log("Havent Connect Send Invite")}
+                size="small"
+              >
+                Manage Channel
+              </Button>
+            )}
+          </>
+        )}
       </Box>
     </Box>
   );
 };
 
 interface DirectChatPropsType {
-  panel: FriendType;
-  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+  panel: PanelData;
+  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
 }
 export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // const chatLineOffset = 100;
@@ -144,10 +158,10 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
-    if (panel === undefined) return;
+    if (panel === undefined || panel.friendInfo === null) return;
     axios
       .get(
-        `/chat-line/getNextChatLines/${panel.directMessage?.chatChannel.id}?chatLineOffset=${chats.length}`,
+        `/chat-line/getNextChatLines/${panel.chatChannel.chatChannel.id}?chatLineOffset=${chats.length}`,
       )
       .then((response) => {
         const newChats: ChatType[] = response.data;
@@ -156,7 +170,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
     function getDirectMessage() {
       if (panel === undefined) return;
       chatSocket.emit("joinRoomDirectMessage", {
-        chatChannelId: panel.directMessage?.chatChannel.id || -1,
+        chatChannelId: panel.chatChannel.chatChannel.id,
       });
     }
     getDirectMessage();
@@ -231,8 +245,8 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
       <ChatBox
         chats={chats}
         setChats={setChats}
-        nickName={panel?.nickName}
-        chatChannelId={panel.directMessage.chatChannel.id}
+        // nickName={panel?.nickName}
+        chatChannelId={panel.chatChannel.chatChannel.id}
         // height="100%"
       />
 

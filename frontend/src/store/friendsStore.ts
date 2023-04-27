@@ -1,29 +1,10 @@
+import { FriendType } from "@/types/social-type";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-interface DirectMessageType {
-  id?: number;
-  chatChannel: {
-    id: number;
-    name?: string | null;
-    channelType?: string;
-    chatType?: string;
-  };
-}
-
-export interface FriendType {
-  id: number;
-  nickName: string;
-  avatar: string;
-  wins: number;
-  losses: number;
-  online: boolean;
-  directMessage: DirectMessageType;
-}
-
 interface FriendsStoreType {
   friends: FriendType[] | [];
-  setFriendList: (friendQuery: any) => void;
+  setFriendList: (friendQuery: any[]) => void;
   resetFriendList: () => void;
 }
 
@@ -31,29 +12,21 @@ const useFriendsStore = create<FriendsStoreType>()(
   persist(
     (set) => ({
       friends: [],
-      setFriendList: (friendQuery: any) => {
+      setFriendList: (friendQuery) => {
         const friendList: FriendType[] = [];
-        friendQuery.map((query: any) => {
+        friendQuery.map((query) => {
           friendList.push({
-            id: query.friend.id,
-            nickName: query.friend.nickName,
-            avatar: query.friend.avatar,
-            wins: query.friend.wins,
-            losses: query.friend.losses,
-            online: query.friend.online,
-            directMessage: query.directMessage
-              ? {
-                  id: query.directMessage.id,
-                  chatChannel: {
-                    id: query.directMessage.chatChannel.id,
-                    name: query.directMessage.chatChannel.name,
-                    channelType: query.directMessage.chatChannel.channelType,
-                    chatType: query.directMessage.chatChannel.chatType,
-                  },
-                }
-              : null,
+            // id: query.id,
+            // nickName: query.nickName,
+            // avatar: query.avatar,
+            // wins: query.wins,
+            // losses: query.losses,
+            // online: query.online,
+            ...query.friend,
+            chatChannel: query.directMessage,
           });
         });
+        console.log("firendList: ", friendList);
         set(() => ({
           friends: friendList,
         }));

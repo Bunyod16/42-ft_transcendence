@@ -4,6 +4,8 @@ import DirectChat from "./SidePanel/DirectChat";
 import GeneralTab from "./SidePanel/GeneralTab";
 import { FriendType } from "@/store/friendsStore";
 import { chatSocket } from "./socket/socket";
+import { Channel } from "@/store/channelStore";
+import { PanelData } from "@/types/social-type";
 /**
  * State to track
  * - Whether in chat room or not
@@ -19,7 +21,7 @@ export type TabTypes = "friends" | "channels";
 
 export default function SidePanel() {
   const [tabs, setTabs] = useState<TabTypes>("friends");
-  const [panel, setPanel] = useState<FriendType | undefined>(undefined);
+  const [panel, setPanel] = useState<PanelData | undefined>(undefined);
 
   useEffect(() => {
     chatSocket.connect();
