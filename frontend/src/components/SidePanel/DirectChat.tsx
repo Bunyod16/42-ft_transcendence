@@ -29,86 +29,119 @@ interface TopBarProps {
   panel: FriendType;
   handleBack: () => void;
 }
+
+interface StatusBarProps {
+  online: boolean;
+}
+const StatusBar = ({ online }: StatusBarProps) => {
+  return (
+    <Box component="div">
+      <Typography
+        sx={{
+          fontSize: 14,
+          color: "#F2F4F370",
+          display: "inline-block",
+        }}
+      >
+        <CircleIcon
+          sx={{
+            fill: online ? "green" : "crimson",
+            // width: "12px",
+            // height: "12px",
+            fontSize: 10,
+            mr: 0.8,
+          }}
+        />
+        {online ? "Online" : "Offline"}
+      </Typography>
+    </Box>
+  );
+};
+
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
   return (
-    <>
+    <Box
+      component="div"
+      sx={{
+        display: "flex",
+        // padding: "10px",
+        flexDirection: "row",
+        alignItems: "center",
+        p: 1,
+        borderBottom: "1px black solid",
+      }}
+    >
+      <IconButton
+        // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
+        onClick={handleBack}
+        sx={{ display: "inline-block" }}
+      >
+        <ArrowBackIcon sx={{ fill: "white" }} />
+      </IconButton>
       <Box
         component="div"
         sx={{
           display: "flex",
           // padding: "10px",
-          flexDirection: "row",
-          alignItems: "center",
+          flexDirection: "column",
+          width: "100%",
         }}
       >
-        <IconButton
-          // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
-          onClick={handleBack}
-          sx={{ display: "inline-block" }}
-        >
-          <ArrowBackIcon sx={{ fill: "white" }} />
-        </IconButton>
-        <Avatar
-          src="/jakoh_smol.jpg"
-          sx={{ width: 50, height: 50, mr: 2 }}
-          // width="80"
-          // height="80"
-          // style={StyleImage}
-          alt="profile pic"
-        />
-        <Box component="div">
-          <Typography variant="h4" paddingBottom={1}>
-            {panel.nickName}
-          </Typography>
-          <Box component="div">
-            <Button
-              color="secondary"
-              sx={{ color: "white", border: "2px solid #F2F4F3", mr: "5px" }}
-              size="small"
-              onClick={() => console.log("Havent Connect Profile Page")}
-            >
-              Profile
-            </Button>
-            <Button
-              sx={{
-                color: "white",
-                border: "2px solid #F2F4F3",
-              }}
-              onClick={() => console.log("Havent Connect Send Invite")}
-              size="small"
-            >
-              Invite
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-      <Box component="div">
-        {/* <Button> */}
-        <CircleIcon
+        <Box
+          component={"div"}
           sx={{
-            fill: panel?.online ? "green" : "red",
-            mx: "12px",
-            width: "12px",
-            height: "12px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            p: 1,
+            cursor: "pointer",
           }}
-        />
-        <Typography sx={{ color: "white", display: "inline-block" }}>
-          {panel?.online ? "Online" : "Offline"}
-        </Typography>
-        {/* </Button> */}
+          onClick={() => console.log("show friend")}
+        >
+          <Avatar
+            src="/jakoh_smol.jpg"
+            sx={{ width: 50, height: 50, mr: 2, float: "left" }}
+            alt="profile pic"
+          />
+          <Box component={"div"}>
+            <Typography variant="h6">{panel.nickName}</Typography>
+            <StatusBar online={panel.online} />
+          </Box>
+          {/* TODO add block friend here!! */}
+        </Box>
+
+        {/* <Button
+                  color="secondary"
+                  sx={{ color: "white", border: "2px solid #F2F4F3", mr: 2 }}
+                  size="small"
+                  onClick={() => console.log("Havent Connect Profile Page")}
+                >
+                  Profile
+                </Button> */}
+        <Button
+          fullWidth
+          sx={{
+            color: "white",
+            border: "2px solid #F2F4F3",
+          }}
+          onClick={() => console.log("Havent Connect Send Invite")}
+          size="small"
+        >
+          Invite
+        </Button>
       </Box>
-    </>
+    </Box>
   );
 };
 
 interface DirectChatPropsType {
-  panel: FriendType | undefined;
+  panel: FriendType;
   setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
 }
 export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // const chatLineOffset = 100;
   const [chats, setChats] = useState<ChatType[]>([]);
-  const [message, setMessage] = useState<string>("");
+  // const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
     if (panel === undefined) return;
@@ -117,19 +150,16 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
         `/chat-line/getNextChatLines/${panel.directMessage?.chatChannel.id}?chatLineOffset=${chats.length}`,
       )
       .then((response) => {
-        console.log(response.data);
         const newChats: ChatType[] = response.data;
         setChats(newChats.reverse());
       });
-    function handleDirectMessage() {
+    function getDirectMessage() {
       if (panel === undefined) return;
-      console.log(panel);
       chatSocket.emit("joinRoomDirectMessage", {
-        // frienId: panel?.directMessage?.chatChannel?.id || -1,
         chatChannelId: panel.directMessage?.chatChannel.id || -1,
       });
     }
-    handleDirectMessage();
+    getDirectMessage();
   }, [panel]);
 
   useEffect(() => {
@@ -152,23 +182,23 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // }, []);
   // if (panel) return <></>;
 
-  function handleMessageSubmit(e: React.SyntheticEvent) {
-    e.preventDefault();
-    if (message === "") return;
-    // setChats((prevState: ChatType[]) => [
-    //   ...prevState,
-    //   {
-    //     text: message,
-    //     sender: { nickName: panel?.nickName || "Unknown User" },
-    //   },
-    // ]);
-    if (panel === undefined || panel.directMessage === null) return;
-    chatSocket.emit("sendMessage", {
-      message: message,
-      chatChannelId: panel.directMessage.chatChannel.id,
-    });
-    setMessage("");
-  }
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   // setChats((prevState: ChatType[]) => [
+  //   //   ...prevState,
+  //   //   {
+  //   //     text: message,
+  //   //     sender: { nickName: panel?.nickName || "Unknown User" },
+  //   //   },
+  //   // ]);
+  //   if (panel === undefined || panel.directMessage === null) return;
+  //   chatSocket.emit("sendMessage", {
+  //     message: message,
+  //     chatChannelId: panel.directMessage.chatChannel.id,
+  //   });
+  //   setMessage("");
+  // }
 
   return (
     <Box
@@ -202,26 +232,10 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
         chats={chats}
         setChats={setChats}
         nickName={panel?.nickName}
+        chatChannelId={panel.directMessage.chatChannel.id}
         // height="100%"
       />
-      {/* Textbox input here */}
-      <Box component="div" sx={{ width: "100%", height: "56px" }}>
-        <form onSubmit={handleMessageSubmit}>
-          <TextField
-            variant="outlined"
-            placeholder="Type Here Bishhh..."
-            autoComplete="off"
-            onChange={(event) => setMessage(event.target.value)}
-            value={message}
-            sx={{
-              width: "100%",
-              color: "#FEFEFE",
-              "&::placeholder": { color: "#FEFEFE" },
-              border: "1px solid #FEFEFE",
-            }}
-          />
-        </form>
-      </Box>
+
       {/* </Box> */}
     </Box>
   );

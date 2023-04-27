@@ -58,7 +58,7 @@ export default function GeneralTab({
           gap: "10px",
           width: "100%",
           height: "calc(100vh - 105px)",
-          border: "2px solid red",
+          // border: "2px solid red",
         }}
       >
         {tabs === "channels" ? (

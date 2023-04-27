@@ -16,14 +16,16 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
       sx={{
         height: "100vh",
         width: "100vw",
+        maxWidth: "100vw",
         display: "flex",
         flexDirection: "row",
       }}
     >
-      <SidePanel sx={{}} />
+      <SidePanel />
       <Box
         component={"div"}
         sx={{
+          // flex: 1,
           width: "100%",
           height: "100%",
           display: "flex",

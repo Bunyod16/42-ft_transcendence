@@ -36,6 +36,7 @@ export default function Home() {
     axios
       .get("auth/profile")
       .then((res) => {
+        console.log(res.data);
         login(res.data.nickName, res.data.id);
         console.log("user authenticated");
         socket.connect();

@@ -17,7 +17,7 @@ import { chatSocket } from "./socket/socket";
 
 export type TabTypes = "friends" | "channels";
 
-export default function SidePanel(sx: SxProps) {
+export default function SidePanel() {
   const [tabs, setTabs] = useState<TabTypes>("friends");
   const [panel, setPanel] = useState<FriendType | undefined>(undefined);
 
@@ -40,10 +40,9 @@ export default function SidePanel(sx: SxProps) {
       component="div"
       sx={{
         minWidth: "300px",
-        width: "25%",
+        maxWidth: "25%",
         height: "100%",
-        overflow: "hidden",
-        ...sx,
+        bgcolor: "#00000020",
       }}
     >
       {panel === undefined ? (
