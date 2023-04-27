@@ -19,6 +19,8 @@ import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { UserService } from 'src/user/user.service';
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
+import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('friend-request')
 export class FriendRequestController {
@@ -71,13 +73,25 @@ export class FriendRequestController {
   @UseGuards(UserAuthGuard)
   async createByNickName(@Req() req: any, @Body('nickName') nickName: string) {
     const userId: number = req.user.id;
-    const friendId: number = (
+    const friend: User = (
       await this.userService.findOneByUsername(nickName)
-    ).id;
+    );
+
+    if (friend === null) {
+      throw new CustomException(`Friend with nickname = ${nickName} doesn't exists`,
+      HttpStatus.NOT_FOUND,
+      `FriendRequest => createByNickName()`);
+    }
+
+    if (friend.id === userId) {
+      throw new CustomException(`User can't add themselves`,
+      HttpStatus.BAD_REQUEST,
+      `FriendRequest => createByNickName()`);
+    }
 
     const friendRequest = await this.friendRequestService.create(
       userId,
-      friendId,
+      friend.id,
     );
 
     Logger.log(

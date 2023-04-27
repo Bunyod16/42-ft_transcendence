@@ -2,61 +2,62 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface RequestType {
-	id: number;
-	nickName: string;
-	online: boolean;
+  friend: {
+    id: number;
+    nickName: string;
+    online: boolean;
+  };
 }
 
+interface PendingRequest {
+  incomingRequests: RequestType[];
+  outgoingRequests: RequestType[];
+}
 
 interface pendingFriendStoreType {
-	incomingRequests: RequestType[];
-	outgoingRequests: RequestType[];
-	setRequests: (pendingRequest: any) => void;
-	resetRequests: () => void;
+  incomingRequests: RequestType[];
+  outgoingRequests: RequestType[];
+  setRequests: (pendingRequest: PendingRequest) => void;
+  resetRequests: () => void;
 }
 
+const usePendingFriendStore = create<pendingFriendStoreType>()(
+  persist(
+    (set) => ({
+      incomingRequests: [],
+      outgoingRequests: [],
+      setRequests: (pendingRequest: PendingRequest) => {
+        const inReq: RequestType[] = [];
+        const outReq: RequestType[] = [];
+        console.log(pendingRequest);
+        if (pendingRequest.incomingRequests.length) {
+          pendingRequest.incomingRequests.map((req) => {
+            inReq.push({ friend: req.friend });
+          });
+        }
+        if (pendingRequest.outgoingRequests.length)
+          pendingRequest.outgoingRequests.map((req) => {
+            outReq.push({ friend: req.friend });
+          });
+        set(() => ({
+          incomingRequests: inReq,
+          outgoingRequests: outReq,
+        }));
+      },
+      resetRequests: () => {
+        set(() => ({
+          incomingRequests: [],
+          outgoingRequests: [],
+        }));
+      },
+    }),
+    {
+      name: "rgm-friend-request-store",
+    },
+  ),
+);
 
-const pendingFriendStore = create<pendingFriendStoreType>()(
-	persist(
-		(set) => ({
-			incomingRequests: [],
-			outgoingRequests: [],
-			setRequests: (pendingRequest: any)=>{
-				let inReq:RequestType[];
-				let outReq: RequestType[];
-				pendingRequest.incomingRequest.map( (req : any) => {
-					inReq.push({
-						id: req.friend.id,
-						nickName: req.friend.nickName,
-						online: req.friend.online
-					})
-				})
-				pendingRequest.outgoingRequest.map( (req : any) => {
-					outReq.push({
-						id: req.friend.id,
-						nickName: req.friend.nickName,
-						online: req.friend.online
-					})
-				})
-				set(() => ({
-					incomingRequests: inReq,
-					outgoingRequests: outReq,
-				}))
-			},
-			resetRequests: () => {
-				set(()=>({
-					incomingRequests: [],
-					outgoingRequests: [],
-				}))
-			}
-		})
-		,{
-			name:"rgm-friend-request-store"
-		}
-	)
-)
-
-export default pendingFriendStore;
+export default usePendingFriendStore;
 
 //pending user api. http://localhost:3000/friend-request/findUserPendingRequest
 // {

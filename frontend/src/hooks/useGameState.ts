@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 function useGameState() {
   const gameState = useRef<GameState>({
-    playerOne: { y: 0, isConnected: false, score: 0 },
-    playerTwo: { y: 0, isConnected: false, score: 0 },
+    playerOne: { y: 0, isConnected: false, score: 0, skin: 0 },
+    playerTwo: { y: 0, isConnected: false, score: 0, skin: 0 },
     ballProperties: { dx: 0, dy: 0, x: 0, y: 0 },
   });
 
@@ -16,7 +16,6 @@ function useGameState() {
         playerTwo: data.playerTwo,
         ballProperties: data.ballProperties,
       };
-        console.log("update game...");
     }
 
     socket.on("updateGame", onUpdateGame);

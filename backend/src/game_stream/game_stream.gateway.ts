@@ -5,7 +5,15 @@ import {
   WebSocketServer,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { OnModuleDestroy, UseGuards } from '@nestjs/common';
+// import { OnModuleDestroy, UseGuards } from '@nestjs/common';
+import { GameStreamService } from './game_stream.service';
+import {
+  Body,
+  OnModuleDestroy,
+  OnModuleInit,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { Server } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
@@ -140,7 +148,10 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userConnected')
-  async userConnected(@ConnectedSocket() socket: SocketWithAuthData) {
+  async userConnected(
+    @ConnectedSocket() socket: SocketWithAuthData,
+    @Body() body: any,
+  ) {
     const match = await this.matchService.findCurrentByUser(socket.user);
     if (!match) {
       return;
@@ -150,7 +161,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
       console.log('both players have connected to the game');
-      this.server.to(`${match.id}`).emit('matchBegin');
+      this.server.to(`${match.id}`).emit('matchBegin', game);
       this.addInterval(match);
       await this.gameStateService.setRandomBallDirection(match.id);
     }

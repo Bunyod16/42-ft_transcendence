@@ -8,70 +8,25 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { io } from "socket.io-client";
+import useFriendsStore, { FriendType } from "@/store/friendsStore";
+import PendingBox from "./PendingBox";
+
 const inlineStyle = {
   width: "32px",
   height: "32px",
   borderRadius: "50px",
 };
 
-const sampleData = [
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Jakoh",
-    alt: "some text",
-    status: true,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Bunyod",
-    alt: "some more text",
-    status: true,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Jaclyn",
-    alt: "some more more text",
-    status: false,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Al Kapitan",
-    alt: "some more more more text",
-    status: false,
-  },
-  {
-    img: "/jakoh_smol.jpg",
-    username: "Davidto",
-    alt: "some more more more more text",
-    status: true,
-  },
-];
-
-// not sure something.
 // data acpt from here, friend msg etc
 // socket.on("serverMessage", (data) => {
 //   data;
 // });
-function FriendBox({
-  setPanel,
-}: {
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  /**
-   * useState to store friend;
-   */
-  // const socket = io();
-  function handleDirectMessage() {
-    // socket.emit("joinRoomDirectMessage", {
-    //   // have to check if id is me or not for resquester and responder
-    //   friendId: directMessage.id | friend.id,
-    // });
-  }
-
+function FriendBox({ setPanel }: FriendPanelType) {
+  const friends = useFriendsStore((state) => state.friends);
+  // console.log(friends);
   return (
     <List
       sx={{
@@ -83,30 +38,31 @@ function FriendBox({
       aria-label="contacts"
     >
       {/** map new friend state */}
-      {sampleData.map((friend, index) => (
+      {friends.map((friend, index) => (
         <ListItem
           key={index}
           disablePadding
           sx={{
-            backgroundColor: "#FEFEFE",
+            backgroundColor: "#00000030",
             mb: "8px",
-            width: "95%",
-            color: "black",
-            borderRadius: "8px",
+            // width: "95%",
+            // color: "black",
+            borderRadius: "4px",
           }}
         >
-          <ListItemButton onClick={() => setPanel(friend.username)}>
+          {/** Need to change src to img thingy */}
+          <ListItemButton onClick={() => setPanel(friend)}>
             <Image
-              src={friend.img}
-              alt={friend.alt}
+              src={"/jakoh_smol.jpg"}
+              alt={friend.avatar}
               width={32}
               height={32}
               style={inlineStyle}
             />
-            <ListItemText sx={{ ml: "12px" }} primary={friend.username} />
+            <ListItemText sx={{ ml: "12px" }} primary={friend.nickName} />
             <CircleIcon
               sx={{
-                fill: friend.status ? "green" : "red",
+                fill: friend.online ? "green" : "red",
                 mr: "12px",
                 width: "12px",
                 height: "12px",
@@ -119,40 +75,92 @@ function FriendBox({
   );
 }
 
-export default function FriendList({
-  setPanel,
-}: {
-  setPanel: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  const [friend, setFriend] = useState<string>("");
+interface FriendPanelType {
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+}
+export default function FriendList({ setPanel }: FriendPanelType) {
+  const setFriendList = useFriendsStore((state) => state.setFriendList);
+  const [pendingActive, setPendingActive] = useState(false);
+  useEffect(() => {
+    axios
+      .get("/friend-request/findUserFriendsWithDirectMessage")
+      .then((response) => {
+        setFriendList(response.data);
+        // alert("YOU NOW HAVE FRENS");
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+        // alert("KENOT SET FRIEND");
+      });
+  }, []);
+
   function handleFriend() {
     const promptFriend: string = prompt("Enter friend Name") || "";
-    setFriend(promptFriend);
-    console.log(friend);
+    axios
+      .post("/friend-request/addFriendByNickName", {
+        nickName: promptFriend,
+      })
+      .then((response) => {
+        alert("BEFRIENDING SUCCESSFUL");
+        console.log(response);
+      })
+      .catch((err) => {
+        alert("BEFRIENDING FAIL");
+        console.log(err);
+      });
   }
+
   return (
     <Box
       component="div"
-      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        px: 1,
+        gap: 1,
+      }}
     >
       <Button
         variant="outlined"
+        fullWidth
         sx={{
-          width: "95%",
-          mt: "8px",
-          mb: "15px",
+          // width: "95%",
+          mt: 2,
+          // mb: "15px",
           color: "#FEFEFE",
           border: "2px solid #A3A3A3",
-          height: "64px",
+          height: "48px",
           "&:hover": {
             border: "2px solid #626262",
           },
         }}
         onClick={handleFriend}
       >
-        <Typography variant="h6">ADD FRIENDS</Typography>
+        ADD FRIENDS
       </Button>
+
+      {/* <Typography>Pending</Typography> */}
+      <Button
+        // variant="outlined"
+        // color="primary"
+        fullWidth
+        sx={{
+          mt: "8px",
+          color: "#FEFEFE",
+          // border: "2px solid #A3A3A3",
+          justifyContent: "start",
+          "&:hover": {
+            backgroundColor: "#00000050",
+          },
+        }}
+        onClick={() => setPendingActive(!pendingActive)}
+      >
+        Pending
+      </Button>
+
       <FriendBox setPanel={setPanel} />
+      {pendingActive && <PendingBox />}
     </Box>
   );
 }

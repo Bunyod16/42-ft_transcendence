@@ -7,7 +7,7 @@ const URL = "http://localhost:3000";
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   URL,
   {
-    withCredentials: true, 
+    withCredentials: true,
     // temporarily remove to avoid the socket error
     autoConnect: false,
   },
@@ -17,3 +17,24 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 //     autoConnect: false,
 //   });
 // Probably just use one socket
+
+interface ChatClientToServerType {
+  joinRoomDirectMessage: (data: { chatChannelId: number }) => void;
+  sendMessage: (data: { message: string; chatChannelId: number }) => void;
+}
+
+interface ChatServerToClientType {
+  chatMessage: (data: {
+    text: string;
+    sender: { id: number; nickName: string };
+  }) => void;
+}
+
+export const chatSocket: Socket<
+  ChatServerToClientType,
+  ChatClientToServerType
+> = io(`${URL}/chatSockets`, {
+  withCredentials: true,
+  // temporarily remove to avoid the socket error
+  autoConnect: false,
+});
