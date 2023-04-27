@@ -140,7 +140,6 @@ export class UserService {
 
     return filteredUser;
   }
-
   async findOneByIntraname(intraname: string): Promise<User> {
     if (intraname == undefined) return null;
     return this.userRepository.findOneBy({

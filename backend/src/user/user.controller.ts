@@ -20,7 +20,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
-import fs from 'fs';
+// import fs from 'fs';
 
 export class temp {
   nickName?: string;

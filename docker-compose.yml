@@ -64,7 +64,6 @@ services:
       CDN_HOST: ${CDN_HOST}
       CDN_PORT: ${CDN_PORT}
 
-
   nextjs:
     container_name: frontend
     image: 42-ft_transendence-nextjs

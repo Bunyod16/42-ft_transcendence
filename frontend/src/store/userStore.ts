@@ -51,6 +51,11 @@ const useUserStore = create<UserStore>()(
           nickName,
         }));
       },
+      updateName: (name: string) => {
+        set(() => ({
+          name,
+        }));
+      },
       logout: () => {
         set(() => ({
           isLoggedIn: false,
