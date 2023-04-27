@@ -5,9 +5,10 @@ import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "./login";
 import Lobby from "@/components/Lobby";
+import PickUsername from "./pickusername";
 
 export default function Home() {
-  const { isLoggedIn, logout, login } = useUserStore();
+  const { isLoggedIn, name, logout, login } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   React.useEffect(() => {
@@ -60,6 +61,8 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-
-  return <>{isLoggedIn ? <Lobby /> : <Login />}</>;
+  console.log(`username is ${name}`);
+  return (
+    <>{name == null ? <PickUsername /> : isLoggedIn ? <Lobby /> : <Login />}</>
+  );
 }

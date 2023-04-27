@@ -105,6 +105,13 @@ export class UserService {
     return user;
   }
 
+  async findOneByIntraname(intraname: string): Promise<User> {
+    if (intraname == undefined) return null;
+    return this.userRepository.findOneBy({
+      intraName: intraname,
+    });
+  }
+
   //im not sure if this should be a user service or a match service
   async getMatches(id: number) {
     const userMatches = await this.userRepository

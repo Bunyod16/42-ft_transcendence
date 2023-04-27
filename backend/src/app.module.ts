@@ -21,7 +21,6 @@ import { GameStreamModule } from './game_stream/game_stream.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
 import { ChatSocketsModule } from './chat-sockets/chat-sockets.module';
-import { ChatModule } from './chat/chat.module';
 import { ContentModule } from './content/content.module';
 
 @Module({
@@ -61,7 +60,6 @@ import { ContentModule } from './content/content.module';
     ScheduleModule.forRoot(),
     ChatChannelMemberModule,
     ChatSocketsModule,
-    ChatModule,
     ContentModule,
   ],
   controllers: [AppController],
