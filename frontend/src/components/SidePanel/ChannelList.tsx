@@ -31,7 +31,6 @@ interface AddChannelModalProp {
 }
 const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
   // const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [isProtected, setIsProtected] = useState(false);
   const [channelValue, setChannelValue] = useState({
@@ -144,7 +143,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
 };
 
 interface ChannelPanelProp {
-  setPanel: React.Dispatch<React.SetStateAction<PanelData>>;
+  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
 }
 export default function ChannelList({ setPanel }: ChannelPanelProp) {
   // const [chats, setChats] = useState<ChatType[]>([]);

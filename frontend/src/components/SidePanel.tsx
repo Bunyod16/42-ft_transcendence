@@ -1,10 +1,8 @@
-import { Box, SxProps } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import DirectChat from "./SidePanel/DirectChat";
 import GeneralTab from "./SidePanel/GeneralTab";
-import { FriendType } from "@/store/friendsStore";
 import { chatSocket } from "./socket/socket";
-import { Channel } from "@/store/channelStore";
 import { PanelData } from "@/types/social-type";
 /**
  * State to track

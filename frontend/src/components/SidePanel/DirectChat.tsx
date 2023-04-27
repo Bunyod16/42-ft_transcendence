@@ -242,13 +242,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
           border: "1px solid #048BA8",
         }}
       > */}
-      <ChatBox
-        chats={chats}
-        setChats={setChats}
-        // nickName={panel?.nickName}
-        chatChannelId={panel.chatChannel.chatChannel.id}
-        // height="100%"
-      />
+      <ChatBox chats={chats} chatChannelId={panel.chatChannel.chatChannel.id} />
 
       {/* </Box> */}
     </Box>
