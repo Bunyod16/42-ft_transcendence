@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import useGameStore from "@/store/gameStore";
-import { GameState } from "@/types/game-types";
+import { GameState } from "@/types/game-type";
 import { useState, useEffect } from "react";
 import { socket } from "../socket/socket";
 import useUserStore from "@/store/userStore";
