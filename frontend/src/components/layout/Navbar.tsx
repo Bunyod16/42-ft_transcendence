@@ -7,14 +7,22 @@ import useUserStore from "@/store/userStore";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
+import SettingsIcon from "@mui/icons-material/Settings";
 import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
 import { socket } from "../socket/socket";
+
 export default function Navbar({ sx }: { sx: SxProps }) {
-  const { name, isLoggedIn, logout, login } = useUserStore();
+  const { nickName, isLoggedIn, logout, login } = useUserStore();
   const router = useRouter();
+  const [isHydrated, setIsHydrated] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const handleLogout = () => {
     axios
       .post("/auth/log-out")
@@ -22,6 +30,9 @@ export default function Navbar({ sx }: { sx: SxProps }) {
       .catch((err) => console.log(err));
     logout();
   };
+
+  if (!isHydrated) return <></>;
+
   return (
     <Box component={"div"} sx={{ ...sx }}>
       <AppBar position="static" sx={{ backgroundColor: "accent.main" }}>
@@ -48,10 +59,13 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               onClick={() => router.push("/profile")}
             >
               <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
-                {name}
+                {nickName}
               </Typography>
-              <Avatar src="" variant="rounded" />
+              <Avatar src="/jakoh_smol.jpg" variant="rounded" />
             </Button>
+            <IconButton onClick={() => router.push("/settings")}>
+              <SettingsIcon />
+            </IconButton>
             <IconButton onClick={handleLogout}>
               <LogoutSharpIcon />
             </IconButton>

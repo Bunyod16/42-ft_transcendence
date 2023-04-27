@@ -23,15 +23,20 @@ const theme = createTheme({
     },
     text: {
       primary: "#ffffff",
+      secondary: "#808080",
     },
     primary: {
       main: "#26333A",
+      "100": "#1b2429",
+      "200": "rgba(0,0,0,0.2)",
+      "300": "#00000066",
     },
     secondary: {
       main: "#048BA8",
     },
     accent: {
       main: "#93032E",
+      light: "#4089A5",
       // contrastText: "#FFF",
       // hover: "#AC0436",
       dark: "#58021c",

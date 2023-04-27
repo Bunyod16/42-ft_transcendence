@@ -5,6 +5,7 @@ import {
   WebSocketServer,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { OnModuleDestroy, UseGuards } from '@nestjs/common';
 import { GameStreamService } from './game_stream.service';
 import {
   Body,
@@ -14,17 +15,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
-import RequestWithUser from 'src/auth/requestWithUser.interace';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Match } from 'src/match/entities/match.entity';
 import { GameStateService } from 'src/game_state/gameState.service';
-import { parse } from 'cookie';
-import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { MatchService } from 'src/match/match.service';
-import { GameStream } from './entities/game_stream.entity';
-import { User } from 'src/user/entities/user.entity';
 import { GameState } from 'src/game_state/gameState.class';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 
@@ -65,11 +61,11 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     const match = await this.matchService.findCurrentByUser(user);
     if (!match) return;
 
-    await this.server.to(`${match.id}`).emit('userDisconnected', user.nickName);
+    this.server.to(`${match.id}`).emit('userDisconnected', user.nickName);
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     try {
-      await this.removeInterval(match);
+      this.removeInterval(match);
     } catch (error) {
       console.log(
         'Tried to remove interval for updateGame but it was already removed',
@@ -78,13 +74,13 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   async endGame(match: Match, gameState: GameState) {
-    await this.server.to(`${match.id}`).emit('gameEnded', gameState);
+    this.server.to(`${match.id}`).emit('gameEnded', gameState);
     match.playerOneScore = gameState.playerOne.score;
     match.playerTwoScore = gameState.playerTwo.score;
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
     try {
-      await this.removeInterval(match);
+      this.removeInterval(match);
     } catch (error) {
       console.log(
         'Tried to remove interval for updateGame but it was already removed',
@@ -173,10 +169,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userDisconnected')
-  async leaveGame(
-    @MessageBody() body: any,
-    @ConnectedSocket() socket: SocketWithAuthData,
-  ) {
+  async leaveGame(@ConnectedSocket() socket: SocketWithAuthData) {
     await this.stop_game(socket);
   }
 }

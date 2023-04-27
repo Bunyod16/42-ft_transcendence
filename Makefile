@@ -22,9 +22,9 @@ dev_down:
 	docker compose down --volumes
 
 rm_dev_volume :
-	docker volume rm $(NAME)_$(DEV_REDIS_VOLUME)
-	docker volume rm $(NAME)_$(DEV_POSTGRESQL_VOLUME)
-	docker volume rm $(NAME)_$(DEV_NGINX_CDN_VOLUME)
+	docker volume rm --force $(NAME)_$(DEV_REDIS_VOLUME)
+	docker volume rm --force $(NAME)_$(DEV_POSTGRESQL_VOLUME)
+	docker volume rm --force $(NAME)_$(DEV_NGINX_CDN_VOLUME)
 
 rm_prod_volume :
 	docker volume rm $(NAME)_$(REDIS_VOLUME)

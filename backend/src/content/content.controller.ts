@@ -1,4 +1,16 @@
-import { Controller, Post, UploadedFile, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, Logger, HttpStatus, Body, UseGuards, Req, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  Logger,
+  HttpStatus,
+  UseGuards,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -13,58 +25,74 @@ export class ContentController {
 
   constructor(
     private userService: UserService,
-    private configService: ConfigService
-  ){}
+    private configService: ConfigService,
+  ) {}
 
   @UseGuards(UserAuthGuard)
-	@Post('upload_avatar')
+  @Post('upload_avatar')
   @UseInterceptors(
-    FileInterceptor('avatar',
-    {
+    FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: (req: RequestWithUser, file, cb) => {
+        destination: (req: RequestWithUser, _, cb) => {
           if (req.user.avatar !== 'default-stormtrooper.png') {
-            const avatarFilename: string = `avatars/${req.user.avatar.split('/').pop()}`;
-            if (fs.existsSync(avatarFilename))
-              fs.unlinkSync(avatarFilename);
+            const avatarFilename: string = `avatars/${req.user.avatar
+              .split('/')
+              .pop()}`;
+            if (fs.existsSync(avatarFilename)) fs.unlinkSync(avatarFilename);
           }
-          cb(null, 'avatars/')
+          cb(null, 'avatars/');
         },
-        filename: (req: RequestWithUser, file: Express.Multer.File, callback) => {
-          callback(null, req.user.id + '-' + req.user.nickName + '.' + file.originalname.split('.').pop());
-        }
-      })
-    }
-    )
+        filename: (
+          req: RequestWithUser,
+          file: Express.Multer.File,
+          callback,
+        ) => {
+          callback(
+            null,
+            req.user.id +
+              '-' +
+              req.user.nickName +
+              '.' +
+              file.originalname.split('.').pop(),
+          );
+        },
+      }),
+    }),
   )
-	async uploadAvatar(
+  async uploadAvatar(
     @Req() req: RequestWithUser,
     @UploadedFile(
-    new ParseFilePipe({
-      validators: [
-        new FileTypeValidator({ fileType: 'image/png' }),
-        new MaxFileSizeValidator({ maxSize: 2000000 })
-      ],
-      errorHttpStatusCode: HttpStatus.BAD_REQUEST
-    })
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: 'image/*' }),
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+        ],
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
     )
-    file: Express.Multer.File) {
-
+    file: Express.Multer.File,
+  ) {
     const { user } = req;
-    const cdnURI: string =
-    (this.configService.get('CDN_DOMAIN_NAME') || process.env.CDN_DOMAIN_NAME)
-    || (this.configService.get('CDN_HOST') || process.env.CDN_HOST) + ':' + (this.configService.get('CDN_PORT') || process.env.CDN_PORT)
+    const cdnURI: string = 'http://localhost:7000';
+    // const cdnURI: string =
+    //   (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
+    //   ':' +
+    //   (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
     const avatarURL: string = `${cdnURI}/avatar/${file.filename}`;
 
-    this.logger.log(`Saving avatar for user ${user.nickName} to ${process.cwd()}/${file.destination} as ${file.filename}`);
+    this.logger.log(
+      `Saving avatar for user ${user.nickName} to ${process.cwd()}/${
+        file.destination
+      } as ${file.filename}`,
+    );
 
     await this.userService.update(user.id, {
-      avatar: avatarURL
+      avatar: avatarURL,
     });
 
     return {
-      message: "File successfully uploaded",
-      avatarURI: avatarURL
-    }
-	}
+      message: 'File successfully uploaded',
+      avatarURI: avatarURL,
+    };
+  }
 }

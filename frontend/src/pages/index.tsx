@@ -8,7 +8,7 @@ import Lobby from "@/components/Lobby";
 import PickUsername from "./pickusername";
 
 export default function Home() {
-  const { isLoggedIn, name, logout, login } = useUserStore();
+  const { isLoggedIn, nickName, logout, login } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   React.useEffect(() => {
@@ -61,8 +61,10 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-  console.log(`username is ${name}`);
+  console.log(`username is ${nickName}`);
   return (
-    <>{name == null ? <PickUsername /> : isLoggedIn ? <Lobby /> : <Login />}</>
+    <>
+      {nickName == null ? <PickUsername /> : isLoggedIn ? <Lobby /> : <Login />}
+    </>
   );
 }
