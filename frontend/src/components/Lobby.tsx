@@ -3,7 +3,7 @@ import { socket } from "./socket/socket";
 import React from "react";
 import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
-import { MatchInfo } from "@/types/game-types";
+import { MatchInfo } from "@/types/game-type";
 import DefaultLayout from "./layout/DefaultLayout";
 import { useRouter } from "next/router";
 
