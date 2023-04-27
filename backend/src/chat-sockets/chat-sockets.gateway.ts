@@ -91,34 +91,41 @@ export class ChatSocketsGateway
   @SubscribeMessage('joinRoomDirectMessage')
   async handleJoinRoomDirectmessage(
     @ConnectedSocket() socket: SocketWithAuthData,
-    @MessageBody('friendId', ParseIntPipe) friendId: number,
+    @MessageBody('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
     const user: User = socket.user;
+    const roomName = `chatChannel/${chatChannelId}`;
+    console.log('asdfasdf');
+    // if (friendId == user.id)
+    //   throw new CustomWSException(
+    //     `FriendId Can't be the same as UserId`,
+    //     HttpStatus.BAD_REQUEST,
+    //     `ChatSockets => handleJoinRoomTesting()`,
+    //   );
 
-    if (friendId == user.id)
-      throw new CustomWSException(
-        `FriendId Can't be the same as UserId`,
-        HttpStatus.BAD_REQUEST,
-        `ChatSockets => handleJoinRoomTesting()`,
-      );
-
-    const hasDirectMessage =
-      await this.chatChannelMemberService.checkIfUserHasChatWithFriend(
-        user.id,
-        friendId,
-      );
+    // const hasDirectMessage =
+    //   await this.chatChannelMemberService.checkIfUserHasChatWithFriend(
+    //     user.id,
+    //     friendId,
+    //   );
 
     //if user doesnt have direct message with friend
-    if (hasDirectMessage === false)
-      await this.chatChannelService.create_direct_message(user.id, friendId);
+    // if (hasDirectMessage === false)
+    //   await this.chatChannelService.create_direct_message(user.id, friendId);
 
-    //send chatInstance to front end to call api (they need ChatChannelId to query all past chats)
-    const chatInstance =
-      await this.chatChannelMemberService.findUserChatWithFriend(
-        user.id,
-        friendId,
-      );
-    this.io.emit('serverMessage', { chatInstance });
+    // //send chatInstance to front end to call api (they need ChatChannelId to query all past chats)
+    // const chatInstance =
+    //   await this.chatChannelMemberService.findUserChatWithFriend(
+    //     user.id,
+    //     friendId,
+    //   );
+    socket.join(roomName);
+    Logger.log(
+      `User ${user.nickName} joined room [${roomName}]`,
+      `ChatSocketsGateway => joinRoomDirectMessage()`,
+    );
+
+    // this.io.emit('serverMessage', { chatInstance });
   }
 
   @SubscribeMessage('joinRoom')
@@ -194,7 +201,7 @@ export class ChatSocketsGateway
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @ConnectedSocket() socket: SocketWithAuthData,
-    @Body() body: ChatMessage,
+    @MessageBody() body: ChatMessage,
     // @Body('message') message: string,
     // @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
@@ -208,7 +215,7 @@ export class ChatSocketsGateway
       `ChatSocketsGateway => sendMessage()`,
     );
     this.io.in(`chatChannel/${chatChannelId}`).emit('chatMessage', {
-      message: message,
+      text: message,
       sender: {
         id: userId,
         nickName: socket.user.nickName,

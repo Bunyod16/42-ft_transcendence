@@ -220,14 +220,14 @@ export class FriendRequestService {
       .getMany();
 
     const res: {
-      incomingRequest: Partial<FriendRequest>[];
+      incomingRequests: Partial<FriendRequest>[];
       outgoingRequests: Partial<FriendRequest>[];
     } = friendRequests.reduce(
       (acc, friendRequest) => {
         if (friendRequest.responder.id === id) {
           //i am the responder
           const friendUser: User = friendRequest.requester;
-          acc.incomingRequest.push({
+          acc.incomingRequests.push({
             friendRequest: friendRequest,
             friend: friendUser,
           });
@@ -243,7 +243,7 @@ export class FriendRequestService {
         delete friendRequest.responder;
         return acc;
       },
-      { incomingRequest: [], outgoingRequests: [] },
+      { incomingRequests: [], outgoingRequests: [] },
     );
 
     return res;

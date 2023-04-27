@@ -3,6 +3,7 @@ export class PlayerData {
   isConnected: boolean;
   x: number;
   y: number;
+  skin: number;
   score: number;
   constructor(id: number, y: number) {
     this.id = id;

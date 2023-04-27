@@ -1,12 +1,8 @@
-export interface Player {
-  id: number;
-  nickName: string;
-}
-
 export interface PlayerState {
   y: number;
   isConnected: boolean;
   score: number;
+  skin: number;
 }
 
 export interface GameState {
@@ -20,14 +16,28 @@ export interface GameState {
   };
 }
 
-export type GameStatus = "InGame" | "Ended" | "NoGame";
+export type GameStatus = "NoGame" | "Customize" | "InGame" | "Ended";
+
+export interface Player {
+  id: string;
+  nickName: string;
+  skin: number;
+}
 
 export interface MatchInfo {
   id: string;
-  playerOne: Player | undefined;
-  playerTwo: Player | undefined;
+  playerOne: Player;
+  playerTwo: Player;
   playerOneScore?: number;
   playerTwoScore?: number;
-  gameStatus?: GameStatus;
-  isWinner?: boolean;
+  isWinner: boolean;
+  selectedSkin?: number;
+}
+
+export interface Textures {
+  map: string;
+  // displacementMap: string;
+  normalMap: string;
+  roughnessMap: string;
+  aoMap: string;
 }

@@ -34,36 +34,55 @@ function Pong() {
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
+  const gameStatus = useGameStore((state) => state.gameStatus);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
-  // const setGameState = useGameStore((state) => state.setGameState);
-  const { name } = useUserStore();
+  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+  const name = useUserStore((state) => state.name);
+  const updateGameSkin = useGameStore((state) => state.updateGameSkin);
 
-  socket.emit("userConnected");
+  const checkIsWinner = (data: GameState) => {
+    if (
+      name === matchInfo.playerOne.nickName &&
+      data.playerOne.score > data.playerTwo.score
+    )
+      return true;
+    if (
+      name === matchInfo.playerTwo.nickName &&
+      data.playerTwo.score > data.playerOne.score
+    )
+      return true;
+    return false;
+  };
   useEffect(() => {
-    console.log(matchInfo, name);
-
+    function onMatchBegin(data: GameState) {
+      updateGameSkin(data.playerOne.skin, data.playerTwo.skin);
+      updateGameStatus("InGame");
+    }
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
       setMatchInfo({
         ...matchInfo,
         playerOneScore: data.playerOne.score,
         playerTwoScore: data.playerTwo.score,
-        gameStatus: "Ended",
+        isWinner: checkIsWinner(data),
       });
+      updateGameStatus("Ended");
     }
 
     // socket.on("updateGame", onUpdateGame);
     socket.on("gameEnded", onGameEnded);
+    socket.on("matchBegin", onMatchBegin);
 
     return () => {
       // socket.off("updateGame", onUpdateGame);
       socket.off("gameEnded", onGameEnded);
+      socket.off("matchBegin", onMatchBegin);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchInfo]);
+  }, []);
 
   return (
-    <group visible={matchInfo.gameStatus != "NoGame"}>
+    <group visible={gameStatus == "InGame" || gameStatus == "Ended"}>
       <Table tableSize={tableSize} />
 
       <Player

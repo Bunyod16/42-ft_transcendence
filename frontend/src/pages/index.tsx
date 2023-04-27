@@ -36,6 +36,7 @@ export default function Home() {
     axios
       .get("auth/profile")
       .then((res) => {
+        console.log(res.data);
         login(res.data.nickName, res.data.id);
         console.log("user authenticated");
         socket.connect();
@@ -43,8 +44,8 @@ export default function Home() {
       .catch(() => {
         refreshToken();
       });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(isLoggedIn);
   }, [isLoggedIn]);
 
   React.useEffect(() => {

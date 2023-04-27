@@ -12,7 +12,6 @@ import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
-import { socket } from "../socket/socket";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
   const [nickName, logout, avatar] = useUserStore((store) => [

@@ -1,8 +1,9 @@
 import { Box, SxProps } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DirectChat from "./SidePanel/DirectChat";
 import GeneralTab from "./SidePanel/GeneralTab";
-
+import { FriendType } from "@/store/friendsStore";
+import { chatSocket } from "./socket/socket";
 /**
  * State to track
  * - Whether in chat room or not
@@ -16,16 +17,38 @@ import GeneralTab from "./SidePanel/GeneralTab";
 
 export type TabTypes = "friends" | "channels";
 
-export default function SidePanel(sx: SxProps) {
+export default function SidePanel() {
   const [tabs, setTabs] = useState<TabTypes>("friends");
-  const [panel, setPanel] = useState<string>("");
+  const [panel, setPanel] = useState<FriendType | undefined>(undefined);
+
+  useEffect(() => {
+    chatSocket.connect();
+
+    function onConnect() {
+      console.log("chat socket connected");
+    }
+
+    chatSocket.on("connect", onConnect);
+
+    return () => {
+      chatSocket.off("connect", onConnect);
+    };
+  }, []);
 
   return (
-    <Box component="div" sx={{ minWidth: "350px", width: "25%", ...sx }}>
-      {panel === "" ? (
+    <Box
+      component="div"
+      sx={{
+        minWidth: "300px",
+        maxWidth: "25%",
+        height: "100%",
+        bgcolor: "#00000020",
+      }}
+    >
+      {panel === undefined ? (
         <GeneralTab tabs={tabs} setTabs={setTabs} setPanel={setPanel} />
       ) : (
-        <DirectChat setPanel={setPanel} />
+        <DirectChat panel={panel} setPanel={setPanel} />
       )}
     </Box>
   );

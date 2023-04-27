@@ -99,8 +99,16 @@ export class UserService {
 
   async findOneByUsername(nickName: string): Promise<User> {
     if (nickName == undefined) return null;
-    return this.userRepository.findOneBy({
+    const user: User = await this.userRepository.findOneBy({
       nickName: nickName,
+    });
+    return user;
+  }
+
+  async findOneByIntraname(intraname: string): Promise<User> {
+    if (intraname == undefined) return null;
+    return this.userRepository.findOneBy({
+      intraName: intraname,
     });
   }
 
@@ -139,12 +147,6 @@ export class UserService {
     const filteredUser = { ...user, matches };
 
     return filteredUser;
-  }
-  async findOneByIntraname(intraname: string): Promise<User> {
-    if (intraname == undefined) return null;
-    return this.userRepository.findOneBy({
-      intraName: intraname,
-    });
   }
 
   //im not sure if this should be a user service or a match service

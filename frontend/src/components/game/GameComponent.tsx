@@ -17,7 +17,7 @@ function GameComponent() {
         position: "absolute",
         top: 0,
         left: 0,
-        display: view == "Game" ? "block" : "none",
+        display: "block",
         // zIndex: -100,
       }}
     >
