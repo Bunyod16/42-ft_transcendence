@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
-import { GameState } from "@/types/game-types";
+import { GameState } from "@/types/game-type";
 
 THREE.ColorManagement.enabled = true;
 
