@@ -66,7 +66,7 @@ export default function ProfileIconBox(user: UserProfile) {
       <Box component="div" sx={{ display: "flex", flexDirection: "row" }}>
         <Avatar
           sx={{ width: "120px", height: "120px", borderRadius: "8px" }}
-          src="/jakoh_smol.jpg"
+          src={user.avatar}
         ></Avatar>
         <Box
           component="div"

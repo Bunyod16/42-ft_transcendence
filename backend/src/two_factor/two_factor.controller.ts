@@ -19,6 +19,7 @@ import { TwoFactorService } from './two_factor.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('two-factor')
 @Controller('two-factor')
@@ -87,6 +88,20 @@ export class TwoFactorController {
     return twoFactor;
   }
 
+  @Get('/user-two-factor')
+  @UseGuards(UserAuthGuard)
+  async findUserTwoFactor(@Req() req: any) {
+    const user: User = req.user;
+    const twoFactor = await this.twoFactorService.findOneWithUserId(user.id);
+
+    Logger.log(
+      `Finding TwoFactor for User with id = [${user.id}]`,
+      'TwoFactor => findUserTwoFactor()',
+    );
+
+    return twoFactor;
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     Logger.log(`[twoFactor] Trying to get twoFactor with id = [${id}]`);
@@ -99,10 +114,11 @@ export class TwoFactorController {
     return twoFactor;
   }
 
-  @Get(':userId/user-two-factor')
-  async findUserTwoFactor(@Param('userId', ParseIntPipe) userId: number) {
+  @Get(':userId/user-two-factor-testing')
+  async findUserTwoFactorTesting(
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     const twoFactor = await this.twoFactorService.findOneWithUserId(userId);
-
     if (twoFactor) return true;
   }
 

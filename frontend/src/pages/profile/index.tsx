@@ -35,9 +35,6 @@ export default function Profile() {
       setLoading(false);
       console.log(data);
 
-      //DELETE THIS LATER PLS
-      data.wins = Math.floor(Math.random() * 50);
-      data.losses = Math.floor(Math.random() * 50);
       setUser(data);
     } catch (err) {
       setLoading(false);

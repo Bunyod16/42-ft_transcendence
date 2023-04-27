@@ -5,7 +5,10 @@ import useUserStore from "@/store/userStore";
 
 export default function StatsBox(user: UserProfile) {
   const router = useRouter();
-  const nickName = useUserStore((state) => state.nickName);
+  const [nickName, avatar] = useUserStore((state) => [
+    state.nickName,
+    state.avatar,
+  ]);
   const { username } = router.query;
 
   function parseISOString(date: Date): string {
@@ -84,7 +87,7 @@ export default function StatsBox(user: UserProfile) {
             component="div"
             sx={{
               width: "100%",
-              overflow: "scroll",
+              overflow: "auto",
               height: "92%",
             }}
           >
@@ -147,16 +150,12 @@ export default function StatsBox(user: UserProfile) {
           sx={{
             width: "100%",
             padding: "0px 20px",
-            overflow: "scroll",
+            overflow: "auto",
             height: "87%",
           }}
         >
           {user.matches.map((match) => {
-            //DELETE THIS LATER PLS
-
             console.log(match.id);
-            match.playerOneScore = Math.floor(Math.random() * 5);
-            match.playerTwoScore = Math.floor(Math.random() * 5);
 
             // console.log("match.id", match.id);
 
@@ -238,7 +237,7 @@ export default function StatsBox(user: UserProfile) {
                         height: "50px",
                         borderRadius: "8px",
                       }}
-                      src="/jakoh_smol.jpg"
+                      src={match.playerTwo.avatar}
                     ></Avatar>
                     <Button
                       sx={{
@@ -303,7 +302,7 @@ export default function StatsBox(user: UserProfile) {
                         height: "50px",
                         borderRadius: "8px",
                       }}
-                      src="/jakoh_smol.jpg"
+                      src={match.playerOne.avatar}
                     ></Avatar>
                     <Button
                       sx={{
