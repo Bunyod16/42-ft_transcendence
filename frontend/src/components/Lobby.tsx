@@ -1,9 +1,9 @@
-import { Button, Box, Grid } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { socket } from "./socket/socket";
 import React from "react";
 import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
-import { MatchInfo } from "@/types/game-types";
+import { MatchInfo } from "@/types/game-type";
 import DefaultLayout from "./layout/DefaultLayout";
 import { useRouter } from "next/router";
 
@@ -60,7 +60,7 @@ const Lobby = () => {
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
       socket.off("matchFound", onMatchFound);
     };
-    // esl'int-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

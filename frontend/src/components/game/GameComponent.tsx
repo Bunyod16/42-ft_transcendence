@@ -4,10 +4,8 @@ import { Perf } from "r3f-perf";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Box } from "@mui/material";
 import Overlay from "./Overlay";
-import useUserStore from "@/store/userStore";
 
 function GameComponent() {
-  const view = useUserStore((state) => state.view);
   return (
     <Box
       component={"div"}

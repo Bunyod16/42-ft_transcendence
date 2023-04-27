@@ -2,18 +2,28 @@ import { Box, TextField, Typography } from "@mui/material";
 import { ChatType } from "./DirectChat";
 import { useState } from "react";
 import { chatSocket } from "../socket/socket";
+import useUserStore from "@/store/userStore";
 interface ChatBoxProps {
   chats: ChatType[];
-  setChats: React.Dispatch<React.SetStateAction<[] | ChatType[]>>;
-  nickName?: string;
   chatChannelId: number;
 }
-export default function ChatBox({
-  chats,
-  nickName,
-  chatChannelId,
-}: ChatBoxProps) {
+export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
   const [message, setMessage] = useState<string>("");
+  const nickName = useUserStore((state) => state.nickName);
+
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   setChats((prevState: ChatType[]) => [
+  //     ...prevState,
+  //     { text: message, sender: { nickName: nickName || "Unknown Usepr" } },
+  //   ]);
+
+  //   chatSocket.emit("sendMessage", { message:message, chatChannelId:  });
+  //   setMessage("");
+  // }
+
+  console.log(chats);
 
   // function handleMessageSubmit(e: React.SyntheticEvent) {
   //   e.preventDefault();
@@ -71,11 +81,12 @@ export default function ChatBox({
                 // padding: 1,
                 mb: 1,
                 wordWrap: "break-word",
-                textAlign: chat.sender.nickName === nickName ? "left" : "right",
+                textAlign: chat.sender.nickName !== nickName ? "left" : "right",
               }}
               key={i}
             >
-              {chats[i ? i - 1 : i].sender.nickName != chat.sender.nickName && (
+              {chats[i !== 0 ? i - 1 : i].sender.nickName !=
+                chat.sender.nickName && (
                 <Typography
                   sx={{
                     color: "gray",
