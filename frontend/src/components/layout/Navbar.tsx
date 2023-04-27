@@ -12,10 +12,14 @@ import axios from "axios";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
-import { socket } from "../socket/socket";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
-  const { nickName, isLoggedIn, logout, login } = useUserStore();
+  const [nickName, logout, avatar] = useUserStore((store) => [
+    store.nickName,
+    store.logout,
+    store.avatar,
+  ]);
+
   const router = useRouter();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
@@ -61,7 +65,7 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
                 {nickName}
               </Typography>
-              <Avatar src="/jakoh_smol.jpg" variant="rounded" />
+              <Avatar src={avatar} variant="rounded" />
             </Button>
             <IconButton onClick={() => router.push("/settings")}>
               <SettingsIcon />

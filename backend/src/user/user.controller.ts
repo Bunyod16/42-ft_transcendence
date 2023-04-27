@@ -20,6 +20,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
+import { CustomException } from 'src/utils/app.exception-filter';
 // import fs from 'fs';
 
 export class temp {
@@ -124,7 +125,20 @@ export class UserController {
     const updateUserDto = new UpdateUserDto(req.body);
     updateUserDto.nickName = req.body.nickName;
     updateUserDto.avatar = req.body.avatar;
+    if (!req.body.nickName) {
+      throw new CustomException(
+        `Please pass in a user nickName to update`,
+        HttpStatus.BAD_REQUEST,
+        `User => update()`,
+      );
+    }
     const reg = /^[a-z0-9]+$/i;
+
+    Logger.log(
+      `Trying to update user with id = [${req.user.id}]`,
+      'User => update()',
+    );
+
     return reg.test(updateUserDto.nickName)
       ? this.userService.update(req.user.id, updateUserDto)
       : new HttpException(

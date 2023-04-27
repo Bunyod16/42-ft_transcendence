@@ -1,9 +1,6 @@
-import { socket } from "../socket/socket";
 import CustomizeStep from "./CustomizeStep";
 import Pong from "./Pong";
 import VictoryDefeat from "./VictoryDefeat";
-import useGameStore from "@/store/gameStore";
-import { button, useControls } from "leva";
 
 function Lights() {
   return (

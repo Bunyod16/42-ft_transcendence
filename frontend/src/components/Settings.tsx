@@ -1,40 +1,36 @@
-import { Box, Button, TextField, Typography, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Tooltip,
+  useTheme,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "@/store/userStore";
-import { constrainedMemory } from "process";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Settings() {
-  const [nickName, avatar, updateAvatar] = useUserStore((store) => [
+  const [nickName, avatar, updateAvatar, updateName] = useUserStore((store) => [
     store.nickName,
     store.avatar,
     store.updateAvatar,
+    store.updateName,
   ]);
   const [usernameField, setUsernameField] = useState<string>(nickName);
   const [isValidUsername, setIsValidUsername] = useState<boolean>(false);
   const [newAvatarUrl, setNewAvatarUrl] = useState<string>("");
   const [newAvatar, setNewAvatar] = useState<File>();
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  console.log("avatar", avatar);
-
-  const handleSubmitUsername = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(usernameField);
-    //make some api call here
-    //change textField to error if username exists
-  };
-
+  const theme = useTheme();
   const handleSubmitAvatar = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(newAvatar);
     const formData = new FormData();
     if (newAvatar === undefined) return;
+    console.log("avatar before upadate", avatar);
     formData.append("avatar", newAvatar);
     axios
       .post("/content/upload_avatar", formData, {
@@ -43,11 +39,18 @@ export default function Settings() {
         },
       })
       .then((res) => {
-        console.log(res);
-        updateAvatar("http://localhost:7001/avatar/1-Boyeeeee.png");
+        toast.success("Succesfully Updated Avatar", {
+          position: "bottom-right",
+        });
+        updateAvatar(res.data.avatarURI); //i HAVE TO CHANGE THIS AND UPDATE STORE AVATAR
+        console.log("avatar after succesfull upadate", avatar);
       })
-      .catch(() => {
-        console.log("error");
+      .catch((error) => {
+        toast.error(`${error.mossage}`, {
+          position: "bottom-right",
+        });
+        console.log(`error: ${error.message}`);
+        console.log("avatar after fail upadate", avatar);
       });
   };
 
@@ -59,13 +62,33 @@ export default function Settings() {
     setNewAvatar(file);
   };
 
+  const handleSubmitUsername = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(usernameField);
+    axios
+      .patch(`/user`, { nickName: usernameField })
+      .then(() => {
+        toast.success("Succesfully Updated Username", {
+          position: "bottom-right",
+        });
+        updateName(usernameField);
+      })
+      .catch((error) => {
+        toast.error(`${error.mossage}`, {
+          position: "bottom-right",
+        });
+        console.log(`error: ${error.message}`);
+      });
+  };
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   useEffect(() => {
     const reg = /^[a-z0-9]+$/i;
-    console.log(reg.test(usernameField));
     setIsValidUsername(reg.test(usernameField));
   }, [usernameField]);
-
-  console.log(isValidUsername);
 
   return !isHydrated ? (
     <></>
@@ -299,6 +322,15 @@ export default function Settings() {
           </Box>
         </Box>
       </Box>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "green",
+            // background: `${theme.palette.primary.main}`,
+            color: `${theme.palette.text.primary}`,
+          },
+        }}
+      />
     </Box>
   );
 }
