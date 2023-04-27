@@ -58,10 +58,6 @@ function FriendBox({ setPanel }: FriendPanelType) {
           {/** Need to change src to img thingy */}
           <ListItemButton
             onClick={() => {
-              console.log({
-                friendInfo: friend,
-                chatChannel: friend.chatChannel,
-              });
               setPanel({
                 friendInfo: friend,
                 chatChannel: friend.chatChannel,

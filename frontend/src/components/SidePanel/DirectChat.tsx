@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
 import axios from "axios";
 import { PanelData } from "@/types/social-type";
+import BlockIcon from "@mui/icons-material/Block";
 
 export interface ChatType {
   id?: number;
@@ -50,6 +51,82 @@ interface TopBarProps {
   handleBack: () => void;
 }
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
+  const FriendDetail = () => {
+    return (
+      <>
+        <Box
+          component="div"
+          sx={{ display: "flex", mb: 1, alignItems: "center" }}
+        >
+          <Button
+            component={"div"}
+            sx={{
+              display: "flex",
+              // flexDirection: "row",
+              alignItems: "center",
+              p: 1,
+              cursor: "pointer",
+              color: "text.primary",
+              bgcolor: "#00000020",
+              borderRadius: 2,
+              flex: 1,
+            }}
+            onClick={() => console.log("show friend")}
+          >
+            <Avatar
+              src="/jakoh_smol.jpg"
+              sx={{ width: 50, height: 50, mr: 2, float: "left" }}
+              alt="profile pic"
+            />
+            <Box component={"div"} sx={{ flex: 1 }}>
+              <Typography variant="h6">{panel.friendInfo?.nickName}</Typography>
+              <StatusBar online={panel.friendInfo?.online || false} />
+            </Box>
+            {/* TODO add block friend here!! */}
+          </Button>
+          <IconButton>
+            <BlockIcon />
+          </IconButton>
+        </Box>
+        <Button
+          fullWidth
+          sx={{
+            color: "white",
+            border: "2px solid #F2F4F3",
+          }}
+          onClick={() => console.log("Havent Connect Send Invite")}
+          size="small"
+        >
+          Invite
+        </Button>
+      </>
+    );
+  };
+
+  const ChannelDetail = () => {
+    // console.log(panel.chatChannel);
+    return (
+      <Box component={"div"} sx={{ justifySelf: "center" }}>
+        <Typography variant="h6">
+          {panel.chatChannel.chatChannel.name}
+        </Typography>
+        {panel.chatChannel.isAdmin && (
+          <Button
+            fullWidth
+            sx={{
+              color: "white",
+              border: "2px solid #F2F4F3",
+            }}
+            onClick={() => console.log("Havent Connect Send Invite")}
+            size="small"
+          >
+            Manage Channel
+          </Button>
+        )}
+      </Box>
+    );
+  };
+
   return (
     <Box
       component="div"
@@ -57,7 +134,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         display: "flex",
         // padding: "10px",
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "start",
         p: 1,
         borderBottom: "1px black solid",
       }}
@@ -65,7 +142,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
       <IconButton
         // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
         onClick={handleBack}
-        sx={{ display: "inline-block" }}
+        // sx={{ display: "inline-block" }}
       >
         <ArrowBackIcon sx={{ fill: "white" }} />
       </IconButton>
@@ -79,69 +156,9 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         }}
       >
         {panel.chatChannel.chatChannel.chatType === "direct_message" ? (
-          <>
-            <Box
-              component={"div"}
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                p: 1,
-                cursor: "pointer",
-              }}
-              onClick={() => console.log("show friend")}
-            >
-              <Avatar
-                src="/jakoh_smol.jpg"
-                sx={{ width: 50, height: 50, mr: 2, float: "left" }}
-                alt="profile pic"
-              />
-              <Box component={"div"}>
-                <Typography variant="h6">
-                  {panel.friendInfo?.nickName}
-                </Typography>
-                <StatusBar online={panel.friendInfo?.online || false} />
-              </Box>
-              {/* TODO add block friend here!! */}
-            </Box>
-
-            {/* <Button
-                  color="secondary"
-                  sx={{ color: "white", border: "2px solid #F2F4F3", mr: 2 }}
-                  size="small"
-                  onClick={() => console.log("Havent Connect Profile Page")}
-                >
-                  Profile
-                </Button> */}
-            <Button
-              fullWidth
-              sx={{
-                color: "white",
-                border: "2px solid #F2F4F3",
-              }}
-              onClick={() => console.log("Havent Connect Send Invite")}
-              size="small"
-            >
-              Invite
-            </Button>
-          </>
+          <FriendDetail />
         ) : (
-          <>
-            <Typography>{panel.chatChannel.chatChannel.name}</Typography>
-            {panel.chatChannel.isAdmin && (
-              <Button
-                fullWidth
-                sx={{
-                  color: "white",
-                  border: "2px solid #F2F4F3",
-                }}
-                onClick={() => console.log("Havent Connect Send Invite")}
-                size="small"
-              >
-                Manage Channel
-              </Button>
-            )}
-          </>
+          <ChannelDetail />
         )}
       </Box>
     </Box>
@@ -158,7 +175,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   // const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
-    if (panel === undefined || panel.friendInfo === null) return;
+    if (panel === undefined) return;
     axios
       .get(
         `/chat-line/getNextChatLines/${panel.chatChannel.chatChannel.id}?chatLineOffset=${chats.length}`,
@@ -167,13 +184,18 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
         const newChats: ChatType[] = response.data;
         setChats(newChats.reverse());
       });
-    function getDirectMessage() {
+    console.log(panel);
+    function getMessage() {
       if (panel === undefined) return;
-      chatSocket.emit("joinRoomDirectMessage", {
+      // if ()
+      // chatSocket.emit("joinRoomDirectMessage", {
+      //   chatChannelId: panel.chatChannel.chatChannel.id,
+      // });
+      chatSocket.emit("joinRoom", {
         chatChannelId: panel.chatChannel.chatChannel.id,
       });
     }
-    getDirectMessage();
+    getMessage();
   }, [panel]);
 
   useEffect(() => {

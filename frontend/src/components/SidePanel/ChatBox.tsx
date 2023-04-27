@@ -23,6 +23,8 @@ export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
   //   setMessage("");
   // }
 
+  console.log(chats);
+
   function handleMessageSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (message === "") return;
@@ -71,7 +73,8 @@ export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
               }}
               key={i}
             >
-              {chats[i ? i - 1 : i].sender.nickName != chat.sender.nickName && (
+              {chats[i !== 0 ? i - 1 : i].sender.nickName !=
+                chat.sender.nickName && (
                 <Typography
                   sx={{
                     color: "gray",

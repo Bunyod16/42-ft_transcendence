@@ -20,6 +20,7 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 
 interface ChatClientToServerType {
   joinRoomDirectMessage: (data: { chatChannelId: number }) => void;
+  joinRoom: (data: { chatChannelId: number }) => void;
   sendMessage: (data: { message: string; chatChannelId: number }) => void;
 }
 
