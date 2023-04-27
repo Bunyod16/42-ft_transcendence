@@ -37,6 +37,7 @@ const Lobby = () => {
       playerOne: data.playerOne,
       playerTwo: data.playerTwo,
       id: data.id,
+      isWinner: false,
     };
     setMatchInfo(matchInfo);
     updateView("Game");
