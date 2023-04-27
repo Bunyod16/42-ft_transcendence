@@ -25,6 +25,18 @@ export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
 
   console.log(chats);
 
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   setChats((prevState: ChatType[]) => [
+  //     ...prevState,
+  //     { text: message, sender: { nickName: nickName || "Unknown Usepr" } },
+  //   ]);
+
+  //   chatSocket.emit("sendMessage", { message:message, chatChannelId:  });
+  //   setMessage("");
+  // }
+
   function handleMessageSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (message === "") return;
