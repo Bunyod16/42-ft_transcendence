@@ -3,7 +3,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "@/store/userStore";
-import { constrainedMemory } from "process";
 
 export default function Settings() {
   const [nickName, avatar, updateAvatar] = useUserStore((store) => [

@@ -196,6 +196,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
       });
     }
     getMessage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [panel]);
 
   useEffect(() => {

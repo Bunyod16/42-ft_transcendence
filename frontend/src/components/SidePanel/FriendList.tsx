@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Typography,
   List,
   ListItem,
   ListItemButton,
@@ -20,11 +19,6 @@ const inlineStyle = {
   height: "32px",
   borderRadius: "50px",
 };
-
-// data acpt from here, friend msg etc
-// socket.on("serverMessage", (data) => {
-//   data;
-// });
 
 interface FriendPanelType {
   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
@@ -101,6 +95,7 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         console.log("error: ", error);
         // alert("KENOT SET FRIEND");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleFriend() {

@@ -3,9 +3,9 @@ import { Textures } from "@/types/game-type";
 import { Center, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Flex, Box } from "@react-three/flex";
-import { useState, useRef } from "react";
 import { Mesh } from "three";
 import * as THREE from "three";
+import { useRef } from "react";
 
 interface PlayerSkinProp {
   size: number[];
