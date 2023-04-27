@@ -5,16 +5,9 @@ import { chatSocket } from "../socket/socket";
 import useUserStore from "@/store/userStore";
 interface ChatBoxProps {
   chats: ChatType[];
-  setChats: React.Dispatch<React.SetStateAction<[] | ChatType[]>>;
-  // nickName?: string;
   chatChannelId: number;
 }
-export default function ChatBox({
-  chats,
-  setChats,
-  // nickName,
-  chatChannelId,
-}: ChatBoxProps) {
+export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
   const [message, setMessage] = useState<string>("");
   const nickName = useUserStore((state) => state.nickName);
 
