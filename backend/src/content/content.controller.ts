@@ -7,7 +7,6 @@ import {
   MaxFileSizeValidator,
   Logger,
   HttpStatus,
-  Body,
   UseGuards,
   Req,
   UseInterceptors,
@@ -34,7 +33,7 @@ export class ContentController {
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: (req: RequestWithUser, file, cb) => {
+        destination: (req: RequestWithUser, _, cb) => {
           if (req.user.avatar !== 'default-stormtrooper.png') {
             const avatarFilename: string = `avatars/${req.user.avatar
               .split('/')
@@ -65,7 +64,7 @@ export class ContentController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: 'image/png' }),
+          new FileTypeValidator({ fileType: 'image/*' }),
           new MaxFileSizeValidator({ maxSize: 2000000 }),
         ],
         errorHttpStatusCode: HttpStatus.BAD_REQUEST,
@@ -74,12 +73,11 @@ export class ContentController {
     file: Express.Multer.File,
   ) {
     const { user } = req;
-    const cdnURI: string =
-      this.configService.get('CDN_DOMAIN_NAME') ||
-      process.env.CDN_DOMAIN_NAME ||
-      (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
-        ':' +
-        (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
+    const cdnURI: string = 'http://localhost:7000';
+    // const cdnURI: string =
+    //   (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
+    //   ':' +
+    //   (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
     const avatarURL: string = `${cdnURI}/avatar/${file.filename}`;
 
     this.logger.log(

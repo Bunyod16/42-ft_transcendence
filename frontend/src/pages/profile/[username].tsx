@@ -14,7 +14,7 @@ export default function Profile() {
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
   const [userExists, setUserExists] = useState(false);
   const [loading, setLoading] = useState(true);
-  const name = useUserStore((state) => state.name);
+  const nickName = useUserStore((state) => state.nickName);
 
   const getUserProfile = async (username: string) => {
     try {
@@ -40,7 +40,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!router.isReady) return;
-    if (name === username) router.push("/profile");
+    if (nickName === username) router.push("/profile");
     getUserProfile(username as string);
     //eslint-disable-next-line
   }, [router.isReady]);

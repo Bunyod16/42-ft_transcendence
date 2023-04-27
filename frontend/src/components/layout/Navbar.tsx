@@ -15,7 +15,7 @@ import { SxProps } from "@mui/material";
 import { socket } from "../socket/socket";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
-  const { name, isLoggedIn, logout, login } = useUserStore();
+  const { nickName, isLoggedIn, logout, login } = useUserStore();
   const router = useRouter();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
@@ -59,11 +59,11 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               onClick={() => router.push("/profile")}
             >
               <Typography sx={{ flexGrow: 1, textAlign: "left" }}>
-                {name}
+                {nickName}
               </Typography>
               <Avatar src="/jakoh_smol.jpg" variant="rounded" />
             </Button>
-            <IconButton>
+            <IconButton onClick={() => router.push("/settings")}>
               <SettingsIcon />
             </IconButton>
             <IconButton onClick={handleLogout}>

@@ -16,7 +16,7 @@ export default function Profile() {
   const [user, setUser] = useState<UserProfile>();
   const [loading, setLoading] = useState(true);
   const [userExists, setUserExists] = useState(false);
-  const name = useUserStore((state) => state.name);
+  const nickName = useUserStore((state) => state.nickName);
 
   const getUserProfile = async (username: string) => {
     try {
@@ -46,7 +46,7 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    getUserProfile(name);
+    getUserProfile(nickName);
     //eslint-disable-next-line
   }, []);
 

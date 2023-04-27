@@ -20,6 +20,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
+import fs from 'fs';
 
 export class temp {
   nickName?: string;
@@ -29,6 +30,28 @@ export class temp {
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  // @Post('/zulul')
+  // async zulul() {
+  //   const boringAvatar = await fetch(
+  //     `https://source.boringavatars.com/marble/120/nfernand`,
+  //   );
+  //   // console.log(boringAvatar);
+  //   const arrayBuffer = await boringAvatar.arrayBuffer();
+  //   const buffer = Buffer.from(arrayBuffer);
+  //   console.log(arrayBuffer);
+  //   console.log(buffer);
+  //   try {
+  //     console.log(
+  //       fs.createWriteStream(
+  //         '/Users/nazrinshahaf/Desktop/Coding/42/Core/ft_transendence/zululplswork',
+  //       ),
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   return boringAvatar;
+  // }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {

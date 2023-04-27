@@ -16,7 +16,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     // const password = encodePassword(createUserDto.password);
     // const newUser = this.userRepository.create({ ...createUserDto, password})
     return this.userRepository.save(createUserDto);
@@ -162,7 +162,7 @@ export class UserService {
     ];
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     this.userRepository.update({ id: id }, updateUserDto);
   }
 

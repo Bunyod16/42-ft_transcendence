@@ -10,16 +10,24 @@ import { ConfigModule } from '@nestjs/config';
     MulterModule.register({
       storage: diskStorage({
         destination: 'uploads/',
-        filename: (req, file: Express.Multer.File, callback) => {
+        filename: (_, file: Express.Multer.File, callback) => {
           const dateObj = new Date();
-          const dateSuffix = dateObj.getFullYear() + dateObj.getMonth() + dateObj.getDay();
-          callback(null, dateSuffix + '-' + file.fieldname + '.' + file.originalname.split('.').pop());
-        }
-      })
+          const dateSuffix =
+            dateObj.getFullYear() + dateObj.getMonth() + dateObj.getDay();
+          callback(
+            null,
+            dateSuffix +
+              '-' +
+              file.fieldname +
+              '.' +
+              file.originalname.split('.').pop(),
+          );
+        },
+      }),
     }),
     UserModule,
-    ConfigModule
+    ConfigModule,
   ],
-  controllers: [ContentController]
+  controllers: [ContentController],
 })
 export class ContentModule {}

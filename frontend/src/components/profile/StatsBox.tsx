@@ -5,7 +5,7 @@ import useUserStore from "@/store/userStore";
 
 export default function StatsBox(user: UserProfile) {
   const router = useRouter();
-  const name = useUserStore((state) => state.name);
+  const nickName = useUserStore((state) => state.nickName);
   const { username } = router.query;
 
   function parseISOString(date: Date): string {
@@ -256,9 +256,9 @@ export default function StatsBox(user: UserProfile) {
                         },
                       }}
                       onClick={() => {
-                        const isMe = match.playerTwo.nickName === name;
+                        const isMe = match.playerTwo.nickName === nickName;
                         const onPageAlready =
-                          match.playerTwo.nickName === (username || name);
+                          match.playerTwo.nickName === (username || nickName);
                         if (!onPageAlready) {
                           if (isMe) {
                             router.push(`/profile`);
@@ -321,9 +321,9 @@ export default function StatsBox(user: UserProfile) {
                         },
                       }}
                       onClick={() => {
-                        const isMe = match.playerOne.nickName === name;
+                        const isMe = match.playerOne.nickName === nickName;
                         const onPageAlready =
-                          match.playerOne.nickName === (username || name);
+                          match.playerOne.nickName === (username || nickName);
                         if (!onPageAlready) {
                           if (isMe) {
                             router.push(`/profile`);

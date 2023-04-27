@@ -1,15 +1,27 @@
 import { Box, Button, TextField, Typography, Tooltip } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useState } from "react";
-import jakohSmol from "../../public/jakoh_smol.jpg";
+import { useState, useEffect } from "react";
 import axios from "axios";
-// import useUserStore from "@/store/userStore";
+import useUserStore from "@/store/userStore";
+import { constrainedMemory } from "process";
 
 export default function Settings() {
-  // const name = useUserStore((store) => store.name);
-  const [usernameField, setUsernameField] = useState<string>("");
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
-  const [avatar, setAvatar] = useState<File>();
+  const [nickName, avatar, updateAvatar] = useUserStore((store) => [
+    store.nickName,
+    store.avatar,
+    store.updateAvatar,
+  ]);
+  const [usernameField, setUsernameField] = useState<string>(nickName);
+  const [isValidUsername, setIsValidUsername] = useState<boolean>(false);
+  const [newAvatarUrl, setNewAvatarUrl] = useState<string>("");
+  const [newAvatar, setNewAvatar] = useState<File>();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  console.log("avatar", avatar);
 
   const handleSubmitUsername = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,14 +32,22 @@ export default function Settings() {
 
   const handleSubmitAvatar = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(avatar);
+    console.log(newAvatar);
+    const formData = new FormData();
+    if (newAvatar === undefined) return;
+    formData.append("avatar", newAvatar);
     axios
-      .patch("/upload_avatar", { avatar })
-      .then(() => {
-        console.log("successfully uploading avatar");
+      .post("/content/upload_avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        updateAvatar("http://localhost:7001/avatar/1-Boyeeeee.png");
       })
       .catch(() => {
-        console.log("some bad shit happened");
+        console.log("error");
       });
   };
 
@@ -35,11 +55,21 @@ export default function Settings() {
     if (e.target.files === null) return;
     const file = e.target.files[0]; //select the file to upload
     const imageUrl = URL.createObjectURL(file);
-    setAvatarUrl(imageUrl);
-    setAvatar(file);
+    setNewAvatarUrl(imageUrl);
+    setNewAvatar(file);
   };
 
-  return (
+  useEffect(() => {
+    const reg = /^[a-z0-9]+$/i;
+    console.log(reg.test(usernameField));
+    setIsValidUsername(reg.test(usernameField));
+  }, [usernameField]);
+
+  console.log(isValidUsername);
+
+  return !isHydrated ? (
+    <></>
+  ) : (
     <Box
       component="div"
       sx={{
@@ -116,9 +146,9 @@ export default function Settings() {
                     borderRadius: "8px",
                     width: "140px",
                     height: "140px",
-                    backgroundImage: avatarUrl
-                      ? `url("${avatarUrl}")`
-                      : `url("${jakohSmol.src}")`,
+                    backgroundImage: newAvatarUrl
+                      ? `url("${newAvatarUrl}")`
+                      : `url("${avatar}")`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
@@ -129,8 +159,8 @@ export default function Settings() {
                   component="label"
                 >
                   <input
-                    name="avatar"
                     type="file"
+                    name="file"
                     accept="image/*"
                     onChange={(e) => getImageFile(e)}
                     hidden
@@ -183,9 +213,32 @@ export default function Settings() {
             >
               <TextField
                 label="username"
+                value={usernameField}
                 variant="outlined"
                 size="small"
-                sx={{ backgroundColor: "primary.300" }}
+                error={!isValidUsername}
+                helperText={
+                  !isValidUsername &&
+                  "Must only contain alphanumeric characters"
+                }
+                sx={{
+                  width: "210px",
+                  backgroundColor: "primary.300",
+                  "& label.Mui-focused": {
+                    color: isValidUsername ? "white" : "red",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: isValidUsername ? "white" : "red",
+                    },
+                    "&.Mui-active fieldset:": {
+                      borderColor: isValidUsername ? "white" : "red",
+                    },
+                  },
+                  "& .Mui-error": {
+                    color: isValidUsername ? "white" : "red",
+                  },
+                }}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setUsernameField(event.target.value);
                 }}

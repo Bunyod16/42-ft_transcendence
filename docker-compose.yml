@@ -61,6 +61,9 @@ services:
       - ft_trancendence
     environment:
       REDIS_HOST: ${REDIS_HOST}
+      CDN_HOST: ${CDN_HOST}
+      CDN_PORT: ${CDN_PORT}
+
 
   nextjs:
     container_name: frontend
