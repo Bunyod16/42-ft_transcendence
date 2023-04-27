@@ -1,5 +1,5 @@
 import { socket } from "@/components/socket/socket";
-import { GameState } from "@/types/game-types";
+import { GameState } from "@/types/game-type";
 import { useEffect, useRef } from "react";
 
 function useGameState() {

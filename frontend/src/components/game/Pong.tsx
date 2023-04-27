@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
-import { GameState } from "@/types/game-types";
+import { GameState } from "@/types/game-type";
 
 THREE.ColorManagement.enabled = true;
 
@@ -37,17 +37,17 @@ function Pong() {
   const gameStatus = useGameStore((state) => state.gameStatus);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
   const updateGameStatus = useGameStore((state) => state.updateGameStatus);
-  const name = useUserStore((state) => state.name);
+  const nickName = useUserStore((state) => state.nickName);
   const updateGameSkin = useGameStore((state) => state.updateGameSkin);
 
   const checkIsWinner = (data: GameState) => {
     if (
-      name === matchInfo.playerOne.nickName &&
+      nickName === matchInfo.playerOne.nickName &&
       data.playerOne.score > data.playerTwo.score
     )
       return true;
     if (
-      name === matchInfo.playerTwo.nickName &&
+      nickName === matchInfo.playerTwo.nickName &&
       data.playerTwo.score > data.playerOne.score
     )
       return true;
@@ -88,13 +88,13 @@ function Pong() {
       <Player
         tableSize={tableSize}
         playerLR={LEFT}
-        isPlayer={matchInfo.playerOne?.nickName == name}
+        isPlayer={matchInfo.playerOne?.nickName == nickName}
       />
 
       <Player
         tableSize={tableSize}
         playerLR={RIGHT}
-        isPlayer={matchInfo.playerTwo?.nickName == name}
+        isPlayer={matchInfo.playerTwo?.nickName == nickName}
       />
 
       <Ball tableSize={tableSize} />

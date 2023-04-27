@@ -1,4 +1,4 @@
-import { GameState, MatchInfo } from "@/types/game-types";
+import { GameState, MatchInfo } from "@/types/game-type";
 
 export interface ServerToClientEvents {
   noArg: () => void;

@@ -1,9 +1,5 @@
 import { create } from "zustand";
 
-export interface ChannelType {
-  name: string;
-}
-
 interface ChannelStoreType {
   channels: string[] | [];
   addChannel: (channel: string) => void;
@@ -23,3 +19,22 @@ const channelStore = create<ChannelStoreType>((set) => ({
     }));
   },
 }));
+
+export default channelStore;
+
+// JSON Array of Object of
+// /chat-channel-member/usersGroupMessages
+// {
+//   "id": 3,
+//   "joinedAt": "2023-04-27T08:34:55.467Z",
+//   "isAdmin": false,
+//   "isBlacklisted": false,
+//   "mutedUntil": null,
+//   "chatChannel": {
+//       "id": 2,
+//       "name": "Gang Gang",
+//       "created_at": "2023-04-27T08:34:55.434Z",
+//       "channel_type": "public",
+//       "chatType": "group_message"
+//   }
+// },
