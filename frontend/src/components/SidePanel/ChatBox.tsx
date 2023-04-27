@@ -1,13 +1,21 @@
-import { Box, Typography, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, TextField, Typography } from "@mui/material";
 import { ChatType } from "./DirectChat";
+import { useState } from "react";
 import { chatSocket } from "../socket/socket";
 interface ChatBoxProps {
   chats: ChatType[];
   setChats: React.Dispatch<React.SetStateAction<[] | ChatType[]>>;
   nickName?: string;
+  chatChannelId: number;
 }
-export default function ChatBox({ chats, setChats, nickName }: ChatBoxProps) {
+export default function ChatBox({
+  chats,
+  setChats,
+  nickName,
+  chatChannelId,
+}: ChatBoxProps) {
+  const [message, setMessage] = useState<string>("");
+
   // function handleMessageSubmit(e: React.SyntheticEvent) {
   //   e.preventDefault();
   //   if (message === "") return;
@@ -20,52 +28,85 @@ export default function ChatBox({ chats, setChats, nickName }: ChatBoxProps) {
   //   setMessage("");
   // }
 
+  function handleMessageSubmit(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (message === "") return;
+    // setChats((prevState: ChatType[]) => [
+    //   ...prevState,
+    //   {
+    //     text: message,
+    //     sender: { nickName: panel?.nickName || "Unknown User" },
+    //   },
+    // ]);
+    // if (panel === undefined || panel.directMessage === null) return;
+    chatSocket.emit("sendMessage", {
+      message: message,
+      chatChannelId: chatChannelId,
+    });
+    setMessage("");
+  }
+
   return (
-    // <Box
-    //   component="div"
-    //   sx={{
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     justifyContent: "end",
-    //     height: "100%",
-    //     overflow: "hidden",
-    //   }}
-    // >
-    <Box
-      component="div"
-      sx={{
-        display: "flex",
-        flexDirection: "column-reverse",
-        overflow: "scroll",
-        overflowX: "hidden",
-        height: "100%",
-        p: 1,
-      }}
-    >
-      {chats
-        .map((chat, i) => (
-          <Box
-            component="div"
-            sx={{
-              // padding: "10px",
-              // border: "2px solid #11AAAA",
-              // borderRadius: "8px",
-              // margin: "10px",
-              // padding: 1,
-              mb: "2px",
-              wordWrap: "break-word",
-              // textAlign:
-            }}
-            key={i}
-          >
-            <Typography
-              sx={{ color: "gray" }}
-            >{`${chat.sender.nickName}`}</Typography>
-            <Typography sx={{ lineHeight: 1 }}>{chat.text}</Typography>
-          </Box>
-        ))
-        .reverse()}
-    </Box>
-    // </Box>
+    <>
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+          flexDirection: "column-reverse",
+          overflow: "auto",
+          // overflowX: "hidden",
+          // height: "100%",
+          flex: 1,
+          p: 1,
+        }}
+      >
+        {chats
+          .map((chat, i) => (
+            <Box
+              component="div"
+              sx={{
+                // padding: "10px",
+                // border: "2px solid #11AAAA",
+                // borderRadius: "8px",
+                // margin: "10px",
+                // padding: 1,
+                mb: "2px",
+                wordWrap: "break-word",
+                textAlign: chat.sender.nickName === nickName ? "left" : "right",
+              }}
+              key={i}
+            >
+              <Typography
+                sx={{
+                  color: "gray",
+                  // textAlign:
+                  //   chat.sender.nickName === nickName ? "left" : "right",
+                }}
+              >{`${chat.sender.nickName}`}</Typography>
+              <Typography sx={{ lineHeight: 1 }}>{chat.text}</Typography>
+            </Box>
+          ))
+          .reverse()}
+      </Box>
+
+      {/* Textbox input here */}
+      {/* <Box component="div" sx={{ width: "100%", height: "56px" }}> */}
+      <form onSubmit={handleMessageSubmit}>
+        <TextField
+          variant="outlined"
+          placeholder="message..."
+          autoComplete="off"
+          onChange={(event) => setMessage(event.target.value)}
+          value={message}
+          sx={{
+            height: 56,
+            width: "100%",
+            color: "#FEFEFE",
+            "&::placeholder": { color: "#FEFEFE" },
+          }}
+        />
+      </form>
+      {/* </Box> */}
+    </>
   );
 }

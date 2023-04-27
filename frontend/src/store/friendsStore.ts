@@ -18,7 +18,7 @@ export interface FriendType {
   wins: number;
   losses: number;
   online: boolean;
-  directMessage: DirectMessageType | null;
+  directMessage: DirectMessageType;
 }
 
 interface FriendsStoreType {

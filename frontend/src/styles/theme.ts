@@ -30,9 +30,11 @@ const theme = createTheme({
       "100": "#1b2429",
       "200": "rgba(0,0,0,0.2)",
       "300": "#00000066",
+      contrastText: "#fefefe",
     },
     secondary: {
       main: "#048BA8",
+      contrastText: "#fefefe",
     },
     accent: {
       main: "#93032E",
@@ -70,20 +72,21 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-            width: "20px",
+            width: "8px",
+            // background-color: #"F5F5F5";
           },
           "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track": {
             backgroundColor: "transparent",
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-            backgroundColor: "#d6dee1",
+            backgroundColor: "#00000020",
             borderRadius: "20px",
-            border: "6px solid transparent",
+            // border: "6px solid transparent",
             backgroundClip: "content-box",
           },
           "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
             {
-              backgroundColor: "#a8bbbf",
+              backgroundColor: "#ffffff20",
             },
         },
       },

@@ -20,17 +20,13 @@ const inlineStyle = {
   borderRadius: "50px",
 };
 
-interface FriendPanelType {
-  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
-}
-
 // data acpt from here, friend msg etc
 // socket.on("serverMessage", (data) => {
 //   data;
 // });
 function FriendBox({ setPanel }: FriendPanelType) {
   const friends = useFriendsStore((state) => state.friends);
-  console.log(friends);
+  // console.log(friends);
   return (
     <List
       sx={{
@@ -79,6 +75,9 @@ function FriendBox({ setPanel }: FriendPanelType) {
   );
 }
 
+interface FriendPanelType {
+  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+}
 export default function FriendList({ setPanel }: FriendPanelType) {
   const setFriendList = useFriendsStore((state) => state.setFriendList);
   const [pendingActive, setPendingActive] = useState(false);
