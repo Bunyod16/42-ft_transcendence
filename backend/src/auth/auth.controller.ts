@@ -58,11 +58,14 @@ export class AuthController {
       'Content-Type': 'application/json';
     };
     try {
+      console.log('CALL BACK');
+      console.log(postData);
       const resp = await this.httpService.axiosRef.post(
         'https://api.intra.42.fr/oauth/token',
         postData,
         { headers },
       );
+      console.log('attempt at login');
       const intra_data = await this.httpService.axiosRef.get(
         'https://api.intra.42.fr/v2/me',
         { headers: { Authorization: `Bearer ${resp.data.access_token}` } },
