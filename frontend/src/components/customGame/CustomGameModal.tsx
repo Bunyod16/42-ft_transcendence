@@ -143,7 +143,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
                       friendId: friend.id.toString(),
                     });
                     setFriendsInvited((prevFriends) => {
-                      return [...prevFriends, friend.username];
+                      return [...prevFriends, friend.nickName];
                     });
                   }}
                 >
@@ -161,10 +161,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
                       paddingBottom: 1,
                     }}
                   >
-                    <Avatar
-                      src={friend.avatar}
-                      alt={friend.nickName}
-                    />
+                    <Avatar src={friend.avatar} alt={friend.nickName} />
                     <ListItemText
                       sx={{ ml: "12px" }}
                       primary={friend.nickName}
