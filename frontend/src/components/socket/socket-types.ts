@@ -22,7 +22,7 @@ export interface ClientToServerEvents {
   queueLeave: () => void;
   cancelPlayWithFriend: () => void;
   inviteFriend: (data: { friendId: string }) => void;
-  userConnected: () => void;
+  userConnected: (data: { skin: any }) => void;
   userDisconnected: () => void;
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;

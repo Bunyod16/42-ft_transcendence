@@ -249,8 +249,9 @@ const Score = () => {
 
 const Overlay = () => {
   const gameStatus = useGameStore((state) => state.gameStatus);
+  console.log("gameStatus", gameStatus);
 
-  if (gameStatus == "NoGame") return <></>;
+  // if (gameStatus === "NoGame") return <></>;
   return (
     <Box
       component={"div"}
@@ -261,6 +262,7 @@ const Overlay = () => {
         top: 0,
         left: 0,
         pointerEvents: "none",
+        // zIndex: 100,
       }}
     >
       <Score />

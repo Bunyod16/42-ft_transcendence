@@ -148,12 +148,15 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
   }
 
   @SubscribeMessage('userConnected')
-  async userConnected(@ConnectedSocket() socket: SocketWithAuthData) {
+  async userConnected(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: SocketWithAuthData,
+  ) {
     const match = await this.matchService.findCurrentByUser(socket.user);
     if (!match) {
       return;
     }
-    await this.gameStateService.connectUser(match.id, socket.user);
+    await this.gameStateService.connectUser(match.id, socket.user, body.skin);
     console.log(`${socket.user.nickName} has connected to game`);
     const game = await this.gameStateService.getGame(match.id);
     if (game.playerOne.isConnected && game.playerTwo.isConnected) {
