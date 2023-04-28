@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -19,93 +20,6 @@ import {
 } from "../socket/socket-types";
 
 const inlineStyle = {};
-
-const sampleData = [
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Jakoh",
-    alt: "some text",
-    status: true,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Bunyod",
-    alt: "some more text",
-    status: true,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Jaclyn",
-    alt: "some more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Al Kapitan",
-    alt: "some more more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Al Pakistan",
-    alt: "some more more more text",
-    status: true,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Davidtos",
-    alt: "some more more more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Al Lapitan",
-    alt: "some more more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Doritos",
-    alt: "some more more more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Al Sapitan",
-    alt: "some more more more text",
-    status: true,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Davidto",
-    alt: "some more more more more text",
-    status: true,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Al Mapitan",
-    alt: "some more more more text",
-    status: false,
-  },
-  {
-    id: 44,
-    img: "/jakoh_smol.jpg",
-    username: "Davintito",
-    alt: "some more more more more text",
-    status: true,
-  },
-];
 
 interface CustomGameModalProps {
   open: boolean;
@@ -217,21 +131,21 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
             </Button>
           </Box>
         ) : (
-          sampleData
+          friends
             .sort((a, b) => {
-              return a.status === b.status ? 0 : a.status ? -1 : 1;
+              return a.online === b.online ? 0 : a.online ? -1 : 1;
             })
             .map((friend, index) => {
               return (
                 <ListItemButton
                   disableRipple
-                  disabled={friend.status ? false : true}
+                  disabled={friend.online ? false : true}
                   onClick={() => {
                     socket.emit("inviteFriend", {
                       friendId: friend.id.toString(),
                     });
                     setFriendsInvited((prevFriends) => {
-                      return [...prevFriends, friend.username];
+                      return [...prevFriends, friend.nickName];
                     });
                   }}
                 >
@@ -249,19 +163,16 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
                       paddingBottom: 1,
                     }}
                   >
-                    <Image
-                      src={friend.img}
-                      alt={friend.alt}
-                      width={32}
-                      height={32}
-                      style={inlineStyle}
+                    <Avatar
+                      src={friend.avatar}
+                      alt={friend.nickName}
                     />
                     <ListItemText
                       sx={{ ml: "12px" }}
-                      primary={friend.username}
+                      primary={friend.nickName}
                     />
                     <Box component="div">
-                      {friendsInvited.includes(friend.username) ? (
+                      {friendsInvited.includes(friend.nickName) ? (
                         <CircularProgress
                           size={23}
                           sx={{
@@ -275,7 +186,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
                       ) : (
                         <CircleIcon
                           sx={{
-                            fill: friend.status ? "green" : "red",
+                            fill: friend.online ? "green" : "red",
                             mr: "12px",
                             width: "12px",
                             height: "12px",
