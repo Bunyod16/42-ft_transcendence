@@ -30,7 +30,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
   const friends = useFriendsStore((state) => state.friends);
   const [friendsInvited, setFriendsInvited] = useState<string[]>([]);
 
-  const handleOpen = () => setOpen(true);
+  // const handleOpen = () => setOpen(true);
   const handleClose = () => {
     if (friendsInvited.length == 0) {
       setOpen(false);
@@ -71,7 +71,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
       <Box
         component="div"
         sx={{
-          position: "absolute" as "absolute",
+          position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
@@ -136,6 +136,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
             .map((friend, index) => {
               return (
                 <ListItemButton
+                  key={index}
                   disableRipple
                   disabled={friend.online ? false : true}
                   onClick={() => {
