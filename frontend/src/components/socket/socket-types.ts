@@ -1,4 +1,5 @@
 import { GameState, MatchInfo } from "@/types/game-types";
+import { UserProfile } from "@/types/user-profile-type";
 
 export interface ServerToClientEvents {
   noArg: () => void;
@@ -10,6 +11,8 @@ export interface ServerToClientEvents {
   fuck: () => void;
   gameEnded: (data: GameState) => void;
   matchBegin: (data: GameState) => void;
+  gameInvite: (data: UserProfile) => void;
+  acceptInviteRejected: () => void;
 }
 
 export interface ClientToServerEvents {
@@ -23,6 +26,7 @@ export interface ClientToServerEvents {
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;
+  acceptInvite: (data: UserProfile) => void;
 }
 
 // export interface MatchFoundData {

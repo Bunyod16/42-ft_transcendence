@@ -15,6 +15,7 @@ export class AuthService {
   async signIn(username: string) {
     const existing_user = await this.usersService.findOneByIntraname(username);
     if (!existing_user) {
+      console.log('registering new user');
       const new_user = new CreateUserDto();
 
       new_user.intraName = username;
@@ -22,9 +23,7 @@ export class AuthService {
     }
     const user = await this.usersService.findOneByIntraname(username);
     const accessToken = this.jwtAccessService.generateAccessToken(user);
-    const refreshToken = this.jwtRefreshService.generateRefreshToken(
-      user,
-    );
+    const refreshToken = this.jwtRefreshService.generateRefreshToken(user);
     await this.usersService.setCurrentRefreshToken(refreshToken.token, user.id);
     console.log({
       accessToken: accessToken,

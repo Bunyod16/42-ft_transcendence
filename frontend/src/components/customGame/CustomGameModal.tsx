@@ -22,84 +22,84 @@ const inlineStyle = {};
 
 const sampleData = [
   {
-    id: 1,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Jakoh",
     alt: "some text",
     status: true,
   },
   {
-    id: 2,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Bunyod",
     alt: "some more text",
     status: true,
   },
   {
-    id: 3,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Jaclyn",
     alt: "some more more text",
     status: false,
   },
   {
-    id: 4,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Al Kapitan",
     alt: "some more more more text",
     status: false,
   },
   {
-    id: 5,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Al Pakistan",
     alt: "some more more more text",
     status: true,
   },
   {
-    id: 6,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Davidtos",
     alt: "some more more more more text",
     status: false,
   },
   {
-    id: 7,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Al Lapitan",
     alt: "some more more more text",
     status: false,
   },
   {
-    id: 8,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Doritos",
     alt: "some more more more more text",
     status: false,
   },
   {
-    id: 9,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Al Sapitan",
     alt: "some more more more text",
     status: true,
   },
   {
-    id: 10,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Davidto",
     alt: "some more more more more text",
     status: true,
   },
   {
-    id: 11,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Al Mapitan",
     alt: "some more more more text",
     status: false,
   },
   {
-    id: 12,
+    id: 44,
     img: "/jakoh_smol.jpg",
     username: "Davintito",
     alt: "some more more more more text",
@@ -130,6 +130,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
     setOpen(false);
     setCancelFriends(false);
     setFriendsInvited([]);
+    socket.emit("cancelPlayWithFriend");
   };
 
   const handleContinueFriends = () => {
