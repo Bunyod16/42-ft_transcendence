@@ -1,5 +1,6 @@
-import { GameState, MatchInfo } from "@/types/game-types";
 import { UserProfile } from "@/types/user-profile-type";
+import { GameState, MatchInfo } from "@/types/game-type";
+
 
 export interface ServerToClientEvents {
   noArg: () => void;

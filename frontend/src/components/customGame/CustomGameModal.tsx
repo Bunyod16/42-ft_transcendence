@@ -19,8 +19,6 @@ import {
   ClientToServerEvents,
 } from "../socket/socket-types";
 
-const inlineStyle = {};
-
 interface CustomGameModalProps {
   open: boolean;
   setOpen: (state: boolean) => void;
@@ -145,7 +143,7 @@ const CustomGameModal = ({ open, setOpen, socket }: CustomGameModalProps) => {
                       friendId: friend.id.toString(),
                     });
                     setFriendsInvited((prevFriends) => {
-                      return [...prevFriends, friend.nickName];
+                      return [...prevFriends, friend.username];
                     });
                   }}
                 >
