@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { socket } from "../socket/socket";
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
-import { GameState } from "@/types/game-types";
+import { GameState } from "@/types/game-type";
 
 THREE.ColorManagement.enabled = true;
 
@@ -34,48 +34,67 @@ function Pong() {
   const LEFT = -1;
   const RIGHT = 1;
   const matchInfo = useGameStore((state) => state.matchInfo);
+  const gameStatus = useGameStore((state) => state.gameStatus);
   const setMatchInfo = useGameStore((state) => state.setMatchInfo);
-  // const setGameState = useGameStore((state) => state.setGameState);
-  const { name } = useUserStore();
+  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+  const nickName = useUserStore((state) => state.nickName);
+  const updateGameSkin = useGameStore((state) => state.updateGameSkin);
 
-  socket.emit("userConnected");
+  const checkIsWinner = (data: GameState) => {
+    if (
+      nickName === matchInfo.playerOne.nickName &&
+      data.playerOne.score > data.playerTwo.score
+    )
+      return true;
+    if (
+      nickName === matchInfo.playerTwo.nickName &&
+      data.playerTwo.score > data.playerOne.score
+    )
+      return true;
+    return false;
+  };
   useEffect(() => {
-    console.log(matchInfo, name);
-
+    function onMatchBegin(data: GameState) {
+      updateGameSkin(data.playerOne.skin, data.playerTwo.skin);
+      updateGameStatus("InGame");
+    }
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
       setMatchInfo({
         ...matchInfo,
         playerOneScore: data.playerOne.score,
         playerTwoScore: data.playerTwo.score,
-        gameStatus: "Ended",
+        isWinner: checkIsWinner(data),
       });
+      updateGameStatus("Ended");
     }
 
     // socket.on("updateGame", onUpdateGame);
     socket.on("gameEnded", onGameEnded);
+    socket.on("matchBegin", onMatchBegin);
 
     return () => {
       // socket.off("updateGame", onUpdateGame);
       socket.off("gameEnded", onGameEnded);
+      socket.off("matchBegin", onMatchBegin);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchInfo]);
+  }, []);
 
   return (
-    <group visible={matchInfo.gameStatus != "NoGame"}>
+    <group visible={gameStatus == "InGame" || gameStatus == "Ended"}>
       <Table tableSize={tableSize} />
 
       <Player
         tableSize={tableSize}
         playerLR={LEFT}
-        isPlayer={matchInfo.playerOne?.nickName == name}
+        isPlayer={matchInfo.playerOne?.nickName == nickName}
       />
 
       <Player
         tableSize={tableSize}
         playerLR={RIGHT}
-        isPlayer={matchInfo.playerTwo?.nickName == name}
+        isPlayer={matchInfo.playerTwo?.nickName == nickName}
       />
 
       <Ball tableSize={tableSize} />

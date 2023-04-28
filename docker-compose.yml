@@ -75,6 +75,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       LISTEN_PORT: ${NEST_LISTEN_PORT}
       ENV: ${ENV}
+      CDN_HOST: ${CDN_HOST}
+      CDN_PORT: ${CDN_PORT}
 
   nextjs:
     container_name: frontend

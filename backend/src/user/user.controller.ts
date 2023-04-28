@@ -6,21 +6,22 @@ import {
   Patch,
   Param,
   Delete,
-  ForbiddenException,
-  HttpStatus,
   ParseIntPipe,
   Logger,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HttpException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { encodePassword } from 'src/utils/bcrypt';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
+import { CustomException } from 'src/utils/app.exception-filter';
+// import fs from 'fs';
 
 export class temp {
   nickName?: string;
@@ -30,6 +31,28 @@ export class temp {
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  // @Post('/zulul')
+  // async zulul() {
+  //   const boringAvatar = await fetch(
+  //     `https://source.boringavatars.com/marble/120/nfernand`,
+  //   );
+  //   // console.log(boringAvatar);
+  //   const arrayBuffer = await boringAvatar.arrayBuffer();
+  //   const buffer = Buffer.from(arrayBuffer);
+  //   console.log(arrayBuffer);
+  //   console.log(buffer);
+  //   try {
+  //     console.log(
+  //       fs.createWriteStream(
+  //         '/Users/nazrinshahaf/Desktop/Coding/42/Core/ft_transendence/zululplswork',
+  //       ),
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   return boringAvatar;
+  // }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -50,6 +73,18 @@ export class UserController {
   async findMany(@Body() body: any) {
     const user_ids: number[] = body.ids;
     return this.userService.findMany(user_ids);
+  }
+
+  @Get('/findOneProfileByUsername/:username')
+  async findOneProfileByUsername(@Param('username') username: string) {
+    const user = await this.userService.findOneProfileByUsername(username);
+
+    Logger.log(
+      `Trying to get User with username = [${username}]`,
+      'User => findOne()',
+    );
+
+    return user;
   }
 
   @Get(':id')
@@ -86,12 +121,30 @@ export class UserController {
 
   @Patch()
   @UseGuards(UserAuthGuard)
-  update(@Req() req: RequestWithUser, @Body() body: UpdateUserDto) {
+  update(@Req() req: RequestWithUser) {
     const updateUserDto = new UpdateUserDto(req.body);
     updateUserDto.nickName = req.body.nickName;
     updateUserDto.avatar = req.body.avatar;
+    if (!req.body.nickName) {
+      throw new CustomException(
+        `Please pass in a user nickName to update`,
+        HttpStatus.BAD_REQUEST,
+        `User => update()`,
+      );
+    }
     const reg = /^[a-z0-9]+$/i;
-    return reg.test(updateUserDto.nickName) ?  this.userService.update(req.user.id, updateUserDto) :  new HttpException("Nickname may only contain alphanumerical characters", HttpStatus.BAD_REQUEST)
+
+    Logger.log(
+      `Trying to update user with id = [${req.user.id}]`,
+      'User => update()',
+    );
+
+    return reg.test(updateUserDto.nickName)
+      ? this.userService.update(req.user.id, updateUserDto)
+      : new HttpException(
+          'Nickname may only contain alphanumerical characters',
+          HttpStatus.BAD_REQUEST,
+        );
   }
 
   @Delete(':id')

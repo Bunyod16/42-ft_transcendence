@@ -8,7 +8,8 @@ type Views = "Lobby" | "Game" | "Profile" | "Settings";
 interface UserStore {
   isLoggedIn: boolean;
   id: number | null;
-  name: string;
+  nickName: string;
+  avatar: string;
   state: States;
   view: Views;
   login: (name: string, id: number) => void;
@@ -16,6 +17,7 @@ interface UserStore {
   updateName: (name: string) => void;
   updateState: (state: States) => void;
   updateView: (view: Views) => void;
+  updateAvatar: (avatar: string) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -23,7 +25,8 @@ const useUserStore = create<UserStore>()(
     (set) => ({
       isLoggedIn: false,
       id: null,
-      name: "",
+      nickName: "",
+      avatar: "",
       state: "Idle",
       view: "Lobby",
       // Persist state to localStorage
@@ -36,22 +39,22 @@ const useUserStore = create<UserStore>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-      login: (name: string, id: number) => {
+      login: (nickName: string, id: number) => {
         set(() => ({
           isLoggedIn: true,
           id,
-          name,
+          nickName,
         }));
       },
-      updateName: (name: string) => {
+      updateName: (nickName: string) => {
         set(() => ({
-          name,
+          nickName,
         }));
       },
       logout: () => {
         set(() => ({
           isLoggedIn: false,
-          name: "",
+          nickName: "",
           id: null,
         }));
       },
@@ -62,6 +65,11 @@ const useUserStore = create<UserStore>()(
       },
       updateView: (view: Views) => {
         set(() => ({ view }));
+      },
+      updateAvatar: (avatar: string) => {
+        set(() => ({
+          avatar,
+        }));
       },
     }),
     {

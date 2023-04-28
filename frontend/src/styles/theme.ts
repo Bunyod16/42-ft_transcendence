@@ -13,6 +13,11 @@ export const inconsolata = Inconsolata({
   fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
+// declare module "@mui/material/TextField"{
+//   interface TextFieldPropsVariantOverrides {
+//     primary: true;
+//   }
+// }
 // https://stackoverflow.com/questions/59145165/change-root-background-color-with-material-ui-theme
 
 // Create a theme instance.
@@ -22,19 +27,26 @@ const theme = createTheme({
       default: "#26333A",
     },
     text: {
-      primary: "#ffffff",
+      primary: "#F2F4F3",
+      secondary: "#808080",
     },
     primary: {
       main: "#26333A",
+      "100": "#1b2429",
+      "200": "rgba(0,0,0,0.2)",
+      "300": "#00000066",
+      contrastText: "#fefefe",
     },
     secondary: {
       main: "#048BA8",
+      contrastText: "#fefefe",
     },
     accent: {
       main: "#93032E",
+      light: "#4089A5",
       // contrastText: "#FFF",
       // hover: "#AC0436",
-      dark:"#58021c"
+      dark: "#58021c",
     },
   },
   typography: {
@@ -60,27 +72,59 @@ const theme = createTheme({
         },
       },
     },
+    MuiTextField : {
+      variants: [
+        {
+          props: { variant: "outlined"},
+          style: {
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#616161',
+              },
+              '&:hover fieldset': {
+                borderColor: '#A8A8A8',
+              },
+            },
+            '& label':{
+              color:"grey",
+            },
+            '& .MuiOutlinedInput-root.Mui-focused': {
+              '& > fieldset': {
+                borderColor: '#D9D9D9',
+              },
+            },
+            "& label.Mui-focused": {
+                color: "#D9D9D9"
+              },
+              
+          }
+        }
+      ]
+    },
+    MuiButton: {},
     MuiCssBaseline: {
-     styleOverrides: {
-      body: {
-        "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-          width: "20px",
+      styleOverrides: {
+        body: {
+          "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+            width: "8px",
+            // background-color: #"F5F5F5";
+          },
+          "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+            backgroundColor: "#00000020",
+            borderRadius: "20px",
+            // border: "6px solid transparent",
+            backgroundClip: "content-box",
+          },
+          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
+            {
+              backgroundColor: "#ffffff20",
+            },
         },
-        "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track": {
-          backgroundColor: "transparent",
-        },
-        "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-          backgroundColor: "#d6dee1",
-          borderRadius: "20px",
-          border: "6px solid transparent",
-          backgroundClip: "content-box",
-        },
-        "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#a8bbbf",
-        },
-      }
-     } 
-    }
+      },
+    },
   },
 });
 

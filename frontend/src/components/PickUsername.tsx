@@ -1,5 +1,4 @@
-import React, { Component, useState } from "react";
-
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,15 +6,16 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import Link from "next/link";
 import useUserStore from "@/store/userStore";
 import { useRouter } from "next/router";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import axios from "axios";
-import Lobby from "./Lobby";
 
 export default function PickUsernamePanel() {
-  const { isLoggedIn, updateName, id } = useUserStore();
+  const [isLoggedIn, updateName] = useUserStore((state) => [
+    state.isLoggedIn,
+    state.updateName,
+  ]);
   const router = useRouter();
   const [errorText, setErrorText] = useState("");
   const [Text, setText] = useState("");
@@ -99,7 +99,7 @@ export default function PickUsernamePanel() {
             .then((res) => {
               res.data
                 ? setErrorText("Username taken")
-                : axios.patch("user", { nickName: Text }).then((res) => {
+                : axios.patch("user", { nickName: Text }).then(() => {
                     updateName(Text);
                   });
             })

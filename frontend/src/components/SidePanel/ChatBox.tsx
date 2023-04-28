@@ -1,79 +1,124 @@
-import { Box, Typography, TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
+import { ChatType } from "./DirectChat";
 import { useState } from "react";
-
-interface chatType {
-  user: string;
-  message: string;
+import { chatSocket } from "../socket/socket";
+import useUserStore from "@/store/userStore";
+interface ChatBoxProps {
+  chats: ChatType[];
+  chatChannelId: number;
 }
-
-export default function ChatBox({ height }: { height: string }) {
-  const [chats, setChats] = useState<chatType[]>([]);
+export default function ChatBox({ chats, chatChannelId }: ChatBoxProps) {
   const [message, setMessage] = useState<string>("");
+  const nickName = useUserStore((state) => state.nickName);
+
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   setChats((prevState: ChatType[]) => [
+  //     ...prevState,
+  //     { text: message, sender: { nickName: nickName || "Unknown Usepr" } },
+  //   ]);
+
+  //   chatSocket.emit("sendMessage", { message:message, chatChannelId:  });
+  //   setMessage("");
+  // }
+
+  console.log(chats);
+
+  // function handleMessageSubmit(e: React.SyntheticEvent) {
+  //   e.preventDefault();
+  //   if (message === "") return;
+  //   setChats((prevState: ChatType[]) => [
+  //     ...prevState,
+  //     { text: message, sender: { nickName: nickName || "Unknown Usepr" } },
+  //   ]);
+
+  //   chatSocket.emit("sendMessage", { message:message, chatChannelId:  });
+  //   setMessage("");
+  // }
 
   function handleMessageSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    const user = "Jakoh";
     if (message === "") return;
-    setChats((prevState: chatType[]) => [...prevState, { user, message }]);
+    // setChats((prevState: ChatType[]) => [
+    //   ...prevState,
+    //   {
+    //     text: message,
+    //     sender: { nickName: panel?.nickName || "Unknown User" },
+    //   },
+    // ]);
+    // if (panel === undefined || panel.directMessage === null) return;
+    chatSocket.emit("sendMessage", {
+      message: message,
+      chatChannelId: chatChannelId,
+    });
     setMessage("");
   }
+
   return (
-    <Box
-      component="div"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "end",
-        height: { height },
-      }}
-    >
+    <>
       <Box
         component="div"
         sx={{
           display: "flex",
           flexDirection: "column-reverse",
           overflow: "auto",
-          overflowX: "hidden",
+          // overflowX: "hidden",
+          // height: "100%",
+          flex: 1,
+          p: 1,
         }}
       >
         {chats
-          .map((x, i) => (
+          .map((chat, i) => (
             <Box
               component="div"
               sx={{
-                padding: "10px",
-                border: "2px solid #11AAAA",
-                borderRadius: "8px",
-                margin: "10px",
+                // padding: "10px",
+                // border: "2px solid #11AAAA",
+                // borderRadius: "8px",
+                // margin: "10px",
+                // padding: 1,
+                mb: 1,
                 wordWrap: "break-word",
+                textAlign: chat.sender.nickName !== nickName ? "left" : "right",
               }}
               key={i}
             >
-              <Typography sx={{ fontSize: "14px" }}>{`${x.user}:`}</Typography>
-              <Typography sx={{ fontSize: "14px", ml: "4px" }}>
-                {x.message}
-              </Typography>
+              {chats[i !== 0 ? i - 1 : i].sender.nickName !=
+                chat.sender.nickName && (
+                <Typography
+                  sx={{
+                    color: "gray",
+                    // textAlign:
+                    //   chat.sender.nickName === nickName ? "left" : "right",
+                  }}
+                >{`${chat.sender.nickName}`}</Typography>
+              )}
+              <Typography sx={{ lineHeight: 1 }}>{chat.text}</Typography>
             </Box>
           ))
           .reverse()}
       </Box>
-      <Box component="div" sx={{ width: "100%", height: "56px" }}>
-        <form onSubmit={handleMessageSubmit}>
-          <TextField
-            variant="outlined"
-            placeholder="Type Here Bishhh..."
-            autoComplete="off"
-            onChange={(event) => setMessage(event.target.value)}
-            value={message}
-            sx={{
-              width: "100%",
-              color: "#FEFEFE",
-              "&::placeholder": { color: "#FEFEFE" },
-              border: "1px solid #FEFEFE",
-            }}
-          />
-        </form>
-      </Box>
-    </Box>
+
+      {/* Textbox input here */}
+      {/* <Box component="div" sx={{ width: "100%", height: "56px" }}> */}
+      <form onSubmit={handleMessageSubmit}>
+        <TextField
+          variant="outlined"
+          placeholder="message..."
+          autoComplete="off"
+          onChange={(event) => setMessage(event.target.value)}
+          value={message}
+          sx={{
+            height: 56,
+            width: "100%",
+            color: "#FEFEFE",
+            "&::placeholder": { color: "#FEFEFE" },
+          }}
+        />
+      </form>
+      {/* </Box> */}
+    </>
   );
 }

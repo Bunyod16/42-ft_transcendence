@@ -2,3 +2,7 @@
 node_modules
 .DS_Store
 *.env
+.env
+node_modules
+.DS_Store
+backend/uploads/
