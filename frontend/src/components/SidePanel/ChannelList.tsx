@@ -37,6 +37,17 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
     name: "",
     password: "",
   });
+  const [newChannels, setNewChannels] = useState<Channel[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("/chat-channels/findAllPublicAndProtectedChannels")
+      .then((res) => {
+        // setNewChannels(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleCreateChannel = () => {
     if (channelValue.name === "") return alert("Channel name is missing");
@@ -195,7 +206,7 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
         }}
         onClick={handleAddChannel}
       >
-        ADD CHANNEL
+        Add Channel
       </Button>
 
       <List
@@ -204,6 +215,10 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          height: "100%",
+          overflow: "auto",
+          pr: 0.5,
+          my: 1,
         }}
         aria-label="contacts"
       >
@@ -213,10 +228,8 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
             key={index}
             disablePadding
             sx={{
-              backgroundColor: "#00000030",
-              mb: "8px",
-              // width: "95%",
-              // color: "black",
+              backgroundColor: "#00000020",
+              mb: 1,
               borderRadius: "4px",
             }}
           >

@@ -33,6 +33,9 @@ function FriendBox({ setPanel }: FriendPanelType) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        height: "100%",
+        overflow: "auto",
+        pr: 1,
       }}
       aria-label="contacts"
     >
@@ -42,10 +45,8 @@ function FriendBox({ setPanel }: FriendPanelType) {
           key={index}
           disablePadding
           sx={{
-            backgroundColor: "#00000030",
-            mb: "8px",
-            // width: "95%",
-            // color: "black",
+            backgroundColor: "#00000020",
+            mb: 1,
             borderRadius: "4px",
           }}
         >
