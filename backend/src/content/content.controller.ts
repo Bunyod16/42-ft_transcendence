@@ -49,7 +49,7 @@ export class ContentController {
         ) => {
           callback(
             null,
-            'avatar-' +
+            'avatar-userId-' +
             req.user.id +
             '.' +
             file.originalname.split('.').pop(),
