@@ -35,7 +35,7 @@ const Lobby = () => {
   };
 
   function onMatchFound(data: MatchInfo) {
-    alert("match found");
+    toast.loading("match found");
 
     const matchInfo: MatchInfo = {
       playerOne: data.playerOne,
