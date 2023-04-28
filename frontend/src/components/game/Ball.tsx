@@ -24,12 +24,14 @@ function Ball({ tableSize }: IBallProps) {
   return (
     <mesh
       ref={body}
-      geometry={boxGeometry}
+      // geometry={boxGeometry}
       material={ballMaterial}
-      scale={tableSize.y}
+      scale={tableSize.y / 2}
       castShadow
       position={[0, 0, tableSize.y + 0.02]}
-    ></mesh>
+    >
+      <sphereGeometry />
+    </mesh>
   );
 }
 export default Ball;
