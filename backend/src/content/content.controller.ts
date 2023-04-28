@@ -34,10 +34,10 @@ export class ContentController {
     FileInterceptor('avatar', {
       storage: diskStorage({
         destination: (req: RequestWithUser, _, cb) => {
-          if (req.user.avatar !== 'default-stormtrooper.png') {
-            const avatarFilename: string = `avatars/${req.user.avatar
-              .split('/')
-              .pop()}`;
+          const avatarFilename: string = `avatars/${req.user.avatar
+            .split('/')
+            .pop()}`;
+          if (avatarFilename !== 'default-stormtrooper.png') {
             if (fs.existsSync(avatarFilename)) fs.unlinkSync(avatarFilename);
           }
           cb(null, 'avatars/');
@@ -49,11 +49,10 @@ export class ContentController {
         ) => {
           callback(
             null,
+            'avatar-' +
             req.user.id +
-              '-' +
-              req.user.nickName +
-              '.' +
-              file.originalname.split('.').pop(),
+            '.' +
+            file.originalname.split('.').pop(),
           );
         },
       }),
