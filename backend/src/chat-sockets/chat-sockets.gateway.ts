@@ -135,6 +135,7 @@ export class ChatSocketsGateway
   ) {
     const user: User = socket.user;
 
+    console.log('ASDFASDF');
     try {
       const chatChannel = await this.chatChannelService.findOne(chatChannelId);
       const roomName = `chatChannel/${chatChannel.id}`;

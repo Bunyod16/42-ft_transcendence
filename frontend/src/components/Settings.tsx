@@ -12,6 +12,20 @@ import axios from "axios";
 import useUserStore from "@/store/userStore";
 import toast, { Toaster } from "react-hot-toast";
 
+const errorStyles = {
+  "& .MuiOutlinedInput-root.Mui-focused": {
+    "& > fieldset": {
+      borderColor: "red",
+    },
+  },
+  "& label.Mui-focused": {
+    color: "red",
+  },
+  input: {
+    color: "red",
+  },
+};
+
 export default function Settings() {
   const [nickName, avatar, updateAvatar, updateName] = useUserStore((store) => [
     store.nickName,
@@ -246,21 +260,7 @@ export default function Settings() {
                 }
                 sx={{
                   width: "210px",
-                  backgroundColor: "primary.300",
-                  "& label.Mui-focused": {
-                    color: isValidUsername ? "white" : "red",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": {
-                      borderColor: isValidUsername ? "white" : "red",
-                    },
-                    "&.Mui-active fieldset:": {
-                      borderColor: isValidUsername ? "white" : "red",
-                    },
-                  },
-                  "& .Mui-error": {
-                    color: isValidUsername ? "white" : "red",
-                  },
+                  ...(!isValidUsername ? errorStyles : {}),
                 }}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setUsernameField(event.target.value);

@@ -13,6 +13,11 @@ export const inconsolata = Inconsolata({
   fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
+// declare module "@mui/material/TextField"{
+//   interface TextFieldPropsVariantOverrides {
+//     primary: true;
+//   }
+// }
 // https://stackoverflow.com/questions/59145165/change-root-background-color-with-material-ui-theme
 
 // Create a theme instance.
@@ -22,7 +27,7 @@ const theme = createTheme({
       default: "#26333A",
     },
     text: {
-      primary: "#ffffff",
+      primary: "#F2F4F3",
       secondary: "#808080",
     },
     primary: {
@@ -66,6 +71,35 @@ const theme = createTheme({
           color: "red",
         },
       },
+    },
+    MuiTextField : {
+      variants: [
+        {
+          props: { variant: "outlined"},
+          style: {
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#616161',
+              },
+              '&:hover fieldset': {
+                borderColor: '#A8A8A8',
+              },
+            },
+            '& label':{
+              color:"grey",
+            },
+            '& .MuiOutlinedInput-root.Mui-focused': {
+              '& > fieldset': {
+                borderColor: '#D9D9D9',
+              },
+            },
+            "& label.Mui-focused": {
+                color: "#D9D9D9"
+              },
+              
+          }
+        }
+      ]
     },
     MuiButton: {},
     MuiCssBaseline: {

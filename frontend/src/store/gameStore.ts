@@ -1,4 +1,4 @@
-import { GameState, GameStatus, MatchInfo, Textures } from "@/types/game-types";
+import { GameState, GameStatus, MatchInfo, Textures } from "@/types/game-type";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 // import { produce } from "immer";

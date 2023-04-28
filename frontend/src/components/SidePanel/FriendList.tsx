@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Typography,
   List,
   ListItem,
   ListItemButton,
@@ -11,8 +10,9 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import useFriendsStore, { FriendType } from "@/store/friendsStore";
+import useFriendsStore from "@/store/friendsStore";
 import PendingBox from "./PendingBox";
+import { PanelData } from "@/types/social-type";
 
 const inlineStyle = {
   width: "32px",
@@ -20,13 +20,12 @@ const inlineStyle = {
   borderRadius: "50px",
 };
 
-// data acpt from here, friend msg etc
-// socket.on("serverMessage", (data) => {
-//   data;
-// });
+interface FriendPanelType {
+  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+}
 function FriendBox({ setPanel }: FriendPanelType) {
   const friends = useFriendsStore((state) => state.friends);
-  // console.log(friends);
+  console.log(friends);
   return (
     <List
       sx={{
@@ -51,7 +50,14 @@ function FriendBox({ setPanel }: FriendPanelType) {
           }}
         >
           {/** Need to change src to img thingy */}
-          <ListItemButton onClick={() => setPanel(friend)}>
+          <ListItemButton
+            onClick={() => {
+              setPanel({
+                friendInfo: friend,
+                chatChannel: friend.chatChannel,
+              });
+            }}
+          >
             <Image
               src={"/jakoh_smol.jpg"}
               alt={friend.avatar}
@@ -75,9 +81,6 @@ function FriendBox({ setPanel }: FriendPanelType) {
   );
 }
 
-interface FriendPanelType {
-  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
-}
 export default function FriendList({ setPanel }: FriendPanelType) {
   const setFriendList = useFriendsStore((state) => state.setFriendList);
   const [pendingActive, setPendingActive] = useState(false);
@@ -92,6 +95,7 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         console.log("error: ", error);
         // alert("KENOT SET FRIEND");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleFriend() {

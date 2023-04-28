@@ -7,18 +7,19 @@ import {
 import ChannelList from "./ChannelList";
 import FriendList from "./FriendList";
 import { TabTypes } from "../SidePanel";
-import { FriendType } from "@/store/friendsStore";
-interface generalTabProps {
+import { PanelData } from "@/types/social-type";
+
+interface GeneralTabProps {
   tabs: TabTypes;
   setTabs: React.Dispatch<React.SetStateAction<TabTypes>>;
-  setPanel: React.Dispatch<React.SetStateAction<FriendType | undefined>>;
+  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
 }
 
 export default function GeneralTab({
   tabs,
   setTabs,
   setPanel,
-}: generalTabProps) {
+}: GeneralTabProps) {
   return (
     <>
       <Box
@@ -62,7 +63,7 @@ export default function GeneralTab({
         }}
       >
         {tabs === "channels" ? (
-          <ChannelList />
+          <ChannelList setPanel={setPanel} />
         ) : (
           <FriendList setPanel={setPanel} />
         )}
