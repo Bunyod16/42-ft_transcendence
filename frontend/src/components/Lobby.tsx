@@ -35,7 +35,7 @@ const Lobby = () => {
   };
 
   function onMatchFound(data: MatchInfo) {
-    toast.loading("match found");
+    toast.success("match found", { duration: 20000 });
 
     const matchInfo: MatchInfo = {
       playerOne: data.playerOne,
@@ -61,6 +61,7 @@ const Lobby = () => {
   // TODO implement this thing ^^
 
   React.useEffect(() => {
+    toast.remove();
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }

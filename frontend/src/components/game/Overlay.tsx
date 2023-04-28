@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { socket } from "../socket/socket";
 import useUserStore from "@/store/userStore";
 import { useRouter } from "next/router";
+import Customize from "./Overlay/Customize";
 
 interface BgColorBox {
   color: string;
@@ -264,6 +265,7 @@ const Overlay = () => {
     >
       <Score />
       <GameResult />
+      <Customize />
     </Box>
   );
 };
