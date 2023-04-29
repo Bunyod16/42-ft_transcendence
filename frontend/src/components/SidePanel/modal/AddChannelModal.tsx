@@ -11,9 +11,55 @@ import {
   TextField,
   FormControlLabel,
   Checkbox,
+  Icon,
 } from "@mui/material";
 import axios from "axios";
 import { ChatChannel, Channel } from "@/types/social-type";
+import useUserStore from "@/store/userStore";
+import { toast } from "react-hot-toast";
+import LockSharpIcon from "@mui/icons-material/LockSharp";
+
+const PasswordModal = () => {
+  const [password, setPassword] = useState("");
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box
+        component={"div"}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.default",
+          // border: "2px solid #000",
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <TextField
+          id="outlined-basic"
+          label="Channel password"
+          variant="outlined"
+          color="secondary"
+          size="small"
+          fullWidth
+          sx={{ mt: 1, mb: 2 }}
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+        />
+      </Box>
+    </Modal>
+  );
+};
 
 interface AddChannelModalProp {
   open: boolean;
@@ -28,6 +74,8 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
     password: "",
   });
   const [newChannels, setNewChannels] = useState<ChatChannel[]>([]);
+  const id = useUserStore((state) => state.id);
+  const [openPwd, setOpenPwd] = useState(false);
 
   function getAllChannels() {
     return axios.get("/chat-channels/findAllPublicAndProtectedChannels");
@@ -75,6 +123,21 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
       });
   };
 
+  const handleJoinChannel = (channel: ChatChannel) => {
+    if (channel.channel_type === "protected") setOpenPwd(true);
+
+    axios
+      .post("/chat-channel-member", {
+        userId: id,
+        chatChannelId: channel.id,
+      })
+      .then(() => toast.success(`Joined ${channel.name}!`))
+      .catch((err) => {
+        toast.error("Something went wrong!");
+        console.log(err);
+      });
+  };
+
   return (
     <Modal
       open={open}
@@ -112,8 +175,20 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
                     mb: 1,
                   }}
                 >
-                  <ListItemText primary={channel.name} />
-                  <Button color="secondary">Join</Button>
+                  <ListItemText sx={{ alignContent: "center" }}>
+                    {channel.name}
+                  </ListItemText>
+                  <Button
+                    color="secondary"
+                    onClick={() => handleJoinChannel(channel)}
+                    endIcon={
+                      channel.channel_type === "protected" && (
+                        <LockSharpIcon fontSize="small" />
+                      )
+                    }
+                  >
+                    Join
+                  </Button>
                 </ListItemButton>
               </ListItem>
             ))

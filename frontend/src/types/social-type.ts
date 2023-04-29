@@ -1,7 +1,7 @@
 export interface ChatChannel {
   id: number;
   name: string;
-  channel_type: "public" | "private";
+  channel_type: "public" | "protected";
   chatType: "group_message" | "direct_message";
 }
 
