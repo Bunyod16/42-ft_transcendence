@@ -1,12 +1,20 @@
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
 import axios from "axios";
-import { PanelData } from "@/types/social-type";
-import BlockIcon from "@mui/icons-material/Block";
+import { PanelData, UserInfo } from "@/types/social-type";
+import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
+import ManageChannelModal from "./modal/ManageChannelModal";
 
 export interface ChatType {
   id?: number;
@@ -85,7 +93,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             {/* TODO add block friend here!! */}
           </Button>
           <IconButton>
-            <BlockIcon />
+            <PersonOffSharpIcon />
           </IconButton>
         </Box>
         <Button
@@ -103,26 +111,55 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
     );
   };
 
+  interface ChannelInfo {
+    owner?: UserInfo;
+    members?: UserInfo[];
+  }
   const ChannelDetail = () => {
     // console.log(panel.chatChannel);
+    const [channelDetail, setChannelDetail] = useState<
+      ChannelInfo | undefined
+    >();
+    const [open, setOpen] = useState(false);
+    useEffect(() => {
+      // get channel details
+      axios
+        .get("/chat-channels/${panel.chatChannel.chatChannel.id}")
+        .then((res) => {
+          setChannelDetail({ ...channelDetail, ...res.data });
+        })
+        .catch((err) => console.log(err));
+      axios
+        .get("/chat-channel-member/${chatChannelId}/usersInChatChannel")
+        .then((res) => setChannelDetail({ ...channelDetail, ...res.data }))
+        .catch((err) => console.log(err));
+    }, []);
+
     return (
-      <Box component={"div"} sx={{ justifySelf: "center" }}>
-        <Typography variant="h6">
+      <Box component={"div"} sx={{ p: 1 }}>
+        <Typography variant="h6" sx={{ display: "inline-block" }}>
           {panel.chatChannel.chatChannel.name}
         </Typography>
-        {panel.chatChannel.isAdmin && (
-          <Button
-            fullWidth
-            sx={{
-              color: "white",
-              border: "2px solid #F2F4F3",
-            }}
-            onClick={() => console.log("Havent Connect Send Invite")}
-            size="small"
-          >
-            Manage Channel
-          </Button>
-        )}
+
+        {/* {panel.chatChannel.isAdmin && ( */}
+        <Button
+          fullWidth
+          sx={{
+            color: "white",
+            border: "2px solid #F2F4F3",
+            mt: 2,
+          }}
+          onClick={() => setOpen(true)}
+          size="small"
+        >
+          Manage Channel
+        </Button>
+        {/* )} */}
+        <ManageChannelModal
+          open={open}
+          setOpen={setOpen}
+          channel={panel.chatChannel}
+        />
       </Box>
     );
   };
