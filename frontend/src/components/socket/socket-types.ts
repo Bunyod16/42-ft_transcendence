@@ -1,7 +1,6 @@
 import { UserProfile } from "@/types/user-profile-type";
 import { GameState, MatchInfo } from "@/types/game-type";
 
-
 export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;

@@ -3,31 +3,21 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
-  OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { OnModuleDestroy, OnModuleInit, Req, UseGuards } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { MatchService } from 'src/match/match.service';
 import { Socket } from 'socket.io';
 import { ConnectedSocket } from '@nestjs/websockets';
-import { GameStateService } from 'src/game_state/gameState.service';
 import { QueueService } from './queue.service';
-import { AuthService } from 'src/auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
-import { parse } from 'cookie';
-import { CreateMatchDto } from 'src/match/dto/create-match.dto';
-import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
-import { GameStreamService } from 'src/game_stream/game_stream.service';
-import { GameStreamGateway } from 'src/game_stream/game_stream.gateway';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { ChatLineService } from 'src/chat_line/chat_line.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { User } from 'src/user/entities/user.entity';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { findUserSocket } from 'src/utils/socket-utils';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -125,20 +115,6 @@ export class QueueGateway implements OnGatewayDisconnect {
     );
   }
 
-  findUserSocket(user: User): SocketWithAuthData {
-    console.log(user.id);
-    var userSocket: SocketWithAuthData;
-    this.server.sockets.sockets.forEach(
-      (sock: SocketWithAuthData, socket_id): SocketWithAuthData => {
-        if (user.id === sock.user.id) {
-          userSocket = sock as SocketWithAuthData;
-          return;
-        }
-      },
-    );
-    return userSocket;
-  }
-
   @SubscribeMessage('acceptInvite')
   async acceptInvite(
     @ConnectedSocket() socket: SocketWithAuthData,
@@ -154,7 +130,7 @@ export class QueueGateway implements OnGatewayDisconnect {
       return;
     } else {
       console.log('match invite found');
-      const senderSocket = this.findUserSocket(inviteSender);
+      const senderSocket = findUserSocket(inviteSender, this.server);
       const match = await this.matchService.create_with_user(
         socket.user,
         inviteSender,
