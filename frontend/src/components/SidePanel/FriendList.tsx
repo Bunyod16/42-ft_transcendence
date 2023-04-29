@@ -13,13 +13,15 @@ import axios from "axios";
 import useFriendsStore from "@/store/friendsStore";
 import PendingBox from "./PendingBox";
 import { PanelData } from "@/types/social-type";
+import useUserStore from "@/store/userStore";
 
-interface FriendPanelType {
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
-function FriendBox({ setPanel }: FriendPanelType) {
-  const friends = useFriendsStore((state) => state.friends);
-  console.log(friends);
+// interface FriendPanelType {
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
+function FriendBox() {
+  const [friends] = useFriendsStore((state) => [state.friends]);
+  const setPanel = useUserStore((state) => state.setPanel);
+
   return (
     <List
       sx={{
@@ -71,7 +73,7 @@ function FriendBox({ setPanel }: FriendPanelType) {
   );
 }
 
-export default function FriendList({ setPanel }: FriendPanelType) {
+export default function FriendList() {
   const setFriendList = useFriendsStore((state) => state.setFriendList);
   const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         Add Friend
       </Button>
 
-      <FriendBox setPanel={setPanel} />
+      <FriendBox />
       {/* <Typography>Pending</Typography> */}
       <Button
         // variant="outlined"

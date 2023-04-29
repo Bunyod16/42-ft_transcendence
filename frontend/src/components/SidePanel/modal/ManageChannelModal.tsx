@@ -24,6 +24,7 @@ import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
 
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import useUserStore from "@/store/userStore";
 
 interface MemberListItemProps {
   member: ChannelMember;
@@ -89,9 +90,13 @@ const ManageChannelModal = ({
   channel,
 }: ManageChannelModalProp) => {
   // const [open, setOpen] = useState(false);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    toast.dismiss();
+  };
   const [members, setMembers] = useState<ChannelMember[]>([]);
   const [showPassword, setShowPassword] = useState(false);
+  const setPanel = useUserStore((state) => state.setPanel);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -101,30 +106,39 @@ const ManageChannelModal = ({
     event.preventDefault();
   };
 
+  const leaveChannel = () => {
+    toast.loading(
+      (t) => (
+        <span>
+          Really leaving?
+          <Button
+            sx={{ ml: 1 }}
+            onClick={() => {
+              toast.dismiss(t.id);
+              axios
+                .delete(`/chat-channel-member/${channel.id}`)
+                .then(() => toast(`You left ${channel.chatChannel.name}!`));
+              setPanel(undefined);
+            }}
+          >
+            Yes
+          </Button>
+          <Button onClick={() => toast.dismiss(t.id)}>No</Button>
+        </span>
+      ),
+      {
+        icon: <EmojiPeopleSharpIcon color="error" />,
+        id: "leaveConfirm",
+      },
+    );
+  };
+
   useEffect(() => {
-    // setMembers(
-    //   [...Array(10)].map((_, i) => {
-    //     return {
-    //       id: i,
-    //       nickName: `JohnDoe ${i}`,
-    //       avatar: `https://source.boringavatars.com/beam/24/${i}`,
-    //       wins: i,
-    //       losses: i,
-    //       online: false,
-    //     };
-    //   }),
-    // );
     axios
       .get(`/chat-channel-member/${channel.chatChannel.id}/usersInChatChannel`)
       .then((res) => setMembers(res.data))
       .catch((err) => console.log(err));
   }, []);
-
-  const leaveChannel = () => {
-    axios
-      .delete(`/chat-channel-member/${channel.id}`)
-      .then(() => toast(`You left ${channel.chatChannel.name}`));
-  };
 
   return (
     <Modal
@@ -143,7 +157,6 @@ const ManageChannelModal = ({
           width: 400,
           height: "70vh",
           bgcolor: "background.default",
-          // border: "2px solid #000",
           borderRadius: 2,
           boxShadow: 24,
           py: 2,

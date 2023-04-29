@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
@@ -15,6 +8,7 @@ import axios from "axios";
 import { PanelData, UserInfo } from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import ManageChannelModal from "./modal/ManageChannelModal";
+import useUserStore from "@/store/userStore";
 
 export interface ChatType {
   id?: number;
@@ -197,13 +191,17 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
   );
 };
 
-interface DirectChatPropsType {
-  panel: PanelData;
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
-export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
+// interface DirectChatPropsType {
+//   panel: PanelData;
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
+export default function DirectChat() {
   // const chatLineOffset = 100;
   const [chats, setChats] = useState<ChatType[]>([]);
+  const [panel, setPanel] = useUserStore((state) => [
+    state.panel,
+    state.setPanel,
+  ]);
   // const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
@@ -269,6 +267,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   //   setMessage("");
   // }
 
+  if (panel === undefined) return <></>;
   return (
     <Box
       component="div"
@@ -281,7 +280,15 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
     >
       {
         /* top part */
-        panel && <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
+        panel && (
+          <>
+            <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
+            <ChatBox
+              chats={chats}
+              chatChannelId={panel.chatChannel.chatChannel.id || 0}
+            />
+          </>
+        )
       }
 
       {/* <Box
@@ -297,7 +304,6 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
           border: "1px solid #048BA8",
         }}
       > */}
-      <ChatBox chats={chats} chatChannelId={panel.chatChannel.chatChannel.id} />
 
       {/* </Box> */}
     </Box>

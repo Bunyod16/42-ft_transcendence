@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { Channel, PanelData } from "@/types/social-type";
 import AddChannelModal from "./modal/AddChannelModal";
+import useUserStore from "@/store/userStore";
 /**
  * Chat Data Array of =
  * {
@@ -21,14 +22,15 @@ import AddChannelModal from "./modal/AddChannelModal";
  * Need to add channel list on top
  */
 
-interface ChannelPanelProp {
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
-export default function ChannelList({ setPanel }: ChannelPanelProp) {
+// interface ChannelPanelProp {
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
+export default function ChannelList() {
   // const [chats, setChats] = useState<ChatType[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
   // const [curChannel, setCurChannel] = useState<string>("");
   const [openModal, setOpenModal] = useState(false);
+  const setPanel = useUserStore((state) => state.setPanel);
 
   const handleAddChannel = () => {
     setOpenModal(!openModal);

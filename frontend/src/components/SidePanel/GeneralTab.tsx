@@ -10,18 +10,17 @@ import ChannelList from "./ChannelList";
 import FriendList from "./FriendList";
 // import { TabTypes } from "../SidePanel";
 import { PanelData, TabTypes } from "@/types/social-type";
+import useUserStore from "@/store/userStore";
 
-interface GeneralTabProps {
-  tabs: TabTypes;
-  setTabs: React.Dispatch<React.SetStateAction<number>>;
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
+// interface GeneralTabProps {
+//   tabs: TabTypes;
+//   setTabs: React.Dispatch<React.SetStateAction<number>>;
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
 
-export default function GeneralTab({
-  tabs,
-  setTabs,
-  setPanel,
-}: GeneralTabProps) {
+export default function GeneralTab() {
+  const [tabs, setTabs] = useUserStore((state) => [state.tabs, state.setTabs]);
+
   return (
     <>
       <Box
@@ -75,11 +74,7 @@ export default function GeneralTab({
           // border: "2px solid red",
         }}
       >
-        {tabs === TabTypes.channels ? (
-          <ChannelList setPanel={setPanel} />
-        ) : (
-          <FriendList setPanel={setPanel} />
-        )}
+        {tabs === TabTypes.channels ? <ChannelList /> : <FriendList />}
       </Box>
     </>
   );
