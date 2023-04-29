@@ -62,7 +62,6 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-  console.log(`username is ${nickName}`);
   return (
     <>
       {nickName == null ? <PickUsername /> : isLoggedIn ? <Lobby /> : <Login />}
