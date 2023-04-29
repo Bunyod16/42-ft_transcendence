@@ -177,6 +177,30 @@ export class ChatChannelsService {
     return chatChannel;
   }
 
+  async findOneWithPassword(id: number): Promise<ChatChannel> {
+    let chatChannel;
+    try {
+      chatChannel = await this.chatChannelRepository
+        .createQueryBuilder('chatChannel')
+        .where({ id: id })
+        .select('chatChannel')
+        .addSelect('chatChannel.password')
+        .getOne();
+      console.log(chatChannel);
+    } catch (error) {
+      console.log(error);
+    }
+    if (chatChannel === null) {
+      throw new CustomException(
+        `chatChannels with id = [${id}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'chatChannels => findOne()',
+      );
+    }
+
+    return chatChannel;
+  }
+
   async update(
     id: number,
     channelType: ChannelType,

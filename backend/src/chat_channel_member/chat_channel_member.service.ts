@@ -76,16 +76,19 @@ export class ChatChannelMemberService {
     password: string,
   ) {
     try {
+      console.log(chatChannelId);
       const user: User = await this.userService.findOne(userId);
-      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
-        chatChannelId,
-      );
+      const chatChannel: ChatChannel =
+        await this.chatChannelService.findOneWithPassword(chatChannelId);
       if (password == null) {
         throw new HttpException(
           'joining protected channel requires password',
           HttpStatus.BAD_REQUEST,
         );
       }
+      console.log('rannnnnn');
+      console.log(chatChannel);
+      console.log(password, chatChannel.password);
       if (password != chatChannel.password) {
         throw new HttpException('wrong password', HttpStatus.BAD_REQUEST);
       }

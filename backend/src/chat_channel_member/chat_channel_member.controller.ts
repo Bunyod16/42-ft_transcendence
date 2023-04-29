@@ -48,7 +48,7 @@ export class ChatChannelMemberController {
   async createProtected(
     @Body('userId', ParseIntPipe) userId: number,
     @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
-    @Body('chatChannelId') password: string,
+    @Body('password') password: string,
   ) {
     const chatChannelMember =
       await this.chatChannelMemberService.createProtected(
