@@ -19,7 +19,7 @@ export const inconsolata = Inconsolata({
 const theme = createTheme({
   palette: {
     background: {
-      default: "#26333A",
+      default: "#1B2429",
     },
     text: {
       primary: "#F2F4F3",
@@ -28,8 +28,9 @@ const theme = createTheme({
     primary: {
       main: "#26333A",
       "100": "#1b2429",
-      "200": "rgba(0,0,0,0.2)",
+      "200": "#161D21",
       "300": "#00000066",
+
       contrastText: "#fefefe",
     },
     secondary: {
