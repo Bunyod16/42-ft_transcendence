@@ -37,6 +37,12 @@ export class ChatChannelMemberService {
       const chatChannel: ChatChannel = await this.chatChannelService.findOne(
         chatChannelId,
       );
+      if (chatChannel.channel_type == ChannelType.PROTECTED) {
+        throw new HttpException(
+          'joining protected channel requires password',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const createChatChannelMemberDto = new CreateChatChannelMemberDto();
 
       createChatChannelMemberDto.user = user;
