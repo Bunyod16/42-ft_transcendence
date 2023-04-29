@@ -26,13 +26,19 @@ export default function GeneralTab({
         component="div"
         sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}
       >
-        <Typography variant="h4" sx={{ mb: "12px" }}>
-          SOCIAL
+        <Typography
+          variant="h4"
+          sx={{ mb: "12px" }}
+          padding={1}
+          fontWeight={600}
+        >
+          Social
         </Typography>
         <ToggleButtonGroup
           value={tabs}
           exclusive
           onChange={(_event, value) => setTabs(value)}
+          sx={{ px: 1 }}
         >
           <ToggleButton
             sx={{ color: "#FEFEFE", border: "none" }}
