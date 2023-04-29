@@ -84,6 +84,31 @@ const theme = createTheme({
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          color: "#fefefe60",
+          marginRight: "8px",
+          lineHeight: "0.75",
+          padding: "0px",
+          minHeight: "36px",
+          minWidth: "80px",
+          "&.Mui-selected": {
+            color: "#fefefe",
+          },
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          minHeight: "36px",
+          "& .MuiTabs-indicator": {
+            backgroundColor: "#fefefe",
+          },
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {

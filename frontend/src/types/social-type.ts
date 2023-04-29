@@ -47,3 +47,8 @@ export interface UserInfo {
   losses: number;
   online: boolean;
 }
+
+export enum TabTypes {
+  friends,
+  channels,
+}

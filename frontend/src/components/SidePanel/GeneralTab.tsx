@@ -3,15 +3,17 @@ import {
   Typography,
   ToggleButtonGroup,
   ToggleButton,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import ChannelList from "./ChannelList";
 import FriendList from "./FriendList";
-import { TabTypes } from "../SidePanel";
-import { PanelData } from "@/types/social-type";
+// import { TabTypes } from "../SidePanel";
+import { PanelData, TabTypes } from "@/types/social-type";
 
 interface GeneralTabProps {
   tabs: TabTypes;
-  setTabs: React.Dispatch<React.SetStateAction<TabTypes>>;
+  setTabs: React.Dispatch<React.SetStateAction<number>>;
   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
 }
 
@@ -26,15 +28,10 @@ export default function GeneralTab({
         component="div"
         sx={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}
       >
-        <Typography
-          variant="h4"
-          sx={{ mb: "12px" }}
-          padding={1}
-          fontWeight={600}
-        >
+        <Typography variant="h4" padding={1} fontWeight={600}>
           Social
         </Typography>
-        <ToggleButtonGroup
+        {/* <ToggleButtonGroup
           value={tabs}
           exclusive
           onChange={(_event, value) => setTabs(value)}
@@ -54,21 +51,31 @@ export default function GeneralTab({
           >
             CHANNELS
           </ToggleButton>
-        </ToggleButtonGroup>
+        </ToggleButtonGroup> */}
+        <Tabs
+          value={tabs}
+          aria-label="basic tabs example"
+          onChange={(event: React.SyntheticEvent, newValue: number) => {
+            setTabs(newValue);
+          }}
+        >
+          <Tab label="FRIENDS" />
+          <Tab label="CHANNELS" />
+        </Tabs>
       </Box>
       <Box
         component="div"
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: tabs === "channels" ? "end" : "start",
+          // justifyContent: tabs === "channels" ? "end" : "start",
           gap: "10px",
           width: "100%",
           height: "calc(100vh - 105px)",
           // border: "2px solid red",
         }}
       >
-        {tabs === "channels" ? (
+        {tabs === TabTypes.channels ? (
           <ChannelList setPanel={setPanel} />
         ) : (
           <FriendList setPanel={setPanel} />
