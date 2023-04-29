@@ -57,6 +57,15 @@ const theme = createTheme({
     h3: {
       fontFamily: oswald.style.fontFamily,
     },
+    h4: {
+      fontFamily: oswald.style.fontFamily,
+    },
+    h5: {
+      fontFamily: oswald.style.fontFamily,
+    },
+    h6: {
+      fontFamily: oswald.style.fontFamily,
+    },
   },
   components: {
     MuiMenu: {
@@ -67,10 +76,17 @@ const theme = createTheme({
         },
       },
     },
-    MuiButton: {},
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
+          overflow: "hidden",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
             width: "8px",
             // background-color: #"F5F5F5";
