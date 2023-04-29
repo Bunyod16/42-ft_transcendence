@@ -67,23 +67,23 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
           sx={{ display: "flex", mb: 1, alignItems: "center" }}
         >
           <Button
-            component={"div"}
+            variant="outlined"
+            component="div"
             sx={{
               display: "flex",
-              // flexDirection: "row",
               alignItems: "center",
               p: 1,
               cursor: "pointer",
               color: "text.primary",
-              bgcolor: "#00000020",
               borderRadius: 2,
               flex: 1,
+              mr: 1,
             }}
             onClick={() => console.log("show friend")}
           >
             <Avatar
               src="/jakoh_smol.jpg"
-              sx={{ width: 50, height: 50, mr: 2, float: "left" }}
+              sx={{ width: 50, height: 50, mr: 1, float: "left" }}
               alt="profile pic"
             />
             <Box component={"div"} sx={{ flex: 1 }}>
@@ -92,7 +92,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             </Box>
             {/* TODO add block friend here!! */}
           </Button>
-          <IconButton>
+          <IconButton sx={{ color: "#EF9A9A50" }}>
             <PersonOffSharpIcon />
           </IconButton>
         </Box>
@@ -169,18 +169,13 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
       component="div"
       sx={{
         display: "flex",
-        // padding: "10px",
         flexDirection: "row",
         alignItems: "start",
-        p: 1,
+        p: "6px 6px 6px 0px",
         borderBottom: "1px black solid",
       }}
     >
-      <IconButton
-        // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
-        onClick={handleBack}
-        // sx={{ display: "inline-block" }}
-      >
+      <IconButton onClick={handleBack}>
         <ArrowBackIcon sx={{ fill: "white" }} />
       </IconButton>
       <Box
