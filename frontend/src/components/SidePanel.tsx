@@ -15,10 +15,9 @@ import { PanelData } from "@/types/social-type";
 //   isChat?: boolean;
 // }
 
-export type TabTypes = "friends" | "channels";
-
 export default function SidePanel() {
-  const [tabs, setTabs] = useState<TabTypes>("friends");
+  // const [tabs, setTabs] = useState<TabTypes>("friends");
+  const [tabs, setTabs] = useState<number>(0);
   const [panel, setPanel] = useState<PanelData | undefined>(undefined);
 
   useEffect(() => {

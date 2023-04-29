@@ -52,9 +52,10 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        position: "relative",
+        // position: "relative",
         alignItems: "center",
         px: 1,
+        my: 2,
       }}
     >
       <AddChannelModal open={openModal} setOpen={setOpenModal} />
@@ -63,7 +64,7 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
         fullWidth
         sx={{
           // width: "95%",
-          mt: 2,
+          // mt: 2,
           // mb: "15px",
           color: "#FEFEFE",
           border: "2px solid #A3A3A3",
@@ -83,7 +84,8 @@ export default function ChannelList({ setPanel }: ChannelPanelProp) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          height: "100%",
+          flex: 1,
+          // height: "100%",
           overflow: "auto",
           pr: 0.5,
           my: 1,
