@@ -12,7 +12,9 @@ import Image from "next/image";
 import axios from "axios";
 import useFriendsStore from "@/store/friendsStore";
 import PendingBox from "./PendingBox";
-import { PanelData } from "@/types/social-type";
+import { FriendType, PanelData } from "@/types/social-type";
+import { chatSocket } from "../socket/socket";
+import { UserProfile } from "@/types/user-profile-type";
 
 const inlineStyle = {
   width: "32px",
@@ -82,7 +84,11 @@ function FriendBox({ setPanel }: FriendPanelType) {
 }
 
 export default function FriendList({ setPanel }: FriendPanelType) {
-  const setFriendList = useFriendsStore((state) => state.setFriendList);
+  const [setFriendList, setOnline, setOffline] = useFriendsStore((state) => [
+    state.setFriendList,
+    state.setOnline,
+    state.setOffline,
+  ]);
   const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
     axios
@@ -95,6 +101,20 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         console.log("error: ", error);
         // alert("KENOT SET FRIEND");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleFriendOnline(friend: FriendType) {
+      setOnline(friend);
+    }
+
+    function handleFriendOffline(friend: FriendType) {
+      setOffline(friend);
+    }
+
+    chatSocket.on("friendOnline", handleFriendOnline);
+    chatSocket.on("friendOffline", handleFriendOffline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -198,4 +198,14 @@ export class UserService {
       currentHashedRefreshToken: null,
     });
   }
+
+  async setOnline(user: User) {
+    const userId = user.id;
+    return this.userRepository.update(userId, { online: true });
+  }
+
+  async setOffline(user: User) {
+    const userId = user.id;
+    return this.userRepository.update(userId, { online: false });
+  }
 }
