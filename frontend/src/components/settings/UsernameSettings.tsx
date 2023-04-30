@@ -14,19 +14,21 @@ export default function UsernameSettings() {
 
   const handleSubmitUsername = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(usernameField);
     axios
       .patch(`/user`, { nickName: usernameField })
       .then(() => {
-        toast.success("Succesfully Updated Username", {
+        toast.success("Succesfully Updated Username!", {
           position: "bottom-right",
         });
         updateName(usernameField);
+        console.log("Succesfully Updated Username!");
       })
       .catch((error) => {
-        toast.error(`${error.mossage}`, {
-          position: "bottom-right",
-        });
+        if (error.response.status === 400) {
+          toast.error(`Nickname is already in use.`, {
+            position: "bottom-right",
+          });
+        }
         console.log(`error: ${error.message}`);
       });
   };
@@ -106,6 +108,7 @@ export default function UsernameSettings() {
               width: "210px",
               height: "40px",
             }}
+            disabled={usernameField === nickName || !isValidUsername}
           >
             Change username
           </Button>

@@ -24,14 +24,14 @@ export default function AvatarSettings() {
         },
       })
       .then((res) => {
-        toast.success("Succesfully Updated Avatar", {
+        toast.success("Succesfully Updated Avatar!", {
           position: "bottom-right",
         });
-        console.log("Succesfully Updated Avatar");
-        updateAvatar(res.data.avatarURI); //i HAVE TO CHANGE THIS AND UPDATE STORE AVATAR
+        console.log("Succesfully Updated Avatar!");
+        updateAvatar(res.data.avatarURI);
       })
       .catch((error) => {
-        toast.error(`${error.mossage}`, {
+        toast.error(`${error.message}`, {
           position: "bottom-right",
         });
         console.log(error.message);
@@ -116,6 +116,7 @@ export default function AvatarSettings() {
               height: "40px",
             }}
             type="submit"
+            disabled={newAvatar === undefined}
           >
             Change Avatar
           </Button>
