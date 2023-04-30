@@ -1,18 +1,17 @@
 import DefaultLayout from "@/components/layout/DefaultLayout";
-import ProfileIconBox from "@/components/profile/ProfileIconBox";
-import StatsBox from "@/components/profile/StatsBox";
 import useUserStore from "@/store/userStore";
 import { UserProfile } from "@/types/user-profile-type";
 import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Typography, Box } from "@mui/material";
+import Profile from "@/components/profile/Profile";
 
 /*
  * Default page for the user themselves
  * Have to query from userStore or wtv.
  * */
 
-export default function Profile() {
+export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile>();
   const [loading, setLoading] = useState(true);
   const [userExists, setUserExists] = useState(false);
@@ -35,9 +34,6 @@ export default function Profile() {
       setLoading(false);
       console.log(data);
 
-      //DELETE THIS LATER PLS
-      data.wins = Math.floor(Math.random() * 50);
-      data.losses = Math.floor(Math.random() * 50);
       setUser(data);
     } catch (err) {
       setLoading(false);
@@ -81,8 +77,7 @@ export default function Profile() {
         <>
           {user !== undefined && (
             <>
-              <ProfileIconBox {...user}></ProfileIconBox>
-              <StatsBox {...user}></StatsBox>
+              <Profile {...user} />
             </>
           )}
         </>

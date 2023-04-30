@@ -1,13 +1,12 @@
 import { UserProfile } from "@/types/user-profile-type";
-import { Box, Avatar, Typography } from "@mui/material";
-import { useEffect } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Avatar, Typography, IconButton } from "@mui/material";
+import { useRouter } from "next/router";
 
-export default function ProfileIconBox(user: UserProfile) {
-  useEffect(() => {
-    console.log(`Profile Page of in iconbox:${user.nickName}`);
-  }, [user]);
-
+export default function BannerProfile(user: UserProfile) {
+  const router = useRouter();
   /*
+   
    * Wins worth 2 points
    * Losses worth 1 point
    *
@@ -20,7 +19,7 @@ export default function ProfileIconBox(user: UserProfile) {
    * extra points left gets turned into fraction over next level.
    * */
 
-  function calculateUserLevel(wins: number, losses: number): string {
+  const calculateUserLevel = (wins: number, losses: number): string => {
     let totalPoints: number = wins * 2 + losses;
     let finalLevel = 0.0;
     let expIncreasePerLevel = 2;
@@ -39,34 +38,55 @@ export default function ProfileIconBox(user: UserProfile) {
 
     //round to 3dp
     return finalLevel.toFixed(3);
-  }
+  };
 
-  function calculateUserMMR(wins: number, losses: number): number {
+  const calculateUserMMR = (wins: number, losses: number): number => {
     const mmr = wins - losses > 0 ? (wins - losses) * 25 : 0;
     return mmr;
-  }
+  };
 
   return (
     <Box
       component="div"
       sx={{ padding: "10px 50px", backgroundColor: "primary.100" }}
     >
-      <Typography
-        variant="h2"
-        sx={{
-          color: "text.secondary",
-          fontSize: "1.5em",
-          fontWeight: "500",
-          marginBottom: "10px",
-          textTransform: "uppercase",
-        }}
+      <Box
+        component="div"
+        sx={{ display: "flex", flexDirection: "row", marginBottom: "10px" }}
       >
-        PLAYER PROFILE
-      </Typography>
+        <IconButton
+          onClick={() => {
+            router.back();
+          }}
+          sx={{
+            padding: "0px",
+          }}
+        >
+          <ArrowBackIcon
+            sx={{
+              height: "30px",
+              width: "30px",
+              marginRight: "20px",
+              color: "text.primary",
+            }}
+          />
+        </IconButton>
+        <Typography
+          variant="h2"
+          sx={{
+            color: "text.secondary",
+            fontSize: "1.5em",
+            fontWeight: "500",
+            textTransform: "uppercase",
+          }}
+        >
+          PLAYER PROFILE
+        </Typography>
+      </Box>
       <Box component="div" sx={{ display: "flex", flexDirection: "row" }}>
         <Avatar
           sx={{ width: "120px", height: "120px", borderRadius: "8px" }}
-          src="/jakoh_smol.jpg"
+          src={user.avatar}
         ></Avatar>
         <Box
           component="div"

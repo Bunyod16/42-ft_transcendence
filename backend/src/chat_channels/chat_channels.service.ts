@@ -164,6 +164,7 @@ export class ChatChannelsService {
       .createQueryBuilder('chatChannel')
       .where({ id: id })
       .select('chatChannel')
+      .leftJoinAndSelect('chatChannel.ownerId', 'user')
       .getOne();
 
     if (chatChannel === null) {

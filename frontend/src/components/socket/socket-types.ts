@@ -1,3 +1,4 @@
+import { UserProfile } from "@/types/user-profile-type";
 import { GameState, MatchInfo } from "@/types/game-type";
 
 export interface ServerToClientEvents {
@@ -10,17 +11,22 @@ export interface ServerToClientEvents {
   fuck: () => void;
   gameEnded: (data: GameState) => void;
   matchBegin: (data: GameState) => void;
+  gameInvite: (data: UserProfile) => void;
+  acceptInviteRejected: () => void;
 }
 
 export interface ClientToServerEvents {
   authenticateUser: () => void;
   queueEnter: () => void;
   queueLeave: () => void;
-  userConnected: (data: { skin: number }) => void;
+  cancelPlayWithFriend: () => void;
+  inviteFriend: (data: { friendId: string }) => void;
+  userConnected: (data: { skin: any }) => void;
   userDisconnected: () => void;
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;
+  acceptInvite: (data: UserProfile) => void;
 }
 
 // export interface MatchFoundData {

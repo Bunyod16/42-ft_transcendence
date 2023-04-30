@@ -31,6 +31,9 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { FriendRequestService } from 'src/friend_request/friend_request.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
+import {
+  findUserSocketWithNamespace,
+} from 'src/utils/socket-utils';
 
 class ChatMessage {
   @IsNotEmpty()
@@ -60,10 +63,23 @@ export class ChatSocketsGateway
     private readonly userService: UserService,
     private readonly chatLineService: ChatLineService,
     private readonly chatChannelMemberService: ChatChannelMemberService,
+    private readonly friendRequestService: FriendRequestService,
   ) {}
 
   afterInit() {
     Logger.log('chatSocket has been initialized');
+  }
+
+  async emitConnectedToFriends(user: User) {
+    const friends = await this.friendRequestService.findUserFriends(user.id);
+    friends.forEach((data, _) => {
+      if (data.friend.online) {
+        const sock = findUserSocketWithNamespace(data.friend, this.io);
+        if (sock) {
+          sock.emit('friendOnline', user);
+        }
+      }
+    });
   }
 
   handleConnection(client: SocketWithAuthData) {
@@ -73,6 +89,20 @@ export class ChatSocketsGateway
       `User with nickName = ${client.user.nickName} connected to chatSocket`,
     );
     this.io.emit('connected');
+    this.userService.setOnline(client.user);
+    this.emitConnectedToFriends(client.user);
+  }
+
+  async emitDisconnectedToFriends(user: User) {
+    const friends = await this.friendRequestService.findUserFriends(user.id);
+    friends.forEach((data, _) => {
+      if (data.friend.online) {
+        const sock = findUserSocketWithNamespace(data.friend, this.io);
+        if (sock) {
+          sock.emit('friendOffline', user);
+        }
+      }
+    });
   }
 
   handleDisconnect(client: SocketWithAuthData) {
@@ -82,6 +112,8 @@ export class ChatSocketsGateway
       `User with nickName = ${client.user.nickName} disconnected from chatSocket`,
     );
     this.io.emit('disconnected');
+    this.userService.setOffline(client.user);
+    this.emitDisconnectedToFriends(client.user);
   }
 
   /*

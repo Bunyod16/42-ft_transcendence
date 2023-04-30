@@ -125,6 +125,7 @@ export class UserController {
     const updateUserDto = new UpdateUserDto(req.body);
     updateUserDto.nickName = req.body.nickName;
     updateUserDto.avatar = req.body.avatar;
+
     if (!req.body.nickName) {
       throw new CustomException(
         `Please pass in a user nickName to update`,
