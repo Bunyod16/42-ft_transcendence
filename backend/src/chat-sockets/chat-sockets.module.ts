@@ -7,6 +7,7 @@ import { ChatChannelsModule } from 'src/chat_channels/chat_channels.module';
 import { UserModule } from 'src/user/user.module';
 import { ChatLineModule } from 'src/chat_line/chat_line.module';
 import { ChatChannelMemberModule } from 'src/chat_channel_member/chat_channel_member.module';
+import { FriendRequestModule } from 'src/friend_request/friend_request.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ChatChannelMemberModule } from 'src/chat_channel_member/chat_channel_me
     UserModule,
     ChatLineModule,
     ChatChannelMemberModule,
+    FriendRequestModule,
   ],
   providers: [ChatSocketsGateway, ChatSocketsService],
   exports: [ChatSocketsService],

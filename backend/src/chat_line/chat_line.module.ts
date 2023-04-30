@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatLine } from './entities/chat_line.entity';
 import { ChatChannelsModule } from 'src/chat_channels/chat_channels.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { ChatChannelMemberModule } from 'src/chat_channel_member/chat_channel_member.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChatLine]),
     ConfigModule,
     ChatChannelsModule,
+    ChatChannelMemberModule,
     AuthModule,
   ],
   controllers: [ChatLineController],

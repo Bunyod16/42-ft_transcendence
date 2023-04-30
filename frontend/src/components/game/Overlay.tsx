@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { socket } from "../socket/socket";
 import useUserStore from "@/store/userStore";
 import { useRouter } from "next/router";
+import Customize from "./Overlay/Customize";
 
 interface BgColorBox {
   color: string;
@@ -248,8 +249,9 @@ const Score = () => {
 
 const Overlay = () => {
   const gameStatus = useGameStore((state) => state.gameStatus);
+  console.log("gameStatus", gameStatus);
 
-  if (gameStatus == "NoGame") return <></>;
+  // if (gameStatus === "NoGame") return <></>;
   return (
     <Box
       component={"div"}
@@ -260,10 +262,12 @@ const Overlay = () => {
         top: 0,
         left: 0,
         pointerEvents: "none",
+        // zIndex: 100,
       }}
     >
       <Score />
       <GameResult />
+      <Customize />
     </Box>
   );
 };
