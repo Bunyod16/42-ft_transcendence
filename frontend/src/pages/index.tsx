@@ -62,9 +62,5 @@ export default function Home() {
   }, []);
 
   if (!isHydrated) return <></>;
-  return (
-    <>
-      {nickName == null ? <PickUsername /> : isLoggedIn ? <Lobby /> : <Login />}
-    </>
-  );
+  return <>{nickName == null ? <PickUsername /> : <Lobby />}</>;
 }
