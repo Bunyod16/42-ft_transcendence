@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -12,15 +12,33 @@ import {
   FormControlLabel,
   Checkbox,
   Icon,
+  useRadioGroup,
 } from "@mui/material";
 import axios from "axios";
 import { ChatChannel, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import { toast } from "react-hot-toast";
 import LockSharpIcon from "@mui/icons-material/LockSharp";
+import { channel } from "diagnostics_channel";
 
-const PasswordModal = () => {
+interface PasswordModalProp {
+  open: boolean;
+  setOpen: (boo: boolean) => void;
+  returnPassword: (password: string) => void;
+}
+const PasswordModal = ({
+  open,
+  setOpen,
+  returnPassword,
+}: PasswordModalProp) => {
+  const handleClose = () => setOpen(false);
   const [password, setPassword] = useState("");
+
+  const handleEnterPassword = () => {
+    returnPassword(password);
+    handleClose();
+  };
+
   return (
     <Modal
       open={open}
@@ -35,7 +53,7 @@ const PasswordModal = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: 300,
           bgcolor: "background.default",
           // border: "2px solid #000",
           borderRadius: 2,
@@ -47,7 +65,7 @@ const PasswordModal = () => {
           id="outlined-basic"
           label="Channel password"
           variant="outlined"
-          color="secondary"
+          // color="secondary"
           size="small"
           fullWidth
           sx={{ mt: 1, mb: 2 }}
@@ -56,6 +74,14 @@ const PasswordModal = () => {
             setPassword(e.target.value)
           }
         />
+        <Button
+          variant="contained"
+          fullWidth
+          color="secondary"
+          onClick={handleEnterPassword}
+        >
+          Enter Password
+        </Button>
       </Box>
     </Modal>
   );
@@ -76,6 +102,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
   const [newChannels, setNewChannels] = useState<ChatChannel[]>([]);
   const id = useUserStore((state) => state.id);
   const [openPwd, setOpenPwd] = useState(false);
+  const [password, setPassword] = useState("");
 
   function getAllChannels() {
     return axios.get("/chat-channels/findAllPublicAndProtectedChannels");
@@ -117,7 +144,6 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
             })
             .then((res) => console.log("success", { res }))
             .catch((err) => console.log(err));
-        // console.log("success", { res });
         alert("Created Channel!");
         setOpen(false);
       });
@@ -125,17 +151,17 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
 
   const handleJoinChannel = (channel: ChatChannel) => {
     if (channel.channel_type === "protected") setOpenPwd(true);
-
-    axios
-      .post("/chat-channel-member", {
-        userId: id,
-        chatChannelId: channel.id,
-      })
-      .then(() => toast.success(`Joined ${channel.name}!`))
-      .catch((err) => {
-        toast.error("Something went wrong!");
-        console.log(err);
-      });
+    else
+      axios
+        .post("/chat-channel-member", {
+          userId: id,
+          chatChannelId: channel.id,
+        })
+        .then(() => toast.success(`Joined ${channel.name}!`))
+        .catch((err) => {
+          toast.error("Something went wrong!");
+          console.log(err);
+        });
   };
 
   return (
@@ -154,12 +180,16 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           transform: "translate(-50%, -50%)",
           width: 400,
           bgcolor: "background.default",
-          // border: "2px solid #000",
           borderRadius: 2,
           boxShadow: 24,
           p: 4,
         }}
       >
+        <PasswordModal
+          open={openPwd}
+          setOpen={setOpenPwd}
+          returnPassword={setPassword}
+        />
         <Typography variant="h6">Join a channel</Typography>
         <List sx={{ maxHeight: 300, overflow: "auto", mb: 2, pr: 1 }}>
           {newChannels.length ? (
@@ -171,7 +201,6 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
                     borderRadius: 1,
                     cursor: "default",
                     bgcolor: "#00000010",
-                    // border: "1px solid #00000020",
                     mb: 1,
                   }}
                 >
