@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   // Patch,
   Param,
   Delete,
@@ -13,12 +12,14 @@ import {
   UseGuards,
   Req,
   Query,
+  Body,
 } from '@nestjs/common';
 import { TwoFactorService } from './two_factor.service';
 // import { UpdateTwoFactorDto } from './dto/update-two_factor.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('two-factor')
 @Controller('two-factor')
@@ -29,45 +30,65 @@ export class TwoFactorController {
   @UseGuards(UserAuthGuard)
   async create(@Req() req: any) {
     const userId = req.user.id;
-    const twoFactor = await this.twoFactorService.create(userId);
+    const twoFactor = await this.twoFactorService.createTwoFactorKeyAndOtp(
+      userId,
+    );
 
     Logger.log(
-      `Created TwoFactor for user with id = [${userId}]`,
+      `Created createTwoFactorKeyAndOtp for user with id = [${userId}]`,
       'TwoFactor => create()',
     );
 
-    console.log(twoFactor);
     return twoFactor;
   }
 
-  @Post(':userId/verify')
+  @Post(':userId/verify-first-time-two-factor')
   @UseGuards(UserAuthGuard)
-  async verify(
+  async verifyFirstTimeTwoFactor(
     @Req() req: any,
-    @Query('twoFactorToken') twoFactorToken: string,
+    @Body('twoFactorToken') twoFactorToken: string,
+    @Body('twoFactorKey') twoFactorKey: string,
   ) {
     const userId = req.user.id;
-    const verification = await this.twoFactorService.verifyTwoFactor(
-      userId,
-      twoFactorToken,
-    );
+
+    console.log('twoFactorToken', twoFactorToken);
+    console.log('twoFactorKey', twoFactorKey);
 
     Logger.log(
       `Trying to get verify TwoFactor for user with id = [${userId}]`,
-      'TwoFactor => verify()',
+      'TwoFactor => verifyFirstTime()',
     );
 
-    return verification;
+    const verification = await this.twoFactorService.verifyFirstTwoFactor(
+      userId,
+      twoFactorToken,
+      twoFactorKey,
+    );
+
+    if (verification === true) {
+      return await this.twoFactorService.saveUserTwoFactor(
+        userId,
+        twoFactorKey,
+      );
+    } else {
+      throw new CustomException(
+        `Wrong Verification Key`,
+        HttpStatus.BAD_REQUEST,
+        `TwoFactor =>verifyFirstTime()`,
+      );
+    }
   }
 
   @Post(':userId/verify-testing')
   async verifyTesting(
     @Param('userId', ParseIntPipe) userId: number,
     @Query('twoFactorToken') twoFactorToken: string,
+    @Query('twoFactorKey') twoFactorKey: string,
   ) {
-    const verification = await this.twoFactorService.verifyTwoFactor(
+    const verification = await this.twoFactorService.verifyFirstTwoFactor(
       userId,
       twoFactorToken,
+      twoFactorKey,
     );
 
     Logger.log(
@@ -87,6 +108,20 @@ export class TwoFactorController {
     return twoFactor;
   }
 
+  @Get('/user-two-factor')
+  @UseGuards(UserAuthGuard)
+  async findUserTwoFactor(@Req() req: any) {
+    const user: User = req.user;
+    const twoFactor = await this.twoFactorService.findOneWithUserId(user.id);
+
+    Logger.log(
+      `Finding TwoFactor for User with id = [${user.id}]`,
+      'TwoFactor => findUserTwoFactor()',
+    );
+
+    return twoFactor;
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     Logger.log(`[twoFactor] Trying to get twoFactor with id = [${id}]`);
@@ -99,10 +134,11 @@ export class TwoFactorController {
     return twoFactor;
   }
 
-  @Get(':userId/user-two-factor')
-  async findUserTwoFactor(@Param('userId', ParseIntPipe) userId: number) {
+  @Get(':userId/user-two-factor-testing')
+  async findUserTwoFactorTesting(
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     const twoFactor = await this.twoFactorService.findOneWithUserId(userId);
-
     if (twoFactor) return true;
   }
 
@@ -110,6 +146,19 @@ export class TwoFactorController {
   // update(@Param('id') id: string, @Body() updateTwoFactorDto: UpdateTwoFactorDto) {
   //   return this.twoFactorService.update(+id, updateTwoFactorDto);
   // }
+
+  @Delete('/delete-with-user-id')
+  @UseGuards(UserAuthGuard)
+  async removeWithUserId(@Req() req: any) {
+    const user: User = req.user;
+
+    Logger.log(
+      `Deleting TwoFactor for User with id = [${user.id}]`,
+      'TwoFactor => removeWithUserId()',
+    );
+
+    return await this.twoFactorService.removeWithUserId(user);
+  }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {

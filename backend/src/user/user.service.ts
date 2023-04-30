@@ -164,7 +164,16 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    this.userRepository.update({ id: id }, updateUserDto);
+    try {
+      return await this.userRepository.update({ id: id }, updateUserDto);
+    } catch (error) {
+      throw new CustomException(
+        `User nickName already exist`,
+        HttpStatus.BAD_REQUEST,
+        'User => update()',
+        error,
+      );
+    }
   }
 
   remove(id: number) {
