@@ -23,6 +23,7 @@ export const inconsolata = Inconsolata({
 // Create a theme instance.
 const theme = createTheme({
   palette: {
+    mode: "dark",
     background: {
       default: "#1B2429",
     },
