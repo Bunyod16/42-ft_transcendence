@@ -102,11 +102,15 @@ export default function UsernameSettings() {
               color: "text.primary",
               fontSize: "1em",
               fontWeight: "600",
-              backgroundColor: "accent.light",
+              backgroundColor:
+                usernameField === nickName || !isValidUsername
+                  ? "accent.main"
+                  : "accent.light",
               marginTop: "10px",
               textTransform: "none",
               width: "210px",
               height: "40px",
+              "&:hover": { backgroundColor: "primary.main" },
             }}
             disabled={usernameField === nickName || !isValidUsername}
           >

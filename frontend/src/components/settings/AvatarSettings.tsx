@@ -109,11 +109,13 @@ export default function AvatarSettings() {
               color: "text.primary",
               fontSize: "1em",
               fontWeight: "600",
-              backgroundColor: "accent.light",
+              backgroundColor:
+                newAvatar === undefined ? "accent.main" : "accent.light",
               marginTop: "10px",
               textTransform: "none",
               width: "210px",
               height: "40px",
+              "&:hover": { backgroundColor: "primary.main" },
             }}
             type="submit"
             disabled={newAvatar === undefined}
