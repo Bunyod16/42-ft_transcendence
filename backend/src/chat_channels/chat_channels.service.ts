@@ -134,6 +134,31 @@ export class ChatChannelsService {
     return chatChannels;
   }
 
+  async findAllPublicAndProtectedChannels() {
+    const chatChannels = await this.chatChannelRepository
+      .createQueryBuilder('chatChannels')
+      .select(['chatChannels'])
+      .where(
+        '(chatChannels.channel_type = :channelType OR chatChannels.channel_type = :channelType2) AND (chatChannels.chatType = :chatType)',
+        {
+          channelType: ChannelType.PUBLIC,
+          channelType2: ChannelType.PROTECTED,
+          chatType: ChatType.GROUP_MESSAGE,
+        },
+      )
+      .getMany();
+
+    if (chatChannels === null) {
+      throw new CustomException(
+        `ChatChannels table doesn't exist`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        'ChatChannels => findOne()',
+      );
+    }
+
+    return chatChannels;
+  }
+
   async findOne(id: number): Promise<ChatChannel> {
     const chatChannel = await this.chatChannelRepository
       .createQueryBuilder('chatChannel')
@@ -142,6 +167,30 @@ export class ChatChannelsService {
       .leftJoinAndSelect('chatChannel.ownerId', 'user')
       .getOne();
 
+    if (chatChannel === null) {
+      throw new CustomException(
+        `chatChannels with id = [${id}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'chatChannels => findOne()',
+      );
+    }
+
+    return chatChannel;
+  }
+
+  async findOneWithPassword(id: number): Promise<ChatChannel> {
+    let chatChannel;
+    try {
+      chatChannel = await this.chatChannelRepository
+        .createQueryBuilder('chatChannel')
+        .where({ id: id })
+        .select('chatChannel')
+        .addSelect('chatChannel.password')
+        .getOne();
+      console.log(chatChannel);
+    } catch (error) {
+      console.log(error);
+    }
     if (chatChannel === null) {
       throw new CustomException(
         `chatChannels with id = [${id}] doesn't exist`,

@@ -106,6 +106,18 @@ export class ChatChannelsController {
 
     return chatChannel;
   }
+  @Get('/findAllPublicAndProtectedChannels')
+  async findAllPublicAndProtectedChannels() {
+    const chatChannel =
+      await this.chatChannelsService.findAllPublicAndProtectedChannels();
+
+    Logger.log(
+      `Trying to get all Public and Protected chatChannels`,
+      'chatChannel => findAllPublicAndProtectedChannels()',
+    );
+
+    return chatChannel;
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
