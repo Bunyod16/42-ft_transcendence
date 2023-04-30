@@ -203,6 +203,7 @@ export default function TwoFactorSettings() {
                 marginTop: "10px",
                 textTransform: "none",
                 width: "210px",
+                "&:hover": { backgroundColor: "primary.main" },
               }}
               onClick={handleEnableTwoFactor}
             >
