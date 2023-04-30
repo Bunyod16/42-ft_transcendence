@@ -1,5 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "./socket-types";
+import { FriendType } from "@/types/social-type";
 
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = "http://localhost:3000";
@@ -29,6 +30,8 @@ interface ChatServerToClientType {
     text: string;
     sender: { id: number; nickName: string };
   }) => void;
+  friendOnline: (data: FriendType) => void;
+  friendOffline: (data: FriendType) => void;
 }
 
 export const chatSocket: Socket<

@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   List,
@@ -8,24 +9,21 @@ import {
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
 import useFriendsStore from "@/store/friendsStore";
 import PendingBox from "./PendingBox";
-import { PanelData } from "@/types/social-type";
+import useUserStore from "@/store/userStore";
+import { FriendType } from "@/types/social-type";
+import { chatSocket } from "../socket/socket";
+// import { UserProfile } from "@/types/user-profile-type";
 
-const inlineStyle = {
-  width: "32px",
-  height: "32px",
-  borderRadius: "50px",
-};
+// interface FriendPanelType {
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
+function FriendBox() {
+  const [friends] = useFriendsStore((state) => [state.friends]);
+  const setPanel = useUserStore((state) => state.setPanel);
 
-interface FriendPanelType {
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
-function FriendBox({ setPanel }: FriendPanelType) {
-  const friends = useFriendsStore((state) => state.friends);
-  console.log(friends);
   return (
     <List
       sx={{
@@ -33,6 +31,10 @@ function FriendBox({ setPanel }: FriendPanelType) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        // height: "100%",
+        overflow: "auto",
+        pr: 1,
+        flex: 1,
       }}
       aria-label="contacts"
     >
@@ -42,10 +44,8 @@ function FriendBox({ setPanel }: FriendPanelType) {
           key={index}
           disablePadding
           sx={{
-            backgroundColor: "#00000030",
-            mb: "8px",
-            // width: "95%",
-            // color: "black",
+            backgroundColor: "#00000020",
+            mb: 1,
             borderRadius: "4px",
           }}
         >
@@ -58,13 +58,7 @@ function FriendBox({ setPanel }: FriendPanelType) {
               });
             }}
           >
-            <Image
-              src={"/jakoh_smol.jpg"}
-              alt={friend.avatar}
-              width={32}
-              height={32}
-              style={inlineStyle}
-            />
+            <Avatar src={"/jakoh_smol.jpg"} sx={{ width: 32, height: 32 }} />
             <ListItemText sx={{ ml: "12px" }} primary={friend.nickName} />
             <CircleIcon
               sx={{
@@ -81,8 +75,12 @@ function FriendBox({ setPanel }: FriendPanelType) {
   );
 }
 
-export default function FriendList({ setPanel }: FriendPanelType) {
-  const setFriendList = useFriendsStore((state) => state.setFriendList);
+export default function FriendList() {
+  const [setFriendList, setOnline, setOffline] = useFriendsStore((state) => [
+    state.setFriendList,
+    state.setOnline,
+    state.setOffline,
+  ]);
   const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
     axios
@@ -95,6 +93,20 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         console.log("error: ", error);
         // alert("KENOT SET FRIEND");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleFriendOnline(friend: FriendType) {
+      setOnline(friend);
+    }
+
+    function handleFriendOffline(friend: FriendType) {
+      setOffline(friend);
+    }
+
+    chatSocket.on("friendOnline", handleFriendOnline);
+    chatSocket.on("friendOffline", handleFriendOffline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -118,20 +130,20 @@ export default function FriendList({ setPanel }: FriendPanelType) {
     <Box
       component="div"
       sx={{
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         px: 1,
         gap: 1,
+        my: 2,
       }}
     >
       <Button
         variant="outlined"
         fullWidth
         sx={{
-          // width: "95%",
-          mt: 2,
-          // mb: "15px",
+          // mt: 2,
           color: "#FEFEFE",
           border: "2px solid #A3A3A3",
           height: "48px",
@@ -141,9 +153,10 @@ export default function FriendList({ setPanel }: FriendPanelType) {
         }}
         onClick={handleFriend}
       >
-        ADD FRIENDS
+        Add Friend
       </Button>
 
+      <FriendBox />
       {/* <Typography>Pending</Typography> */}
       <Button
         // variant="outlined"
@@ -162,8 +175,6 @@ export default function FriendList({ setPanel }: FriendPanelType) {
       >
         Pending
       </Button>
-
-      <FriendBox setPanel={setPanel} />
       {pendingActive && <PendingBox />}
     </Box>
   );

@@ -19,10 +19,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   nickName: string;
 
-  @Column()
+  @Column({ unique: true })
   intraName: string;
 
   @Column({ default: 'default-stormtrooper.png' })

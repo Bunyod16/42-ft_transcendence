@@ -18,7 +18,10 @@ export class TwoFactorService {
     private readonly userService: UserService,
   ) {}
 
-  async create(userId: number) {
+  /*
+   * Changed the logic so that this service only constructs the Key
+   * */
+  async createTwoFactorKeyAndOtp(userId: number) {
     try {
       //generate secret
       const secret = speakeasy.generateSecret({
@@ -26,25 +29,11 @@ export class TwoFactorService {
       });
 
       const user: User = await this.userService.findOne(userId);
-      const createTwoFactorDto = new CreateTwoFactorDto();
+      //encrypt tsecret
 
-      //encryp tsecret
-      console.log('ioadjisaioa', secret);
-      createTwoFactorDto.key = encryptTOTP(
-        secret.ascii,
-        user.created_at.toString(),
-      );
-      createTwoFactorDto.user = user;
-
-      const twoFactor = await this.twoFactorRepository.save(createTwoFactorDto);
-
-      // const res: CreateTwoFactorDto & { otpauth_url: string } = {
-      //   ...twoFactor,
-      //   otpauth_url: secret.otpauth_url,
-      // };
-
+      const key: string = encryptTOTP(secret.ascii, user.created_at.toString());
       const res: { key: string; otpauth_url: string } = {
-        key: twoFactor.key,
+        key: key,
         otpauth_url: secret.otpauth_url,
       };
 
@@ -54,13 +43,42 @@ export class TwoFactorService {
         throw new CustomException(
           `User already has TwoFactor.`,
           HttpStatus.BAD_REQUEST,
-          'TwoFactor => create()',
+          'TwoFactor => createTwoFactorDto()',
         );
       else
         throw new CustomException(
           `Some Bad Shit Happened`,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          'TwoFactor => create()',
+          'TwoFactor => createTwoFactorDto()',
+        );
+    }
+  }
+
+  async saveUserTwoFactor(
+    userId: number,
+    secretKey: string,
+  ): Promise<TwoFactor> {
+    try {
+      const user: User = await this.userService.findOne(userId);
+      const createTwoFactorDto = new CreateTwoFactorDto();
+
+      createTwoFactorDto.user = user;
+      createTwoFactorDto.key = secretKey;
+
+      const twoFactor = await this.twoFactorRepository.save(createTwoFactorDto);
+      return twoFactor;
+    } catch (error) {
+      if (error.name === 'QueryFailedError')
+        throw new CustomException(
+          `User already has TwoFactor.`,
+          HttpStatus.BAD_REQUEST,
+          'TwoFactor => saveUserTwoFactor()',
+        );
+      else
+        throw new CustomException(
+          `Some Bad Shit Happened`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'TwoFactor => saveUserTwoFactor()',
         );
     }
   }
@@ -107,19 +125,42 @@ export class TwoFactorService {
     return twoFactor;
   }
 
-  async verifyTwoFactor(userId: number, twoFactorToken: string) {
+  async verifyFirstTwoFactor(
+    userId: number,
+    twoFactorToken: string,
+    twoFactorKey: string,
+  ) {
+    const secretKey = await this.userService.findOne(userId);
+
+    //decrypt secret
+    const decryptedSecretKey = decryptTOTP(
+      twoFactorKey,
+      secretKey.created_at.toString(),
+    );
+
+    //verify secret
+    const verication = speakeasy.totp.verify({
+      secret: decryptedSecretKey,
+      encoding: 'ascii',
+      token: twoFactorToken,
+    });
+
+    return verication;
+  }
+
+  async verifyUserTwoFactor(userId: number, twoFactorToken: string) {
     const twoFactor = await this.findOneWithUserId(userId);
     const secretKey = await this.userService.findOne(userId);
 
     //decrypt secret
-    const decryptedSecertKey = decryptTOTP(
+    const decryptedSecretKey = decryptTOTP(
       twoFactor.key,
       secretKey.created_at.toString(),
     );
 
     //verify secret
     const verication = speakeasy.totp.verify({
-      secret: decryptedSecertKey,
+      secret: decryptedSecretKey,
       encoding: 'ascii',
       token: twoFactorToken,
     });
@@ -130,6 +171,10 @@ export class TwoFactorService {
   // update(id: number, updateTwoFactorDto: UpdateTwoFactorDto) {
   //   return `This action updates a #${id} twoFactor`;
   // }
+
+  async removeWithUserId(user: User): Promise<DeleteResult> {
+    return this.twoFactorRepository.delete({ user: user });
+  }
 
   async remove(id: number): Promise<DeleteResult> {
     return this.twoFactorRepository.delete({ id });

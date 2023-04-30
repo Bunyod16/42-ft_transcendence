@@ -1,4 +1,10 @@
-import { Injectable, HttpStatus, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  HttpStatus,
+  Inject,
+  forwardRef,
+  HttpException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -7,6 +13,7 @@ import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto
 import { ChatChannelMember } from './entities/chat_channel_member.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
+  ChannelType,
   ChatChannel,
   ChatType,
 } from 'src/chat_channels/entities/chat_channel.entity';
@@ -30,6 +37,12 @@ export class ChatChannelMemberService {
       const chatChannel: ChatChannel = await this.chatChannelService.findOne(
         chatChannelId,
       );
+      if (chatChannel.channel_type == ChannelType.PROTECTED) {
+        throw new HttpException(
+          'joining protected channel requires password',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const createChatChannelMemberDto = new CreateChatChannelMemberDto();
 
       createChatChannelMemberDto.user = user;
@@ -43,7 +56,62 @@ export class ChatChannelMemberService {
         throw new CustomException(
           `${error.response.message}`,
           HttpStatus.NOT_FOUND,
+          'ChatChannelMeber => create()',
+        );
+      } else if (error.name === 'QueryFailedError') {
+        throw new CustomException(
+          `User already In ChatChannel`,
+          HttpStatus.BAD_REQUEST,
           'ChatChannelMember => create()',
+          error,
+        );
+      } else {
+        throw new CustomException(
+          `${error.name}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'ChatChannelMember => create()',
+          error,
+        );
+      }
+    }
+  }
+
+  async createProtected(
+    userId: number,
+    chatChannelId: number,
+    password: string,
+  ) {
+    try {
+      console.log(chatChannelId);
+      const user: User = await this.userService.findOne(userId);
+      const chatChannel: ChatChannel =
+        await this.chatChannelService.findOneWithPassword(chatChannelId);
+      if (password == null) {
+        throw new HttpException(
+          'joining protected channel requires password',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      console.log('rannnnnn');
+      console.log(chatChannel);
+      console.log(password, chatChannel.password);
+      if (password != chatChannel.password) {
+        throw new HttpException('wrong password', HttpStatus.BAD_REQUEST);
+      }
+      const createChatChannelMemberDto = new CreateChatChannelMemberDto();
+
+      createChatChannelMemberDto.user = user;
+      createChatChannelMemberDto.chatChannel = chatChannel;
+
+      return await this.chatChannelMemberRepository.save(
+        createChatChannelMemberDto,
+      );
+    } catch (error) {
+      if (error.name === 'CustomException') {
+        throw new CustomException(
+          `${error.response.message}`,
+          HttpStatus.NOT_FOUND,
+          'ChatChannelMeber => create()',
         );
       } else if (error.name === 'QueryFailedError') {
         throw new CustomException(
