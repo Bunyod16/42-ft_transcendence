@@ -3,9 +3,11 @@ import React, { ReactElement } from "react";
 import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
+import PickUsername from "@/pages/pickusername";
+import Loading from "./Loading";
 
 export default function Auth({ children }: { children: ReactElement }) {
-  const { isLoggedIn, logout, login } = useUserStore();
+  const { isLoggedIn, logout, login, nickName } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   React.useEffect(() => {
@@ -43,6 +45,11 @@ export default function Auth({ children }: { children: ReactElement }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
 
-  if (!isHydrated) return <></>;
-  return <>{isLoggedIn ? children : <Login />}</>;
+  if (!isHydrated) return <Loading />;
+
+  return (
+    <>
+      {nickName == null ? <PickUsername /> : isLoggedIn ? children : <Login />}
+    </>
+  );
 }

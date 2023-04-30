@@ -59,5 +59,5 @@ export default function Home() {
   // }, []);
 
   // if (!isHydrated) return <></>;
-  return <>{nickName == null ? <PickUsername /> : <Lobby />}</>;
+  return <Lobby />;
 }
