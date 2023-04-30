@@ -58,7 +58,7 @@ function FriendBox() {
               });
             }}
           >
-            <Avatar src={"/jakoh_smol.jpg"} sx={{ width: 32, height: 32 }} />
+            <Avatar src={friend.avatar} sx={{ width: 32, height: 32 }} />
             <ListItemText sx={{ ml: "12px" }} primary={friend.nickName} />
             <CircleIcon
               sx={{

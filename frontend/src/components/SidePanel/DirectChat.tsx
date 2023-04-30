@@ -76,8 +76,8 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             onClick={() => console.log("show friend")}
           >
             <Avatar
-              src="/jakoh_smol.jpg"
-              sx={{ width: 50, height: 50, mr: 1, float: "left" }}
+              src={panel.friendInfo?.avatar}
+              sx={{ width: 40, height: 40, mr: 1, float: "left" }}
               alt="profile pic"
             />
             <Box component={"div"} sx={{ flex: 1 }}>
