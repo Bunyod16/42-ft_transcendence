@@ -180,13 +180,7 @@ const ManageChannelModal = ({
           Manage channel
         </Typography>
         {/* <Typography paddingTop={1}>Set a channel name</Typography> */}
-        <FormControl
-          sx={{ my: 1 }}
-          variant="outlined"
-          size="small"
-          color="secondary"
-          fullWidth
-        >
+        <FormControl sx={{ my: 1 }} variant="outlined" size="small" fullWidth>
           <InputLabel htmlFor="outlined-adornment-password">
             New password
           </InputLabel>

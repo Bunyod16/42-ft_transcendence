@@ -8,7 +8,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import axios from "axios";
-import { Channel, PanelData } from "@/types/social-type";
+import { Channel } from "@/types/social-type";
 import AddChannelModal from "./modal/AddChannelModal";
 import useUserStore from "@/store/userStore";
 /**
