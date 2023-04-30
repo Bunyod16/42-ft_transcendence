@@ -4,17 +4,14 @@ import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 
-export default function Auth({
-  children,
-}: {
-  children: ReactElement<any, any>;
-}) {
+export default function Auth({ children }: { children: ReactElement }) {
   const { isLoggedIn, logout, login } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
+
   React.useEffect(() => {
-    console.log("im here");
     setIsHydrated(true);
   }, []);
+
   React.useEffect(() => {
     function refreshToken() {
       axios
@@ -32,7 +29,6 @@ export default function Auth({
           logout();
         });
     }
-
     axios
       .get("auth/profile")
       .then((res) => {
