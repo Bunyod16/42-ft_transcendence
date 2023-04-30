@@ -44,6 +44,27 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
+  @Post('protected')
+  async createProtected(
+    @Body('userId', ParseIntPipe) userId: number,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+    @Body('password') password: string,
+  ) {
+    const chatChannelMember =
+      await this.chatChannelMemberService.createProtected(
+        userId,
+        chatChannelId,
+        password,
+      );
+
+    Logger.log(
+      `Created ChatChannelMember with id = [${chatChannelMember.id}]`,
+      'ChatChannelMember => create()',
+    );
+
+    return chatChannelMember;
+  }
+
   @Get()
   async findAll() {
     const chatChannelMember = await this.chatChannelMemberService.findAll();

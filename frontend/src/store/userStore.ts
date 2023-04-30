@@ -1,3 +1,4 @@
+import { PanelData, TabTypes } from "@/types/social-type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -12,12 +13,16 @@ interface UserStore {
   avatar: string;
   state: States;
   view: Views;
+  panel: PanelData | undefined;
+  tabs: number;
   login: (name: string, id: number) => void;
   logout: () => void;
   updateName: (name: string) => void;
   updateState: (state: States) => void;
   updateView: (view: Views) => void;
   updateAvatar: (avatar: string) => void;
+  setPanel: (panel: PanelData | undefined) => void;
+  setTabs: (tabs: number) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -29,6 +34,8 @@ const useUserStore = create<UserStore>()(
       avatar: "",
       state: "Idle",
       view: "Lobby",
+      panel: undefined,
+      tabs: TabTypes.friends,
       // Persist state to localStorage
       // This will allow the state to be restored even if the user leaves the site
       // or refreshes the page
@@ -71,6 +78,8 @@ const useUserStore = create<UserStore>()(
           avatar,
         }));
       },
+      setPanel: (panel) => set(() => ({ panel: panel })),
+      setTabs: (tabs) => set(() => ({ tabs: tabs })),
     }),
     {
       name: "rgm-user-state", // name of the item in the storage (must be unique)
