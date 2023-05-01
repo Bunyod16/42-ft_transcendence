@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -169,7 +169,6 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
         .post("/chat-channel-member", {
           userId: id,
           chatChannelId: channel.id,
-          password: password,
         })
         .then(() => toast.success(`Joined ${channel.name}!`))
         .catch((err) => {
