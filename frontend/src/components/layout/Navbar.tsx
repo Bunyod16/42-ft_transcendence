@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import SettingsIcon from "@mui/icons-material/Settings";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";

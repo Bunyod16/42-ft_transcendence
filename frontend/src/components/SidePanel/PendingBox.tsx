@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useEffect } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 

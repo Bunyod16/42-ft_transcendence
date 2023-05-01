@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "./apiClient/apiClient";
 import useUserStore from "@/store/userStore";
 import toast, { Toaster } from "react-hot-toast";
 

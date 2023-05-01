@@ -9,7 +9,7 @@ import {
 import useUserStore from "@/store/userStore";
 import { useRouter } from "next/router";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import axios from "axios";
+import axios from "./apiClient/apiClient";
 
 export default function PickUsernamePanel() {
   const [isLoggedIn, updateName] = useUserStore((state) => [

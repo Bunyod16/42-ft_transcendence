@@ -4,7 +4,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import { PanelData, UserInfo } from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import ManageChannelModal from "./modal/ManageChannelModal";

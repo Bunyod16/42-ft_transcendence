@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Tooltip } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import useUserStore from "@/store/userStore";
 import toast from "react-hot-toast";
 

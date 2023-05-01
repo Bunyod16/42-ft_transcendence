@@ -6,7 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import theme from "@/styles/theme";
 import createEmotionCache from "@/styles/createEmotionCache";
-import axios from "axios";
+import axios from "../components/apiClient/apiClient"
 import { Toaster } from "react-hot-toast";
 import Auth from "@/utils/Auth";
 // Client-side cache, shared for the whole session of the user in the browser.
