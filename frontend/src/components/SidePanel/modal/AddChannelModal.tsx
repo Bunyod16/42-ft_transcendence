@@ -12,7 +12,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../../apiClient/apiClient"
 import { ChatChannel, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import { toast } from "react-hot-toast";

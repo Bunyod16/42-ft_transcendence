@@ -20,7 +20,7 @@ import BlockSharpIcon from "@mui/icons-material/BlockSharp";
 import VolumeOffSharpIcon from "@mui/icons-material/VolumeOffSharp";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
 
-import axios from "axios";
+import axios from "../../apiClient/apiClient"
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
 

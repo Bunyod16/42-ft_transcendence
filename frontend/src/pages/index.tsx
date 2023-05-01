@@ -1,7 +1,7 @@
 import React from "react";
 
 import useUserStore from "@/store/userStore";
-import axios from "axios";
+import axios from "../components/apiClient/apiClient"
 import { socket } from "@/components/socket/socket";
 import Login from "./login";
 import Lobby from "@/components/Lobby";

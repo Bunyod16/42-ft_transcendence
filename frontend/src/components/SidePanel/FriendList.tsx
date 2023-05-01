@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import useFriendsStore from "@/store/friendsStore";
 import PendingBox from "./PendingBox";
 import useUserStore from "@/store/userStore";

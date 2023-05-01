@@ -6,7 +6,7 @@ import {
   Avatar,
   TextField,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import useUserStore from "@/store/userStore";
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
