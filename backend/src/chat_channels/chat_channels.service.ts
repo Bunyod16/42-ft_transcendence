@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { UserService } from 'src/user/user.service';
+import { encodePassword } from 'src/utils/bcrypt';
 
 @Injectable()
 export class ChatChannelsService {
@@ -57,6 +58,51 @@ export class ChatChannelsService {
 
     //immeadiately add owner to channelmembers
     await this.chatChannelsMembersService.create(ownerId, savedChannel.id);
+    return savedChannel;
+  }
+
+  async create_protected_group_message(
+    channelName: string,
+    channelPassword: string,
+    ownerId: number,
+  ) {
+    if (channelPassword == null || channelName == null) {
+      throw new HttpException(
+        'channelPassword and channelName must no be null',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    //see if owner exist or not
+    await this.userService.findOne(ownerId);
+    const channel = new ChatChannel();
+
+    //default chatChannel group message settings
+    channel.channel_type = ChannelType.PROTECTED;
+    channel.ownerId = ownerId;
+    channel.name = channelName;
+    channel.password = encodePassword(channelPassword);
+    channel.chatType = ChatType.GROUP_MESSAGE;
+
+    const errors = await validate(channel);
+
+    if (errors.length > 0) {
+      console.log('Validation errors:', errors);
+      throw new CustomException(
+        `Some Bad Shit Happened`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        `ChatChannel => create_group_message()`,
+      );
+    }
+
+    const savedChannel = await this.chatChannelRepository.save(channel);
+
+    //immeadiately add owner to channelmembers
+    await this.chatChannelsMembersService.createProtected(
+      ownerId,
+      savedChannel.id,
+      channel.password,
+    );
     return savedChannel;
   }
 

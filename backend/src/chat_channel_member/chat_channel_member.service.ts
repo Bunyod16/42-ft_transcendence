@@ -19,6 +19,7 @@ import {
 } from 'src/chat_channels/entities/chat_channel.entity';
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { encodePassword } from 'src/utils/bcrypt';
 
 @Injectable()
 export class ChatChannelMemberService {
@@ -92,10 +93,7 @@ export class ChatChannelMemberService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      console.log('rannnnnn');
-      console.log(chatChannel);
-      console.log(password, chatChannel.password);
-      if (password != chatChannel.password) {
+      if (encodePassword(password) != chatChannel.password) {
         throw new HttpException('wrong password', HttpStatus.BAD_REQUEST);
       }
       const createChatChannelMemberDto = new CreateChatChannelMemberDto();

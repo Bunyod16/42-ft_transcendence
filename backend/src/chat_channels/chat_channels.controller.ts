@@ -43,6 +43,28 @@ export class ChatChannelsController {
     return chatChannel;
   }
 
+  @Post('/protectedGroupMessage')
+  @UseGuards(UserAuthGuard)
+  async create_protected_group_message(
+    @Body('name') channelName: string,
+    @Body('password') channelPassword: string,
+    @Req() request: any,
+  ) {
+    const chatChannel = await this.chatChannelsService.create_protected_group_message(
+      channelName,
+      channelPassword,
+      request.user.id,
+    );
+
+    Logger.log(
+      `Created ChatChannel with id = [${chatChannel.id}]`,
+      'ChatChannel => create()',
+    );
+
+    return chatChannel;
+  }
+
+
   @Post('/groupMessageTesting')
   async create_group_message_testing(
     @Body('name') channelName: string,
