@@ -138,10 +138,11 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
   }, [open]);
 
   const handleCreateChannel = () => {
-    if (channelValue.name === "") return alert("Channel name is missing");
+    if (channelValue.name === "")
+      return toast.error("Channel name is missing!");
     if (isProtected)
       if (channelValue.password === "")
-        return alert("Channel password is missing");
+        return toast.error("Channel password is missing!");
     axios
       .post("/chat-channels/groupMessage", { name: channelValue.name })
       .then((res) => {
@@ -154,7 +155,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
             })
             .then((res) => console.log("success", { res }))
             .catch((err) => console.log(err));
-        alert("Created Channel!");
+        toast.success(`Created ${channelValue.name}!`);
         setOpen(false);
       });
   };
@@ -243,7 +244,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           color="secondary"
           size="small"
           fullWidth
-          sx={{ mt: 1 }}
+          sx={{ mt: 2 }}
           value={channelValue.name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setChannelValue({ ...channelValue, name: e.target.value })
@@ -269,7 +270,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
               color="secondary"
               size="small"
               fullWidth
-              sx={{ mt: 1, mb: 2 }}
+              sx={{ mb: 2 }}
               value={channelValue.password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setChannelValue({ ...channelValue, password: e.target.value })

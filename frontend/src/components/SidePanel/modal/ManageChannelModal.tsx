@@ -5,16 +5,14 @@ import {
   Box,
   Typography,
   Button,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  OutlinedInput,
   ListItem,
   ListItemButton,
   ListItemText,
   Tooltip,
   Avatar,
+  TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
@@ -180,7 +178,7 @@ const ManageChannelModal = ({
           Manage channel
         </Typography>
         {/* <Typography paddingTop={1}>Set a channel name</Typography> */}
-        <FormControl sx={{ my: 1 }} variant="outlined" size="small" fullWidth>
+        {/* <FormControl sx={{ my: 1 }} variant="outlined" size="small" fullWidth>
           <InputLabel htmlFor="outlined-adornment-password">
             New password
           </InputLabel>
@@ -201,12 +199,37 @@ const ManageChannelModal = ({
             }
             label="New password"
           />
-        </FormControl>
+        </FormControl> */}
+
+        <TextField
+          id="input-with-icon-textfield"
+          label="New password"
+          type={showPassword ? "text" : "password"}
+          sx={{ my: 2 }}
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+          size="small"
+        />
+
         <Button color="secondary" variant="contained" fullWidth>
           Change password
         </Button>
 
-        <Typography variant="h6" marginTop={2} marginBottom={1}>
+        <Typography variant="h6" marginTop={3} marginBottom={1}>
           Channel members
         </Typography>
         {members.map((member, i) => (
