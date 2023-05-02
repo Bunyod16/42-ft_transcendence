@@ -22,6 +22,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ChatChannelMemberModule } from './chat_channel_member/chat_channel_member.module';
 import { ChatSocketsModule } from './chat-sockets/chat-sockets.module';
 import { ContentModule } from './content/content.module';
+import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
@@ -43,6 +46,25 @@ import { ContentModule } from './content/content.module';
         return dataSource;
       },
     }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const redis_host: string = configService.get<string>('REDIS_HOST') || process.env.REDIS_HOST || 'localhost';
+        const redis_port: number = configService.get<number>('REDIS_PORT') || parseInt(process.env.REDIS_PORT) || 6379;
+        return {
+          // 1000 is for microseconds despite documentation saying seconds..
+          ttl: 24 * 60 * 60 * 1000,
+          store: await redisStore({
+            socket: {
+              host: redis_host,
+              port: redis_port,
+            }
+          })
+        }
+      },
+    inject: [ConfigService],
+    isGlobal: true
+    }),
     UserModule,
     TwoFactorModule,
     ConfigModule.forRoot({ isGlobal: true }),
@@ -63,6 +85,12 @@ import { ContentModule } from './content/content.module';
     ContentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}
