@@ -214,11 +214,10 @@ export class ChatChannelsService {
       .createQueryBuilder('chatChannel')
       .leftJoin('chatChannel.chatChannelMembers', 'chatChannelMember')
       .where(
-        '(chatChannel.chatType = :chatType AND chatChannel.channel_type = :channelType) AND \
+        '(chatChannel.chatType = :chatType) AND \
         (chatChannelMember.user.id <> :userId)',
         {
           chatType: ChatType.GROUP_MESSAGE,
-          channelType: ChannelType.PUBLIC,
           userId: userId,
         },
       )
