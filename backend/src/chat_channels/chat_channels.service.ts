@@ -102,8 +102,9 @@ export class ChatChannelsService {
     await this.chatChannelsMembersService.createProtected(
       ownerId,
       savedChannel.id,
-      channel.password,
+      channelPassword,
     );
+
     return savedChannel;
   }
 

@@ -20,6 +20,7 @@ import {
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { encodePassword } from 'src/utils/bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatChannelMemberService {
@@ -83,19 +84,27 @@ export class ChatChannelMemberService {
     password: string,
   ) {
     try {
-      console.log(chatChannelId);
       const user: User = await this.userService.findOne(userId);
       const chatChannel: ChatChannel =
         await this.chatChannelService.findOneWithPassword(chatChannelId);
+
       if (password == null) {
-        throw new HttpException(
-          'joining protected channel requires password',
+        throw new CustomException(
+          'Joining protected ChatChannel requires password',
           HttpStatus.BAD_REQUEST,
+          `ChatChannelMember => createProtected`,
         );
       }
-      if (encodePassword(password) != chatChannel.password) {
-        throw new HttpException('wrong password', HttpStatus.BAD_REQUEST);
+      const passwordIsCorrect = bcrypt.compare(password, chatChannel.password);
+
+      if (!passwordIsCorrect) {
+        throw new CustomException(
+          `Wrong password for ChatChannel`,
+          HttpStatus.BAD_REQUEST,
+          `ChatChannelMember => createProtected`,
+        );
       }
+
       const createChatChannelMemberDto = new CreateChatChannelMemberDto();
 
       createChatChannelMemberDto.user = user;
@@ -109,20 +118,20 @@ export class ChatChannelMemberService {
         throw new CustomException(
           `${error.response.message}`,
           HttpStatus.NOT_FOUND,
-          'ChatChannelMeber => create()',
+          'ChatChannelMeber => createProtected()',
         );
       } else if (error.name === 'QueryFailedError') {
         throw new CustomException(
           `User already In ChatChannel`,
           HttpStatus.BAD_REQUEST,
-          'ChatChannelMember => create()',
+          'ChatChannelMember => createProtected()',
           error,
         );
       } else {
         throw new CustomException(
           `${error.name}`,
           HttpStatus.INTERNAL_SERVER_ERROR,
-          'ChatChannelMember => create()',
+          'ChatChannelMember => createProtected()',
           error,
         );
       }
