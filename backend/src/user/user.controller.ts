@@ -12,6 +12,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  UseInterceptors
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,6 +22,7 @@ import { encodePassword } from 'src/utils/bcrypt';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import RequestWithUser from 'src/auth/requestWithUser.interace';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 // import fs from 'fs';
 
 export class temp {
@@ -53,13 +55,13 @@ export class UserController {
   //   }
   //   return boringAvatar;
   // }
-
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     createUserDto.password = encodePassword(createUserDto.password);
     return await this.userService.create(createUserDto);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get()
   async findAll() {
     const users = await this.userService.findAll();
