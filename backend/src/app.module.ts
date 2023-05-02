@@ -85,12 +85,6 @@ import { redisStore } from 'cache-manager-redis-yet';
     ContentModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}
