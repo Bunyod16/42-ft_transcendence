@@ -212,7 +212,7 @@ export class ChatChannelsService {
 
     const publicChats = await this.chatChannelRepository
       .createQueryBuilder('chatChannel')
-      .leftJoinAndSelect('chatChannel.chatChannelMembers', 'chatChannelMember')
+      .leftJoin('chatChannel.chatChannelMembers', 'chatChannelMember')
       .where(
         'chatChannel.chatType = :chatType AND chatChannel.channel_type = :channelType',
         { chatType: ChatType.GROUP_MESSAGE, channelType: ChannelType.PUBLIC },
