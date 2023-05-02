@@ -95,7 +95,11 @@ export class ChatChannelMemberService {
           `ChatChannelMember => createProtected`,
         );
       }
-      const passwordIsCorrect = bcrypt.compare(password, chatChannel.password);
+
+      const passwordIsCorrect = await bcrypt.compare(
+        password,
+        chatChannel.password,
+      );
 
       if (!passwordIsCorrect) {
         throw new CustomException(
