@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Inject, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository, In } from 'typeorm';
@@ -8,18 +8,49 @@ import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { Match } from 'src/match/entities/match.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     // const password = encodePassword(createUserDto.password);
     // const newUser = this.userRepository.create({ ...createUserDto, password})
-    return this.userRepository.save(createUserDto);
+
+    // need to think of a more elegant way of doing this..
+    const initialEmptyFields = {
+      achievements: [],
+      matchesAsPlayerOne: [],
+      matchesAsPlayerTwo: [],
+      requests: [],
+      responses: [],
+      sentMessages: []
+    }
+
+    let usersObject: any;
+    let users: User[];
+    let createdUser: User = await this.userRepository.save(createUserDto);
+
+    createdUser = {
+      ...createdUser,
+      ...initialEmptyFields
+    }
+
+    try{
+      usersObject = await this.cacheManager.get('/user');
+      users = usersObject ? [ ...usersObject, createdUser ] : [ createdUser ]
+      await this.cacheManager.set('/user', users);
+    } catch (error){
+      Logger.log(error.message);
+    }
+
+    return createdUser;
   }
 
   async findAll() {
