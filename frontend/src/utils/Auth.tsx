@@ -1,19 +1,17 @@
 import useUserStore from "@/store/userStore";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import axios from "axios";
 import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
 import { toast } from "react-hot-toast";
+import Error from "next/error";
 
 export default function Auth({ children }: { children: ReactElement }) {
   const { isLoggedIn, logout, login, nickName } = useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const [error, setError] = useState("");
 
   React.useEffect(() => {
     function refreshToken() {
@@ -30,20 +28,32 @@ export default function Auth({ children }: { children: ReactElement }) {
         });
     }
 
-    if (isLoggedIn) return;
+    // if (isLoggedIn) return;
     axios
       .get("auth/profile")
       .then((res) => {
+        if (isLoggedIn) return;
         login(res.data.nickName, res.data.id);
         console.log("user authenticated");
         socket.connect();
       })
-      .catch(() => {
+      .catch((err) => {
         // try refresh token
+        if (err.code === "ERR_NETWORK") {
+          console.log("here?");
+          setError(`${err.code} | The server is down. Try again later...`);
+          return;
+        }
+        console.log("auth/profile");
+        console.log("READ THIS", err);
         refreshToken();
-      });
+      })
+      .finally(() => setIsHydrated(true));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (error) return <Loading description={error} />;
 
   if (!isHydrated) return <Loading />;
 

@@ -25,8 +25,8 @@ export default function Loading({ description }: loadingProps) {
         width={384}
         height={384}
       ></Image>
-      <Typography sx={{ color: "black" }}>
-        {description ? description : "Loadingg...."}
+      <Typography variant="h5">
+        {description ? description : "Loading...."}
       </Typography>
     </Paper>
   );
