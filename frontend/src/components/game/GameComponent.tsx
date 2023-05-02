@@ -4,8 +4,16 @@ import { Perf } from "r3f-perf";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Box } from "@mui/material";
 import Overlay from "./Overlay";
+import { useRouter } from "next/router";
+import { socket } from "../socket/socket";
 
 function GameComponent() {
+  const router = useRouter();
+
+  router.beforePopState(() => {
+    socket.disconnect();
+    return true;
+  });
   return (
     <Box
       component={"div"}

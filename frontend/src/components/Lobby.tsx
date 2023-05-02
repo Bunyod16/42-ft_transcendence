@@ -1,6 +1,6 @@
-import { Button, Box, duration } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { socket } from "./socket/socket";
-import React, { useState } from "react";
+import React from "react";
 import useUserStore from "@/store/userStore";
 import useGameStore from "@/store/gameStore";
 import { MatchInfo } from "@/types/game-type";
@@ -16,10 +16,10 @@ const Lobby = () => {
   const updateStatus = useGameStore((state) => state.updateGameStatus);
   const [isQueueing, setIsQueueing] = React.useState(false);
   const router = useRouter();
-  const [friendsInvited, setFriendsInvited] = useState<string[]>([]);
 
   // *start queue here
   const handleQueue = () => {
+    socket.connect();
     socket.emit("queueEnter");
 
     // updateView("Game");
@@ -54,8 +54,6 @@ const Lobby = () => {
   const handleOpen = () => {
     setOpen(true);
   };
-
-  const [progress, setProgress] = useState(0);
 
   // https://nextjs.org/docs/api-reference/next/router#routerbeforepopstate
   // TODO implement this thing ^^
