@@ -88,8 +88,13 @@ export class AuthController {
   @Get('refresh')
   async refresh(@Req() req: RequestWithUser, @Res() res) {
     try {
-      const cookies = parse(req.headers.cookie);
-      const refresh = cookies.Refresh;
+      const cookieString = req.headers?.cookie;
+      if (!cookieString)
+        throw Error('Cookie is missing in request');
+      const cookies = parse(cookieString);
+      const refresh = cookies?.Refresh;
+      if (!refresh)
+        throw Error('Refresh field missing in cookies');
       const user = await this.jwtRefreshService.verifyRefreshToken(refresh);
       const accessTokenCookie = this.jwtAccessService.generateAccessToken(user);
       req.res.setHeader('Set-Cookie', accessTokenCookie);
