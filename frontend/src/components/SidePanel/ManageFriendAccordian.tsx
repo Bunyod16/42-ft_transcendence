@@ -4,26 +4,30 @@ import {
   AccordionSummary,
   Typography,
   List,
-  setRef,
   IconButton,
   ListItem,
   ListItemButton,
   ListItemText,
+  AccordionDetails,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
+import { FriendType } from "@/types/social-type";
+import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
+import { toast } from "react-hot-toast";
 
 const ManageFriendAccordian = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
-  const [incomingReqs, outgoingReqs, setRequests] = usePendingFriendStore(
+  const [incomingReqs, outgoingReqs, updateRequests] = usePendingFriendStore(
     (state) => [
       state.incomingRequests,
       state.outgoingRequests,
-      state.setRequests,
+      state.updateRequests,
     ],
   );
+  const [blockedFriends, setBlockedFriends] = useState<FriendType[]>([]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -32,14 +36,8 @@ const ManageFriendAccordian = () => {
 
   // get pending and blocked friend
   useEffect(() => {
-    axios
-      .get("/friend-request/findUserPendingRequest")
-      .then((res) => {
-        // console.log(res);
-        setRequests(res.data);
-      })
-      .catch((err) => console.log(err));
-  }, [setRequests]);
+    updateRequests();
+  }, []);
 
   const acceptFriendRequest = (id: number) => {
     axios
@@ -47,78 +45,126 @@ const ManageFriendAccordian = () => {
         friendId: id,
         friendStatus: "Accepted",
       })
-      .then((res) => console.log(res))
+      .then((res) => {
+        alert("Accepted fren");
+        updateRequests();
+      })
       .catch((err) => console.log(err));
   };
+
+  const handleDeleteFriend = (friendId: number) => {
+    axios
+      .delete(`/friend-request/deleteFriendRequestByFriendId`, {
+        data: {
+          friendId: friendId,
+        },
+      })
+      .then(() => {
+        toast.success("Deleltate");
+        // alert("DELTEE FREN");
+        updateRequests();
+        console.log("where toast");
+      });
+  };
+
+  const handleDeleteReq = (friendId: number) => {
+    console.log("delete req");
+    axios
+      .delete(`/friend-request/deleteFriendRequestByFriendId`, {
+        data: {
+          friendId: friendId,
+        },
+      })
+      .then(() => {
+        toast.success("Deleltate req");
+        // alert("DELTEE FREN");
+        updateRequests();
+        console.log("where toast delte req");
+      });
+  };
+
+  useEffect(() => {
+    axios.get("/friend-request/findUserBlockedFriends").then((res) => {
+      const tmps: any[] = res.data;
+      const tmpBlocked: FriendType[] = [];
+      tmps.map((tmp) => {
+        tmpBlocked.push({ ...tmp.friend, chatChannel: tmp.chatChannels });
+      });
+      setBlockedFriends(tmpBlocked);
+      console.log(tmpBlocked);
+    });
+  }, []);
 
   return (
     <>
       <Accordion
         expanded={expanded === "panel1"}
         onChange={handleChange("panel1")}
+        sx={{}}
       >
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+        <AccordionSummary
+          aria-controls="panel1d-content"
+          id="panel1d-header"
+          sx={{}}
+        >
           <Typography>Pending</Typography>
         </AccordionSummary>
-        <List>
-          {incomingReqs.map((req, index) => (
-            <ListItem
-              key={index}
-              sx={{
-                backgroundColor: "#FEFEFE",
-                mb: "8px",
-                width: "95%",
-                color: "black",
-                borderRadius: "8px",
-              }}
-            >
-              {/** Need to change src to img thingy */}
-              <ListItemText sx={{ ml: "12px" }} primary={req.friend.nickName} />
-              <IconButton onClick={() => acceptFriendRequest(req.friend.id)}>
-                <CheckCircleSharpIcon
-                  sx={
-                    {
-                      // fill: req.friend.online ? "green" : "red",
-                      // mr: "12px",
-                      // width: "12px",
-                      // height: "12px",
-                    }
-                  }
-                />
-              </IconButton>
-            </ListItem>
-          ))}
-          {/** map new outgoing state */}
-          {outgoingReqs.map((req, index) => (
-            <ListItem
-              key={index}
-              disablePadding
-              sx={{
-                backgroundColor: "#FEFEFE",
-                mb: "8px",
-                width: "95%",
-                color: "black",
-                borderRadius: "8px",
-              }}
-            >
-              {/** Need to change src to img thingy */}
-              <ListItemButton>
-                <ListItemText
-                  sx={{ ml: "12px" }}
-                  primary={req.friend.nickName}
-                />
-                <CloseSharpIcon
-                  sx={{
-                    // fill: req.friend.online ? "green" : "red",
-                    mr: "12px",
-                    width: "12px",
-                    height: "12px",
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        <AccordionDetails>
+          {incomingReqs.length || outgoingReqs.length ? (
+            <List disablePadding sx={{ maxHeight: 200, overflow: "auto" }}>
+              {incomingReqs.map((req, index) => (
+                <ListItem key={index} disablePadding>
+                  {/** Need to change src to img thingy */}
+                  <ListItemButton
+                    disableRipple
+                    sx={{ cursor: "default", padding: "4px 8px" }}
+                  >
+                    <ListItemText
+                      sx={{ ml: "12px" }}
+                      primary={req.friend.nickName}
+                    />
+                    <IconButton
+                      onClick={() => acceptFriendRequest(req.friend.id)}
+                    >
+                      <CheckCircleSharpIcon
+                        sx={
+                          {
+                            // fill: req.friend.online ? "green" : "red",
+                            // mr: "12px",
+                            // width: "12px",
+                            // height: "12px",
+                          }
+                        }
+                      />
+                    </IconButton>
+                  </ListItemButton>
+                </ListItem>
+              ))}
+              {/** map new outgoing state */}
+              {outgoingReqs.map((req, index) => (
+                <ListItem key={index} disablePadding>
+                  {/** Need to change src to img thingy */}
+                  <ListItemButton
+                    disableRipple
+                    sx={{ cursor: "default", padding: "4px 8px" }}
+                  >
+                    <ListItemText
+                      sx={{ ml: "12px" }}
+                      primary={req.friend.nickName}
+                    />
+                    <IconButton onClick={() => handleDeleteReq(req.friend.id)}>
+                      <CloseSharpIcon />
+                    </IconButton>
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography
+              sx={{ color: "gray" }}
+            >{`Nothing here... :')`}</Typography>
+          )}
+        </AccordionDetails>
       </Accordion>
       <Accordion
         expanded={expanded === "panel2"}
@@ -127,7 +173,31 @@ const ManageFriendAccordian = () => {
         <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
           <Typography>Blocked</Typography>
         </AccordionSummary>
-        <List></List>
+        <AccordionDetails>
+          {blockedFriends.length ? (
+            <List disablePadding sx={{ maxHeight: 200, overflow: "auto" }}>
+              {blockedFriends.map((friend, index) => (
+                <ListItem key={index} disablePadding>
+                  {/** Need to change src to img thingy */}
+                  <ListItemButton
+                    disableRipple
+                    sx={{ cursor: "default", padding: "4px 8px" }}
+                  >
+                    <ListItemText
+                      sx={{ ml: "12px" }}
+                      primary={friend.nickName}
+                    />
+                    <IconButton onClick={() => handleDeleteFriend(friend.id)}>
+                      <DeleteSharpIcon />
+                    </IconButton>
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography sx={{ color: "gray" }}>{`Nothing here :)`}</Typography>
+          )}
+        </AccordionDetails>
       </Accordion>
     </>
   );

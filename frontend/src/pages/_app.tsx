@@ -6,7 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import theme from "@/styles/theme";
 import createEmotionCache from "@/styles/createEmotionCache";
-import axios from "../components/apiClient/apiClient"
+import axios from "../components/apiClient/apiClient";
 import { Toaster } from "react-hot-toast";
 import Auth from "@/utils/Auth";
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -28,7 +28,6 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <Toaster />
         <CssBaseline />
         <Auth>
           <Component {...pageProps} />

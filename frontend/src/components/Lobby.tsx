@@ -160,7 +160,7 @@ const Lobby = () => {
           </Button>
           <CustomGameModal open={open} setOpen={setOpen} socket={socket} />
         </Box>
-        <Toaster />
+        {/* <Toaster /> */}
       </DefaultLayout>
     </>
   );

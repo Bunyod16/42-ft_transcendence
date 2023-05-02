@@ -5,8 +5,7 @@ import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
-import { toast } from "react-hot-toast";
-import Error from "next/error";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function Auth({ children }: { children: ReactElement }) {
   const { isLoggedIn, logout, login, nickName } = useUserStore();
@@ -59,6 +58,7 @@ export default function Auth({ children }: { children: ReactElement }) {
 
   return (
     <>
+      <Toaster />
       {nickName == null ? <PickUsername /> : isLoggedIn ? children : <Login />}
     </>
   );

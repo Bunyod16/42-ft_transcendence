@@ -15,6 +15,8 @@ import useUserStore from "@/store/userStore";
 import { FriendType } from "@/types/social-type";
 import { chatSocket } from "../socket/socket";
 import ManageFriendAccordian from "./ManageFriendAccordian";
+import usePendingFriendStore from "@/store/pendingFriendStore";
+import { toast } from "react-hot-toast";
 
 function FriendBox() {
   const [friends] = useFriendsStore((state) => [state.friends]);
@@ -70,23 +72,25 @@ function FriendBox() {
 }
 
 export default function FriendList() {
-  const [setFriendList, setOnline, setOffline] = useFriendsStore((state) => [
-    state.setFriendList,
+  const [updateFriendList, setOnline, setOffline] = useFriendsStore((state) => [
+    state.updateFriendList,
     state.setOnline,
     state.setOffline,
   ]);
+  const updateRequests = usePendingFriendStore((state) => state.updateRequests);
   // const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
-    axios
-      .get("/friend-request/findUserFriendsWithDirectMessage")
-      .then((response) => {
-        setFriendList(response.data);
-        // alert("YOU NOW HAVE FRENS");
-      })
-      .catch((error) => {
-        console.log("error: ", error);
-        // alert("KENOT SET FRIEND");
-      });
+    // axios
+    //   .get("/friend-request/findUserFriendsWithDirectMessage")
+    //   .then((response) => {
+    //     setFriendList(response.data);
+    //     // alert("YOU NOW HAVE FRENS");
+    //   })
+    //   .catch((error) => {
+    //     console.log("error: ", error);
+    //     // alert("KENOT SET FRIEND");
+    //   });
+    updateFriendList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,21 +105,29 @@ export default function FriendList() {
 
     chatSocket.on("friendOnline", handleFriendOnline);
     chatSocket.on("friendOffline", handleFriendOffline);
+
+    return () => {
+      chatSocket.off("friendOnline", handleFriendOnline);
+      chatSocket.off("friendOffline", handleFriendOffline);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleFriend() {
+  function handleAddFriend() {
     const promptFriend: string = prompt("Enter friend Name") || "";
     axios
       .post("/friend-request/addFriendByNickName", {
         nickName: promptFriend,
       })
       .then((response) => {
-        alert("BEFRIENDING SUCCESSFUL");
+        // alert("BEFRIENDING SUCCESSFUL");
         console.log(response);
+        updateRequests();
+        toast.success("Request successful!");
       })
       .catch((err) => {
-        alert("BEFRIENDING FAIL");
+        toast.error("Request failed!");
+        // alert("BEFRIENDING FAIL");
         console.log(err);
       });
   }
@@ -145,7 +157,7 @@ export default function FriendList() {
             border: "2px solid #626262",
           },
         }}
-        onClick={handleFriend}
+        onClick={handleAddFriend}
       >
         Add Friend
       </Button>
