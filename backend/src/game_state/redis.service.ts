@@ -10,7 +10,7 @@ export class RedisService {
 
   constructor(private configService: ConfigService) {
 
-    const redis_port: number = parseInt(configService.get('REDIS_CONNECTION')) || parseInt(process.env.REDIS_CONNECTION) || 6379;
+    const redis_port: number =configService.get<number>('REDIS_PORT') || parseInt(process.env.REDIS_PORT) || 6379;
     const redis_host: string = configService.get('REDIS_HOST') || process.env.REDIS_HOST || 'localhost';
 
     this.client = new Redis(
