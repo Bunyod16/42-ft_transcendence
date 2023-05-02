@@ -8,18 +8,14 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "../apiClient/apiClient";
 import useFriendsStore from "@/store/friendsStore";
-import PendingBox from "./PendingBox";
 import useUserStore from "@/store/userStore";
 import { FriendType } from "@/types/social-type";
 import { chatSocket } from "../socket/socket";
-// import { UserProfile } from "@/types/user-profile-type";
+import ManageFriendAccordian from "./ManageFriendAccordian";
 
-// interface FriendPanelType {
-//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-// }
 function FriendBox() {
   const [friends] = useFriendsStore((state) => [state.friends]);
   const setPanel = useUserStore((state) => state.setPanel);
@@ -31,14 +27,12 @@ function FriendBox() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        // height: "100%",
         overflow: "auto",
         pr: 1,
         flex: 1,
       }}
       aria-label="contacts"
     >
-      {/** map new friend state */}
       {friends.map((friend, index) => (
         <ListItem
           key={index}
@@ -81,7 +75,7 @@ export default function FriendList() {
     state.setOnline,
     state.setOffline,
   ]);
-  const [pendingActive, setPendingActive] = useState(false);
+  // const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
     axios
       .get("/friend-request/findUserFriendsWithDirectMessage")
@@ -158,7 +152,7 @@ export default function FriendList() {
 
       <FriendBox />
       {/* <Typography>Pending</Typography> */}
-      <Button
+      {/* <Button
         // variant="outlined"
         // color="primary"
         fullWidth
@@ -175,7 +169,26 @@ export default function FriendList() {
       >
         Pending
       </Button>
-      {pendingActive && <PendingBox />}
+      <Button
+        // variant="outlined"
+        // color="primary"
+        fullWidth
+        sx={{
+          mt: "8px",
+          color: "#FEFEFE",
+          // border: "2px solid #A3A3A3",
+          justifyContent: "start",
+          "&:hover": {
+            backgroundColor: "#00000050",
+          },
+        }}
+        onChange={handlePendingActive("hello")}
+      >
+        Blocked
+      </Button> */}
+
+      {/* {pendingActive && <PendingBox />} */}
+      <ManageFriendAccordian />
     </Box>
   );
 }
