@@ -2,18 +2,8 @@ import React from "react";
 
 import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
-import useUserStore from "@/store/userStore";
-import { useRouter } from "next/router";
 
 export default function LoginPanel() {
-  const { isLoggedIn } = useUserStore();
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (isLoggedIn) router.push("/");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <Box
       component={"div"}
