@@ -17,6 +17,7 @@ import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import { FriendType } from "@/types/social-type";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import { toast } from "react-hot-toast";
+import useBlockStore from "@/store/blockedStore";
 
 const ManageFriendAccordian = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
@@ -27,7 +28,11 @@ const ManageFriendAccordian = () => {
       state.updateRequests,
     ],
   );
-  const [blockedFriends, setBlockedFriends] = useState<FriendType[]>([]);
+  // const [blockedFriends, setBlockedFriends] = useState<FriendType[]>([]);
+  const [blocked, updateBlocked] = useBlockStore((state) => [
+    state.blocked,
+    state.updateBlocked,
+  ]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -37,6 +42,7 @@ const ManageFriendAccordian = () => {
   // get pending and blocked friend
   useEffect(() => {
     updateRequests();
+    updateBlocked();
   }, []);
 
   const acceptFriendRequest = (id: number) => {
@@ -60,10 +66,8 @@ const ManageFriendAccordian = () => {
         },
       })
       .then(() => {
-        toast.success("Deleltate");
-        // alert("DELTEE FREN");
-        updateRequests();
-        console.log("where toast");
+        toast.success("Friend deleted!");
+        updateBlocked();
       });
   };
 
@@ -83,17 +87,21 @@ const ManageFriendAccordian = () => {
       });
   };
 
-  useEffect(() => {
-    axios.get("/friend-request/findUserBlockedFriends").then((res) => {
-      const tmps: any[] = res.data;
-      const tmpBlocked: FriendType[] = [];
-      tmps.map((tmp) => {
-        tmpBlocked.push({ ...tmp.friend, chatChannel: tmp.chatChannels });
-      });
-      setBlockedFriends(tmpBlocked);
-      console.log(tmpBlocked);
-    });
-  }, []);
+  // const getBlockedFriends = () => {
+  //   axios.get("/friend-request/findUserBlockedFriends").then((res) => {
+  //     const tmps: any[] = res.data;
+  //     const tmpBlocked: FriendType[] = [];
+  //     tmps.map((tmp) => {
+  //       tmpBlocked.push({ ...tmp.friend, chatChannel: tmp.chatChannels });
+  //     });
+  //     setBlockedFriends(tmpBlocked);
+  //     console.log(tmpBlocked);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   getBlockedFriends();
+  // }, []);
 
   return (
     <>
@@ -126,16 +134,7 @@ const ManageFriendAccordian = () => {
                     <IconButton
                       onClick={() => acceptFriendRequest(req.friend.id)}
                     >
-                      <CheckCircleSharpIcon
-                        sx={
-                          {
-                            // fill: req.friend.online ? "green" : "red",
-                            // mr: "12px",
-                            // width: "12px",
-                            // height: "12px",
-                          }
-                        }
-                      />
+                      <CheckCircleSharpIcon />
                     </IconButton>
                   </ListItemButton>
                 </ListItem>
@@ -174,9 +173,9 @@ const ManageFriendAccordian = () => {
           <Typography>Blocked</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {blockedFriends.length ? (
+          {blocked.length ? (
             <List disablePadding sx={{ maxHeight: 200, overflow: "auto" }}>
-              {blockedFriends.map((friend, index) => (
+              {blocked.map((friend, index) => (
                 <ListItem key={index} disablePadding>
                   {/** Need to change src to img thingy */}
                   <ListItemButton

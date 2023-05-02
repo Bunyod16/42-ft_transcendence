@@ -5,12 +5,18 @@ import {
   ToggleButton,
   Tabs,
   Tab,
+  IconButton,
 } from "@mui/material";
 import ChannelList from "./ChannelList";
 import FriendList from "./FriendList";
 // import { TabTypes } from "../SidePanel";
 import { PanelData, TabTypes } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
+import RestartAltSharpIcon from "@mui/icons-material/RestartAltSharp";
+import useFriendsStore from "@/store/friendsStore";
+import useBlockStore from "@/store/blockedStore";
+import usePendingFriendStore from "@/store/pendingFriendStore";
+import { toast } from "react-hot-toast";
 
 // interface GeneralTabProps {
 //   tabs: TabTypes;
@@ -20,6 +26,17 @@ import useUserStore from "@/store/userStore";
 
 export default function GeneralTab() {
   const [tabs, setTabs] = useUserStore((state) => [state.tabs, state.setTabs]);
+  const updateFriendList = useFriendsStore((state) => state.updateFriendList);
+  const updateBlocked = useBlockStore((state) => state.updateBlocked);
+  const updateRequests = usePendingFriendStore((state) => state.updateRequests);
+
+  const handleRefresh = async () => {
+    const toastId = toast.loading("loading");
+    await updateFriendList();
+    await updateBlocked();
+    await updateRequests();
+    toast.dismiss(toastId);
+  };
 
   return (
     <>
@@ -51,16 +68,22 @@ export default function GeneralTab() {
             CHANNELS
           </ToggleButton>
         </ToggleButtonGroup> */}
-        <Tabs
-          value={tabs}
-          aria-label="basic tabs example"
-          onChange={(event: React.SyntheticEvent, newValue: number) => {
-            setTabs(newValue);
-          }}
-        >
-          <Tab label="FRIENDS" />
-          <Tab label="CHANNELS" />
-        </Tabs>
+        <Box component="div" sx={{ display: "flex" }}>
+          <Tabs
+            value={tabs}
+            aria-label="basic tabs example"
+            onChange={(event: React.SyntheticEvent, newValue: number) => {
+              setTabs(newValue);
+            }}
+            sx={{ float: "left", marginRight: "auto" }}
+          >
+            <Tab label="FRIENDS" />
+            <Tab label="CHANNELS" />
+          </Tabs>
+          <IconButton onClick={handleRefresh}>
+            <RestartAltSharpIcon />
+          </IconButton>
+        </Box>
       </Box>
       <Box
         component="div"
