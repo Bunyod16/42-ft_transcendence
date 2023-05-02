@@ -12,6 +12,9 @@ export class Achievement {
   @Column({ unique: true })
   description: string;
 
+  @Column({})
+  url: string;
+
   @OneToMany(
     () => UserAchievement,
     (userAchievement) => userAchievement.achievement,

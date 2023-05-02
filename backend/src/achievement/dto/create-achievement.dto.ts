@@ -1,11 +1,6 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-} from "class-validator";
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class CreateAchievementDto {
-
   @IsNotEmpty()
   @IsNumber()
   id: number;
@@ -15,4 +10,7 @@ export class CreateAchievementDto {
 
   @IsString()
   description: string;
+
+  @IsString()
+  url: string;
 }
