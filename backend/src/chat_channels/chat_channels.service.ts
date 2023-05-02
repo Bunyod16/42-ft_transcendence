@@ -214,16 +214,15 @@ export class ChatChannelsService {
       .createQueryBuilder('chatChannel')
       .leftJoin('chatChannel.chatChannelMembers', 'chatChannelMember')
       .where(
-        'chatChannel.chatType = :chatType AND chatChannel.channel_type = :channelType',
-        { chatType: ChatType.GROUP_MESSAGE, channelType: ChannelType.PUBLIC },
-      )
-      .andWhere(
-        'chatChannelMember.user IS NULL OR chatChannelMember.user.id <> :userId',
-        { userId },
+        '(chatChannel.chatType = :chatType AND chatChannel.channel_type = :channelType) AND \
+        (chatChannelMember.user.id <> :userId)',
+        {
+          chatType: ChatType.GROUP_MESSAGE,
+          channelType: ChannelType.PUBLIC,
+          userId: userId,
+        },
       )
       .getMany();
-
-    console.log(publicChats);
 
     return publicChats;
   }
