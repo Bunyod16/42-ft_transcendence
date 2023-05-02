@@ -54,6 +54,13 @@ interface TopBarProps {
 }
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
   const FriendDetail = () => {
+    const handleBlockFriend = () => {
+      axios.patch("/friend-request/updateByFriendId", {
+        friendId: panel.friendInfo?.id,
+        friendStatus: "blocked",
+      });
+    };
+
     return (
       <>
         <Box
@@ -86,7 +93,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             </Box>
             {/* TODO add block friend here!! */}
           </Button>
-          <IconButton sx={{ color: "#EF9A9A50" }}>
+          <IconButton sx={{ color: "#EF9A9A50" }} onClick={handleBlockFriend}>
             <PersonOffSharpIcon />
           </IconButton>
         </Box>
