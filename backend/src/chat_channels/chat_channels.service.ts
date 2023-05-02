@@ -18,6 +18,7 @@ import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { UserService } from 'src/user/user.service';
 import { encodePassword } from 'src/utils/bcrypt';
+import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
 
 @Injectable()
 export class ChatChannelsService {
@@ -203,6 +204,28 @@ export class ChatChannelsService {
     }
 
     return chatChannels;
+  }
+
+  async findAllPublicChannelsThatUserIsNotIn(userId: number) {
+    //check if user exist
+    await this.userService.findOne(userId);
+
+    const publicChats = await this.chatChannelRepository
+      .createQueryBuilder('chatChannel')
+      .leftJoinAndSelect('chatChannel.chatChannelMembers', 'chatChannelMember')
+      .where(
+        'chatChannel.chatType = :chatType AND chatChannel.channel_type = :channelType',
+        { chatType: ChatType.GROUP_MESSAGE, channelType: ChannelType.PUBLIC },
+      )
+      .andWhere(
+        'chatChannelMember.user IS NULL OR chatChannelMember.user.id <> :userId',
+        { userId },
+      )
+      .getMany();
+
+    console.log(publicChats);
+
+    return publicChats;
   }
 
   async findOne(id: number): Promise<ChatChannel> {

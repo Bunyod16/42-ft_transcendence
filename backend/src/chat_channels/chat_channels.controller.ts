@@ -18,6 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { ChannelType } from './entities/chat_channel.entity';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('chat-channels')
 @Controller('chat-channels')
@@ -50,11 +51,12 @@ export class ChatChannelsController {
     @Body('password') channelPassword: string,
     @Req() request: any,
   ) {
-    const chatChannel = await this.chatChannelsService.create_protected_group_message(
-      channelName,
-      channelPassword,
-      request.user.id,
-    );
+    const chatChannel =
+      await this.chatChannelsService.create_protected_group_message(
+        channelName,
+        channelPassword,
+        request.user.id,
+      );
 
     Logger.log(
       `Created ChatChannel with id = [${chatChannel.id}]`,
@@ -63,7 +65,6 @@ export class ChatChannelsController {
 
     return chatChannel;
   }
-
 
   @Post('/groupMessageTesting')
   async create_group_message_testing(
@@ -128,6 +129,7 @@ export class ChatChannelsController {
 
     return chatChannel;
   }
+
   @Get('/findAllPublicAndProtectedChannels')
   async findAllPublicAndProtectedChannels() {
     const chatChannel =
@@ -135,6 +137,24 @@ export class ChatChannelsController {
 
     Logger.log(
       `Trying to get all Public and Protected chatChannels`,
+      'chatChannel => findAllPublicAndProtectedChannels()',
+    );
+
+    return chatChannel;
+  }
+
+  @Get('/findAllPublicChannelsThatUserIsNotIn')
+  @UseGuards(UserAuthGuard)
+  async findAllPublicChannelsThatUserIsNotIn(@Req() req: any) {
+    const user: User = req.user;
+
+    const chatChannel =
+      await this.chatChannelsService.findAllPublicChannelsThatUserIsNotIn(
+        user.id,
+      );
+
+    Logger.log(
+      `Trying to get all Public chatChannels that User is not in`,
       'chatChannel => findAllPublicAndProtectedChannels()',
     );
 
