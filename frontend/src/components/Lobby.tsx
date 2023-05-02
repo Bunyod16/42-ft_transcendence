@@ -9,6 +9,33 @@ import { useRouter } from "next/router";
 import CustomGameModal from "./customGame/CustomGameModal";
 import toast, { Toaster } from "react-hot-toast";
 import { UserProfile } from "@/types/user-profile-type";
+import Loading from "@/utils/Loading";
+
+interface QueueingStateProp {
+  handleQueueLeave: () => void;
+}
+const QueueingState = ({ handleQueueLeave }: QueueingStateProp) => {
+  return (
+    <>
+      <Loading description="Queueing..." />
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{
+          typography: "h4",
+          fontWeight: "medium",
+          width: "300px",
+          padding: 2,
+          marginBottom: 5,
+          position: " absolute",
+        }}
+        onClick={handleQueueLeave}
+      >
+        Cancel
+      </Button>
+    </>
+  );
+};
 
 const Lobby = () => {
   const updateView = useUserStore((state) => state.updateView);
@@ -30,6 +57,7 @@ const Lobby = () => {
 
   //! queue leave function
   const handleQueueLeave = () => {
+    console.log("queue leave");
     socket.emit("queueLeave");
     setIsQueueing(false);
   };
@@ -114,6 +142,8 @@ const Lobby = () => {
     };
   }, []);
 
+  console.log(isQueueing, open);
+
   return (
     <>
       <DefaultLayout>
@@ -131,33 +161,39 @@ const Lobby = () => {
             justifyContent: "center",
           }}
         >
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              typography: "h4",
-              fontWeight: "medium",
-              width: "300px",
-              padding: 2,
-              marginBottom: 5,
-            }}
-            onClick={isQueueing ? handleQueueLeave : handleQueue}
-          >
-            {isQueueing ? "Cancel" : "Quick Play"}
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              typography: "h4",
-              fontWeight: "medium",
-              width: "300px",
-              padding: 2,
-            }}
-            onClick={handleOpen}
-          >
-            {isQueueing ? "Cancel" : "Play With Friends"}
-          </Button>
+          {!(isQueueing || open) ? (
+            <>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{
+                  typography: "h4",
+                  fontWeight: "medium",
+                  width: "300px",
+                  padding: 2,
+                  marginBottom: 5,
+                }}
+                onClick={isQueueing ? handleQueueLeave : handleQueue}
+              >
+                {isQueueing ? "Cancel" : "Quick Play"}
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{
+                  typography: "h4",
+                  fontWeight: "medium",
+                  width: "300px",
+                  padding: 2,
+                }}
+                onClick={handleOpen}
+              >
+                {"Play With Friends"}
+              </Button>
+            </>
+          ) : (
+            <QueueingState handleQueueLeave={handleQueueLeave} />
+          )}
           <CustomGameModal open={open} setOpen={setOpen} socket={socket} />
         </Box>
         {/* <Toaster /> */}

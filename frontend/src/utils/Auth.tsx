@@ -6,6 +6,7 @@ import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
 import { toast, Toaster } from "react-hot-toast";
+import { Box } from "@mui/material";
 
 export default function Auth({ children }: { children: ReactElement }) {
   const { isLoggedIn, logout, login, nickName } = useUserStore();
@@ -52,7 +53,12 @@ export default function Auth({ children }: { children: ReactElement }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (error) return <Loading description={error} />;
+  if (error)
+    return (
+      <Box component="div" sx={{ height: "100vh" }}>
+        <Loading description={error} />;
+      </Box>
+    );
 
   if (!isHydrated) return <Loading />;
 
