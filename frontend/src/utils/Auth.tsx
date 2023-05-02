@@ -5,6 +5,7 @@ import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
+import { toast } from "react-hot-toast";
 
 export default function Auth({ children }: { children: ReactElement }) {
   const { isLoggedIn, logout, login, nickName } = useUserStore();
@@ -20,30 +21,29 @@ export default function Auth({ children }: { children: ReactElement }) {
         .get("auth/refresh")
         .then(() => {
           console.log("refreshed token");
-          axios.get("auth/profile").then((res) => {
-            login(res.data.nickName, res.data.id);
-            socket.connect();
-          });
+          toast("Try login again!");
         })
         .catch(() => {
-          console.log("not log in ");
+          console.log("cannot refresh");
           socket.disconnect();
           logout();
         });
     }
+
+    if (isLoggedIn) return;
     axios
       .get("auth/profile")
       .then((res) => {
-        console.log(res.data);
         login(res.data.nickName, res.data.id);
         console.log("user authenticated");
         socket.connect();
       })
       .catch(() => {
+        // try refresh token
         refreshToken();
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]);
+  }, []);
 
   if (!isHydrated) return <Loading />;
 

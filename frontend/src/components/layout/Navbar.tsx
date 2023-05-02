@@ -12,6 +12,7 @@ import axios from "../apiClient/apiClient";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
+import { toast } from "react-hot-toast";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
   const [nickName, logout, avatar] = useUserStore((store) => [
@@ -31,7 +32,9 @@ export default function Navbar({ sx }: { sx: SxProps }) {
     axios
       .post("/auth/log-out")
       .then()
-      .catch((err) => console.log(err));
+      .catch(() => {
+        toast.error("Logging out got a bit problem...");
+      });
     logout();
   };
 
