@@ -104,7 +104,7 @@ export default function PickUsernamePanel() {
                   });
             })
             .catch((error) => {
-              console.log(error);
+              console.log(error.response);
             });
         }}
         disabled={errorText || Text == "" ? true : false}

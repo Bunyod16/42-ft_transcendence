@@ -51,11 +51,11 @@ const ManageFriendAccordian = () => {
         friendId: id,
         friendStatus: "Accepted",
       })
-      .then((res) => {
-        alert("Accepted fren");
+      .then(() => {
+        toast.success("Accepted fren");
         updateRequests();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   };
 
   const handleDeleteFriend = (friendId: number) => {
@@ -86,22 +86,6 @@ const ManageFriendAccordian = () => {
         console.log("where toast delte req");
       });
   };
-
-  // const getBlockedFriends = () => {
-  //   axios.get("/friend-request/findUserBlockedFriends").then((res) => {
-  //     const tmps: any[] = res.data;
-  //     const tmpBlocked: FriendType[] = [];
-  //     tmps.map((tmp) => {
-  //       tmpBlocked.push({ ...tmp.friend, chatChannel: tmp.chatChannels });
-  //     });
-  //     setBlockedFriends(tmpBlocked);
-  //     console.log(tmpBlocked);
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   getBlockedFriends();
-  // }, []);
 
   return (
     <>

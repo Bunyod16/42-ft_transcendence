@@ -29,17 +29,16 @@ const PendingBox = () => {
         friendStatus: "Accepted",
       })
       .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   };
 
   useEffect(() => {
     axios
       .get("/friend-request/findUserPendingRequest")
       .then((res) => {
-        // console.log(res);
         setRequests(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

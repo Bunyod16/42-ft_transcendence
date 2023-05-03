@@ -64,7 +64,7 @@ export default function Auth({ children }: { children: ReactElement }) {
 
   return (
     <>
-      <Toaster />
+      {/* <Toaster /> */}
       {nickName == null ? <PickUsername /> : isLoggedIn ? children : <Login />}
     </>
   );

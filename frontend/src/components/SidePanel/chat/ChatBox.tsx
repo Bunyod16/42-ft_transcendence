@@ -50,7 +50,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
     axios
       .get(`/chat-channel-member/${chatChannelId}/usersInChatChannel`)
       .then((res) => setChannelMembers([...res.data]))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   }, [chatChannelId]);
 
   useEffect(() => {

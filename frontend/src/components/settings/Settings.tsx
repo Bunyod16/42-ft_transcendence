@@ -80,7 +80,7 @@ export default function Settings() {
         <UsernameSettings />
         <TwoFactorSettings />
       </Box>
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             background: "green",
@@ -98,7 +98,7 @@ export default function Settings() {
             },
           },
         }}
-      />
+      /> */}
     </Box>
   );
 }

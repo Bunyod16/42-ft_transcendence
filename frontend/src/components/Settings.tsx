@@ -322,7 +322,7 @@ export default function Settings() {
           </Box>
         </Box>
       </Box>
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             background: "green",
@@ -330,7 +330,7 @@ export default function Settings() {
             color: `${theme.palette.text.primary}`,
           },
         }}
-      />
+      /> */}
     </Box>
   );
 }
