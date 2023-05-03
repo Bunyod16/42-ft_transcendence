@@ -19,30 +19,41 @@ import {
   Avatar,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import BlockSharpIcon from "@mui/icons-material/BlockSharp";
 import VolumeOffSharpIcon from "@mui/icons-material/VolumeOffSharp";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
-import { DateTimePicker } from "@mui/x-date-pickers";
-
+import dayjs, { Dayjs } from "dayjs";
 import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
+import MuteDateModal from "./MuteDateModal";
 
 interface MemberListItemProps {
   member: ChannelMember;
   chatChannel: ChatChannel;
+  // showDateModal: boolean;
+  // setShowDateModal: Dispatch<SetStateAction<boolean>>;
   setMembers: () => void;
 }
 
 const MemberListItem = ({
   member,
   chatChannel,
+  // showDateModal,
+  // setShowDateModal,
   setMembers,
 }: MemberListItemProps) => {
   const [isBlacklisted, setIsBlacklisted] = useState<boolean>(
     member.isBlacklisted,
+  );
+  const [isMuted, setIsMuted] = useState<boolean>(
+    member.mutedUntil ? true : false,
+  );
+  const [showDateModal, setShowDateModal] = useState<boolean>(false);
+  const [muteDate, setMuteDate] = useState<Dayjs>(
+    dayjs(member.mutedUntil) || dayjs(),
   );
 
   const confirmToast = (action: string, callback: () => void) => {
@@ -86,59 +97,18 @@ const MemberListItem = ({
     );
   };
 
-  const showMuteOptionsToast = () => {
-    toast.loading(
-      (t) => (
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Typography sx={{ textAlign: "center" }}>Mute until</Typography>
-          <span
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "center",
-            }}
-          >
-            <DateTimePicker />
-            <Button
-              sx={{ ml: 1 }}
-              onClick={() => {
-                toast.dismiss(t.id);
-              }}
-            >
-              Yes
-            </Button>
-            <Button onClick={() => toast.dismiss(t.id)}>No</Button>
-          </span>
-        </span>
-      ),
-      {
-        icon: <EmojiPeopleSharpIcon color="error" />,
-        id: "leaveConfirm",
-      },
-    );
-  };
-
-  const handleKick = () => {
+  const handleUnmute = () => {
     axios
-      .delete(`/chat-channel-member/${member.id}`, {
-        data: {
-          chatChannelId: chatChannel.id,
-        },
+      .patch(`chat-channel-member/${member.id}/unmute`, {
+        chatChannelId: chatChannel.id,
       })
       .then(() => {
-        toast.success(`Member ${member.user.nickName} has been kicked.`);
-        console.log(`Member ${member.user.nickName} has been kicked.`);
-        setMembers();
+        toast.success(`Member ${member.user.nickName} has been unmuted.`);
+        console.log(`Member ${member.user.nickName} has been unmuted`);
+        setIsMuted(false);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err?.response);
         if (err.response.status === 400) {
           let message: string = err.response.data.message;
           message = message.slice(message.indexOf(":") + 1, message.length);
@@ -168,9 +138,31 @@ const MemberListItem = ({
       });
   };
 
-  const handleMute = () => {
-    console.log("mute");
+  const handleKick = () => {
+    axios
+      .delete(`/chat-channel-member/${member.id}`, {
+        data: {
+          chatChannelId: chatChannel.id,
+        },
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been kicked.`);
+        console.log(`Member ${member.user.nickName} has been kicked.`);
+        setMembers();
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
   };
+  // console.log("now", dayjs().toDate());
+  // console.log("muteDate", muteDate.toDate());
+  // console.log("showDateModal", showDateModal);
+  // console.log("isMuted", isMuted);
 
   return (
     <ListItem disablePadding>
@@ -190,22 +182,54 @@ const MemberListItem = ({
           }}
         />
 
-        <Tooltip title="Mute" followCursor>
+        <Tooltip
+          title={
+            isMuted ? `Unmute. ${"\n"}Muted Until ${muteDate.toDate()}` : "Mute"
+          }
+          followCursor
+        >
           <IconButton
             size="small"
             sx={{ ml: 1 }}
-            onClick={showMuteOptionsToast}
+            color={!isMuted ? "default" : "error"}
+            onClick={() => {
+              if (isMuted) {
+                confirmToast("unmute", handleUnmute);
+              } else {
+                setShowDateModal(true);
+              }
+            }}
           >
-            <VolumeOffSharpIcon fontSize="inherit" />
+            <MuteDateModal
+              showDateModal={showDateModal}
+              setShowDateModal={setShowDateModal}
+              muteDate={muteDate}
+              setMuteDate={setMuteDate}
+              member={member}
+              chatChannel={chatChannel}
+              setIsMuted={setIsMuted}
+            />
+            <VolumeOffSharpIcon
+              fontSize="inherit"
+              color={!isMuted ? "inherit" : "error"}
+            />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Blacklist" followCursor>
+        <Tooltip
+          title={!isBlacklisted ? "Blacklist" : "Unblacklist"}
+          followCursor
+        >
           <IconButton
             size="small"
             sx={{ ml: 1 }}
             color={!isBlacklisted ? "default" : "error"}
-            onClick={() => confirmToast("blacklist", handleBlacklist)}
+            onClick={() =>
+              confirmToast(
+                !isBlacklisted ? "blacklist" : "unblacklist",
+                handleBlacklist,
+              )
+            }
           >
             <BlockSharpIcon
               fontSize="inherit"
@@ -291,6 +315,7 @@ const ManageChannelModal = ({
       .catch((err) => console.log(err));
   }, [open]);
 
+  // console.log(showDateModal);
   return (
     <Modal
       open={open}
@@ -389,6 +414,8 @@ const ManageChannelModal = ({
           <MemberListItem
             member={member}
             chatChannel={channel.chatChannel}
+            // showDateModal={showDateModal}
+            // setShowDateModal={setShowDateModal}
             setMembers={() => {
               setMembers((previous) => [
                 ...previous.filter((m) => {

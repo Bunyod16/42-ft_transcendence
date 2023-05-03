@@ -44,18 +44,18 @@ const validateAction = (
     );
   }
 
-  //if admin trying to ${action} out owner
-  if (receiverMember.user.id === owner.id) {
-    throw new CustomException(
-      `Admin cannot ${action} out owner`,
-      HttpStatus.BAD_REQUEST,
-    );
-  }
-
   //if user try to ${action} themselves
   if (requester.id === receiverMember.user.id) {
     throw new CustomException(
       `User cannot ${action} themselves`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  //if admin trying to ${action} out owner
+  if (receiverMember.user.id === owner.id) {
+    throw new CustomException(
+      `Admin cannot ${action} out owner`,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -304,16 +304,25 @@ export class ChatChannelMemberController {
       updateChatChannelMemberDto,
     );
 
+    Logger.log(
+      `Blacklisting ChatChannelMember with chatChannelMemberId = [${chatChannelMemberId}]`,
+      `ChatChannelMember => update_blacklisted()`,
+    );
+
     return chatChannelMember;
   }
 
-  @Patch(':id/mute')
+  @Patch(':chatChannelMemberId/mute')
+  @UseGuards(UserAuthGuard)
   async update_mute(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('mutedUntil') mutedUntil: string,
+    @Req() req: any,
+    @Param('chatChannelMemberId', ParseIntPipe) chatChannelMemberId: number,
+    @Body('mutedUntil') mutedUntil: string,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
     //Date must be in ISO-8601 format
     const date: Date = mutedUntil ? new Date(mutedUntil) : null;
+    const requester: User = req.user;
 
     //check if date is in invalid format
     if (isNaN(date.valueOf())) {
@@ -324,25 +333,103 @@ export class ChatChannelMemberController {
       );
     }
 
+    if (date < new Date()) {
+      throw new CustomException(
+        `Invalid Date`,
+        HttpStatus.BAD_REQUEST,
+        'ChatChannelMember => update_muted()',
+      );
+    }
+
+    //Validate user rights in the channel before doing anything (defo better way to doing this)
+    try {
+      const userToDelete: ChatChannelMember =
+        await this.chatChannelMemberService.findOne(chatChannelMemberId);
+      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
+        chatChannelId,
+      );
+      const isRequesterAdmin: boolean =
+        await this.chatChannelMemberService.isUserAdmin(
+          requester.id,
+          chatChannel.id,
+        );
+      validateAction(
+        requester,
+        userToDelete,
+        chatChannel,
+        isRequesterAdmin,
+        'mute',
+      );
+    } catch (error) {
+      throw new CustomException(
+        `${error.response.message}`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannelMember => update_muted()`,
+      );
+    }
+
     const chatChannelMember = await this.chatChannelMemberService.update_muted(
-      id,
+      chatChannelMemberId,
       date,
+    );
+
+    Logger.log(
+      `Muting ChatChannelMember with chatChannelMemberId = [${chatChannelMemberId}]`,
+      `ChatChannelMember => update_muted()`,
     );
 
     return chatChannelMember;
   }
 
-  @Patch(':id/unmute')
-  async update_unmute(@Param('id', ParseIntPipe) id: number) {
+  @Patch(':chatChannelMemberId/unmute')
+  @UseGuards(UserAuthGuard)
+  async update_unmute(
+    @Req() req: any,
+    @Param('chatChannelMemberId', ParseIntPipe) chatChannelMemberId: number,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+  ) {
+    const requester: User = req.user;
+
+    try {
+      const userToDelete: ChatChannelMember =
+        await this.chatChannelMemberService.findOne(chatChannelMemberId);
+      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
+        chatChannelId,
+      );
+      const isRequesterAdmin: boolean =
+        await this.chatChannelMemberService.isUserAdmin(
+          requester.id,
+          chatChannel.id,
+        );
+      validateAction(
+        requester,
+        userToDelete,
+        chatChannel,
+        isRequesterAdmin,
+        'mute',
+      );
+    } catch (error) {
+      throw new CustomException(
+        `${error.response.message}`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannelMember => update_muted()`,
+      );
+    }
+
     const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
     updateChatChannelMemberDto.mutedUntil = null;
 
     const chatChannelMember = await this.chatChannelMemberService.update(
-      id,
+      chatChannelMemberId,
       updateChatChannelMemberDto,
     );
 
-    return chatChannelMember;
+    Logger.log(
+      `Unmuting ChatChannelMember with chatChannelMemberId = [${chatChannelMemberId}]`,
+      `ChatChannelMember => update_unmute()`,
+    );
+
+    // return chatChannelMember;
   }
 
   @Delete('/byUserInChatChannel')
