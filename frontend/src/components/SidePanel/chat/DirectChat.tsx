@@ -3,11 +3,11 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
-import { chatSocket } from "../socket/socket";
-import axios from "../apiClient/apiClient";
-import { PanelData, UserInfo } from "@/types/social-type";
+// import { chatSocket } from "../socket/socket";
+import axios from "axios";
+import { ChannelMember, PanelData, UserInfo } from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
-import ManageChannelModal from "./modal/ManageChannelModal";
+import ManageChannelModal from "../modal/ManageChannelModal";
 import useUserStore from "@/store/userStore";
 
 export interface ChatType {
@@ -118,29 +118,12 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
     );
   };
 
-  interface ChannelInfo {
-    owner?: UserInfo;
-    members?: UserInfo[];
-  }
+  // interface ChannelInfo {
+  //   // owner?: UserInfo;
+  //   members?: ChannelMember[];
+  // }
   const ChannelDetail = () => {
-    // console.log(panel.chatChannel);
-    const [channelDetail, setChannelDetail] = useState<
-      ChannelInfo | undefined
-    >();
     const [open, setOpen] = useState(false);
-    useEffect(() => {
-      // get channel details
-      axios
-        .get("/chat-channels/${panel.chatChannel.chatChannel.id}")
-        .then((res) => {
-          setChannelDetail({ ...channelDetail, ...res.data });
-        })
-        .catch((err) => console.log(err));
-      axios
-        .get("/chat-channel-member/${chatChannelId}/usersInChatChannel")
-        .then((res) => setChannelDetail({ ...channelDetail, ...res.data }))
-        .catch((err) => console.log(err));
-    }, []);
 
     return (
       <Box component={"div"} sx={{ p: 1 }}>
@@ -204,81 +187,12 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
   );
 };
 
-// interface DirectChatPropsType {
-//   panel: PanelData;
-//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-// }
 export default function DirectChat() {
   // const chatLineOffset = 100;
-  const [chats, setChats] = useState<ChatType[]>([]);
   const [panel, setPanel] = useUserStore((state) => [
     state.panel,
     state.setPanel,
   ]);
-  // const [message, setMessage] = useState<string>("");
-
-  useEffect(() => {
-    if (panel === undefined) return;
-    axios
-      .get(
-        `/chat-line/getNextChatLines/${panel.chatChannel.chatChannel.id}?chatLineOffset=${chats.length}`,
-      )
-      .then((response) => {
-        const newChats: ChatType[] = response.data;
-        setChats(newChats.reverse());
-      });
-    console.log(panel);
-    function getMessage() {
-      if (panel === undefined) return;
-      // if ()
-      // chatSocket.emit("joinRoomDirectMessage", {
-      //   chatChannelId: panel.chatChannel.chatChannel.id,
-      // });
-      chatSocket.emit("joinRoom", {
-        chatChannelId: panel.chatChannel.chatChannel.id,
-      });
-    }
-    getMessage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panel]);
-
-  useEffect(() => {
-    function onChatMessage(data: {
-      text: string;
-      sender: { id: number; nickName: string };
-    }) {
-      setChats((prev: ChatType[]) => [...prev, data]);
-    }
-
-    chatSocket.on("chatMessage", onChatMessage);
-
-    return () => {
-      chatSocket.off("chatMessage", onChatMessage);
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   // listenToSomethingSoPeepoCanSendMeSomething
-  // }, []);
-  // if (panel) return <></>;
-
-  // function handleMessageSubmit(e: React.SyntheticEvent) {
-  //   e.preventDefault();
-  //   if (message === "") return;
-  //   // setChats((prevState: ChatType[]) => [
-  //   //   ...prevState,
-  //   //   {
-  //   //     text: message,
-  //   //     sender: { nickName: panel?.nickName || "Unknown User" },
-  //   //   },
-  //   // ]);
-  //   if (panel === undefined || panel.directMessage === null) return;
-  //   chatSocket.emit("sendMessage", {
-  //     message: message,
-  //     chatChannelId: panel.directMessage.chatChannel.id,
-  //   });
-  //   setMessage("");
-  // }
 
   if (panel === undefined) return <></>;
   return (
@@ -296,29 +210,10 @@ export default function DirectChat() {
         panel && (
           <>
             <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
-            <ChatBox
-              chats={chats}
-              chatChannelId={panel.chatChannel.chatChannel.id || 0}
-            />
+            <ChatBox chatChannelId={panel.chatChannel.chatChannel.id || -1} />
           </>
         )
       }
-
-      {/* <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "end",
-          gap: "10px",
-          width: "100%",
-          height: "100%",
-          // height: "calc(100vh - 140px)",
-          border: "1px solid #048BA8",
-        }}
-      > */}
-
-      {/* </Box> */}
     </Box>
   );
 }
