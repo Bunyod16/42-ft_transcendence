@@ -102,8 +102,9 @@ export class ChatChannelsService {
     await this.chatChannelsMembersService.createProtected(
       ownerId,
       savedChannel.id,
-      channel.password,
+      channelPassword,
     );
+
     return savedChannel;
   }
 
@@ -246,7 +247,7 @@ export class ChatChannelsService {
   }
 
   async findOneWithPassword(id: number): Promise<ChatChannel> {
-    let chatChannel;
+    let chatChannel: ChatChannel;
     try {
       chatChannel = await this.chatChannelRepository
         .createQueryBuilder('chatChannel')
@@ -254,10 +255,10 @@ export class ChatChannelsService {
         .select('chatChannel')
         .addSelect('chatChannel.password')
         .getOne();
-      console.log(chatChannel);
     } catch (error) {
       console.log(error);
     }
+
     if (chatChannel === null) {
       throw new CustomException(
         `chatChannels with id = [${id}] doesn't exist`,
