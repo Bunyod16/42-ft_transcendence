@@ -20,12 +20,6 @@ const useFriendsStore = create<FriendsStoreType>()(
         const friendList: FriendType[] = [];
         friendQuery.map((query) => {
           friendList.push({
-            // id: query.id,
-            // nickName: query.nickName,
-            // avatar: query.avatar,
-            // wins: query.wins,
-            // losses: query.losses,
-            // online: query.online,
             ...query.friend,
             chatChannel: query.directMessage,
           });
