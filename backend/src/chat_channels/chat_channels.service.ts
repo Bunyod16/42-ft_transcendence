@@ -18,7 +18,6 @@ import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { UserService } from 'src/user/user.service';
 import { encodePassword } from 'src/utils/bcrypt';
-import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
 
 @Injectable()
 export class ChatChannelsService {
@@ -103,6 +102,7 @@ export class ChatChannelsService {
       ownerId,
       savedChannel.id,
       channelPassword,
+      true,
     );
 
     return savedChannel;

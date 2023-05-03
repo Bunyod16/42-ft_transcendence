@@ -1,4 +1,9 @@
-import { Channel, ChannelMember, UserInfo } from "@/types/social-type";
+import {
+  Channel,
+  ChannelMember,
+  ChatChannel,
+  UserInfo,
+} from "@/types/social-type";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import {
   Modal,
@@ -19,6 +24,7 @@ import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import BlockSharpIcon from "@mui/icons-material/BlockSharp";
 import VolumeOffSharpIcon from "@mui/icons-material/VolumeOffSharp";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
+import { DateTimePicker } from "@mui/x-date-pickers";
 
 import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
@@ -26,14 +32,140 @@ import useUserStore from "@/store/userStore";
 
 interface MemberListItemProps {
   member: ChannelMember;
+  chatChannel: ChatChannel;
+  setMembers: () => void;
 }
-const MemberListItem = ({ member }: MemberListItemProps) => {
-  const handleKick = (member: UserInfo) => {
-    axios.delete(`/chat-channel-member/${member.id}`).then;
+
+const MemberListItem = ({
+  member,
+  chatChannel,
+  setMembers,
+}: MemberListItemProps) => {
+  const [isBlacklisted, setIsBlacklisted] = useState<boolean>(
+    member.isBlacklisted,
+  );
+
+  const confirmToast = (action: string, callback: () => void) => {
+    toast.loading(
+      (t) => (
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Typography sx={{ textAlign: "center" }}>
+            Are you sure you want to {action} {member.user.nickName}?
+          </Typography>
+          <span
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              sx={{ ml: 1 }}
+              onClick={() => {
+                toast.dismiss(t.id);
+                callback();
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={() => toast.dismiss(t.id)}>No</Button>
+          </span>
+        </span>
+      ),
+      {
+        icon: <EmojiPeopleSharpIcon color="error" />,
+        id: "leaveConfirm",
+      },
+    );
   };
 
-  const handleBan = () => {
-    console.log("ban");
+  const showMuteOptionsToast = () => {
+    toast.loading(
+      (t) => (
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Typography sx={{ textAlign: "center" }}>Mute until</Typography>
+          <span
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <DateTimePicker />
+            <Button
+              sx={{ ml: 1 }}
+              onClick={() => {
+                toast.dismiss(t.id);
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={() => toast.dismiss(t.id)}>No</Button>
+          </span>
+        </span>
+      ),
+      {
+        icon: <EmojiPeopleSharpIcon color="error" />,
+        id: "leaveConfirm",
+      },
+    );
+  };
+
+  const handleKick = () => {
+    axios
+      .delete(`/chat-channel-member/${member.id}`, {
+        data: {
+          chatChannelId: chatChannel.id,
+        },
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been kicked.`);
+        console.log(`Member ${member.user.nickName} has been kicked.`);
+        setMembers();
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
+  };
+
+  const handleBlacklist = () => {
+    axios
+      .patch(`chat-channel-member/${member.id}/blacklisted`, {
+        isBlacklisted: !member.isBlacklisted,
+        chatChannelId: chatChannel.id,
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been blacklisted.`);
+        console.log(`Member ${member.user.nickName} has been blacklisted.`);
+        setIsBlacklisted(!isBlacklisted);
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
   };
 
   const handleMute = () => {
@@ -50,23 +182,46 @@ const MemberListItem = ({ member }: MemberListItemProps) => {
         />
         {/* </ListItemAvatar> */}
 
-        <ListItemText primary={member.user.nickName} />
-
-        <Tooltip title="Kick" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
-            <DeleteSharpIcon fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Ban" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
-            <BlockSharpIcon fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
+        <ListItemText
+          primary={member.user.nickName}
+          sx={{
+            color: isBlacklisted ? "text.secondary" : "text.primary",
+            textDecoration: isBlacklisted ? "line-through" : "none",
+          }}
+        />
 
         <Tooltip title="Mute" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
+          <IconButton
+            size="small"
+            sx={{ ml: 1 }}
+            onClick={showMuteOptionsToast}
+          >
             <VolumeOffSharpIcon fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Blacklist" followCursor>
+          <IconButton
+            size="small"
+            sx={{ ml: 1 }}
+            color={!isBlacklisted ? "default" : "error"}
+            onClick={() => confirmToast("blacklist", handleBlacklist)}
+          >
+            <BlockSharpIcon
+              fontSize="inherit"
+              color={!isBlacklisted ? "inherit" : "error"}
+            />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Kick" followCursor>
+          <IconButton
+            size="small"
+            sx={{ ml: 1 }}
+            color="error"
+            onClick={() => confirmToast("kick", handleKick)}
+          >
+            <DeleteSharpIcon fontSize="inherit" color="error" />
           </IconButton>
         </Tooltip>
       </ListItemButton>
@@ -79,6 +234,7 @@ interface ManageChannelModalProp {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   channel: Channel;
 }
+
 const ManageChannelModal = ({
   open,
   setOpen,
@@ -133,7 +289,7 @@ const ManageChannelModal = ({
       .get(`/chat-channel-member/${channel.chatChannel.id}/usersInChatChannel`)
       .then((res) => setMembers(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [open]);
 
   return (
     <Modal
@@ -230,7 +386,18 @@ const ManageChannelModal = ({
           Channel members
         </Typography>
         {members.map((member, i) => (
-          <MemberListItem member={member} key={i} />
+          <MemberListItem
+            member={member}
+            chatChannel={channel.chatChannel}
+            setMembers={() => {
+              setMembers((previous) => [
+                ...previous.filter((m) => {
+                  return m.user.id != member.user.id;
+                }),
+              ]);
+            }}
+            key={i}
+          />
         ))}
       </Box>
     </Modal>

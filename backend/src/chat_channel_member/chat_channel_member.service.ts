@@ -19,7 +19,6 @@ import {
 } from 'src/chat_channels/entities/chat_channel.entity';
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { CustomException } from 'src/utils/app.exception-filter';
-import { encodePassword } from 'src/utils/bcrypt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -82,6 +81,7 @@ export class ChatChannelMemberService {
     userId: number,
     chatChannelId: number,
     password: string,
+    isOwner?: boolean,
   ) {
     try {
       const user: User = await this.userService.findOne(userId);
@@ -113,6 +113,9 @@ export class ChatChannelMemberService {
 
       createChatChannelMemberDto.user = user;
       createChatChannelMemberDto.chatChannel = chatChannel;
+      if (isOwner) {
+        createChatChannelMemberDto.isAdmin = true;
+      }
 
       return await this.chatChannelMemberRepository.save(
         createChatChannelMemberDto,
@@ -318,6 +321,29 @@ export class ChatChannelMemberService {
     return chatChannelMember;
   }
 
+  async isUserAdmin(userId: number, chatChannelId: number) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where('user.id = :userId AND chatChannel.id = :chatChannelId', {
+        userId: userId,
+        chatChannelId: chatChannelId,
+      })
+      .getOne();
+
+    if (chatChannelMember === null) {
+      throw new CustomException(
+        `ChatChannelMember with id = [${userId}] is not in ChatChannel with id = [${chatChannelId}]`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => isUserAdmin()',
+      );
+    }
+
+    return chatChannelMember.isAdmin;
+  }
+
   async update(
     id: number,
     updateChatChannelMemberDto: UpdateChatChannelMemberDto,
@@ -371,6 +397,29 @@ export class ChatChannelMemberService {
       );
     }
     chatChannelMember.raw = await this.findOne(id);
+    return chatChannelMember;
+  }
+
+  async removeByUserInChatChannel(userId: number, chatChannelId: number) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .delete()
+      .from(ChatChannelMember)
+      .where('userId = :userId AND chatChannelId = :chatChannelId', {
+        userId: userId,
+        chatChannelId: chatChannelId,
+      })
+      .returning('*')
+      .execute();
+
+    if (chatChannelMember.affected === 0) {
+      throw new CustomException(
+        `User with id = [${userId}] doesn't exist in ChatChannel with id = [${chatChannelId}] from ChatChannelMember`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => remove()',
+      );
+    }
+
     return chatChannelMember;
   }
 

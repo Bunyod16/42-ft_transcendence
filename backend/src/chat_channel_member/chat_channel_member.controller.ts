@@ -18,12 +18,66 @@ import { ChatChannelMemberService } from './chat_channel_member.service';
 import { UpdateChatChannelMemberDto } from './dto/update-chat_channel_member.dto';
 import { CustomException } from 'src/utils/app.exception-filter';
 import { UserAuthGuard } from 'src/auth/auth.guard';
-import { ChatType } from 'src/chat_channels/entities/chat_channel.entity';
+import {
+  ChatChannel,
+  ChatType,
+} from 'src/chat_channels/entities/chat_channel.entity';
+import { User } from 'src/user/entities/user.entity';
+import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
+import { ChatChannelMember } from './entities/chat_channel_member.entity';
+
+const validateAction = (
+  requester: User,
+  receiverMember: ChatChannelMember,
+  chatChannel: ChatChannel,
+  isRequesterAdmin: boolean,
+  action: string,
+) => {
+  //Entity is bugged out because OwnerId is type number and not type User. (too late dont fix)
+  const owner: any = chatChannel.ownerId;
+
+  //if not admin
+  if (!isRequesterAdmin) {
+    throw new CustomException(
+      `Requester is not admin in ChatChannel`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  //if admin trying to ${action} out owner
+  if (receiverMember.user.id === owner.id) {
+    throw new CustomException(
+      `Admin cannot ${action} out owner`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  //if user try to ${action} themselves
+  if (requester.id === receiverMember.user.id) {
+    throw new CustomException(
+      `User cannot ${action} themselves`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  //if admin trying to ${action} out other admin
+  if (
+    receiverMember.isAdmin &&
+    isRequesterAdmin &&
+    !(requester.id === owner.id)
+  ) {
+    throw new CustomException(
+      `Admin cannot ${action} out other admins`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+};
 
 @Controller('chat-channel-member')
 export class ChatChannelMemberController {
   constructor(
     private readonly chatChannelMemberService: ChatChannelMemberService,
+    private readonly chatChannelService: ChatChannelsService,
   ) {}
 
   @Post()
@@ -207,16 +261,46 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
-  @Patch(':id/blacklisted')
+  @Patch(':chatChannelMemberId/blacklisted')
+  @UseGuards(UserAuthGuard)
   async update_blacklisted(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('isBlacklisted', ParseBoolPipe) isBlacklisted: boolean,
+    @Req() req: any,
+    @Param('chatChannelMemberId', ParseIntPipe) chatChannelMemberId: number,
+    @Body('isBlacklisted', ParseBoolPipe) isBlacklisted: boolean,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
+    const requester: User = req.user;
+    try {
+      const userToDelete: ChatChannelMember =
+        await this.chatChannelMemberService.findOne(chatChannelMemberId);
+      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
+        chatChannelId,
+      );
+      const isRequesterAdmin: boolean =
+        await this.chatChannelMemberService.isUserAdmin(
+          requester.id,
+          chatChannel.id,
+        );
+      validateAction(
+        requester,
+        userToDelete,
+        chatChannel,
+        isRequesterAdmin,
+        'blacklist',
+      );
+    } catch (error) {
+      throw new CustomException(
+        `${error.response.message}`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannelMember => remove()`,
+      );
+    }
+
     const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
     updateChatChannelMemberDto.isBlacklisted = isBlacklisted;
 
     const chatChannelMember = await this.chatChannelMemberService.update(
-      id,
+      chatChannelMemberId,
       updateChatChannelMemberDto,
     );
 
@@ -261,8 +345,63 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.chatChannelMemberService.remove(id);
+  @Delete('/byUserInChatChannel')
+  async removeByUser(
+    @Body('userId', ParseIntPipe) userId: number,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+  ) {
+    Logger.log(
+      `Deleting ChatChannelMember with userId = [${userId}]`,
+      `ChatChannelMember => delete()`,
+    );
+
+    return this.chatChannelMemberService.removeByUserInChatChannel(
+      userId,
+      chatChannelId,
+    );
+  }
+
+  @Delete(':chatChannelMemberId')
+  @UseGuards(UserAuthGuard)
+  async remove(
+    @Req() req: any,
+    @Param('chatChannelMemberId', ParseIntPipe) chatChannelMemberId: number,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
+  ) {
+    Logger.log(
+      `Deleting ChatChannelMember with chatChannelMemberId = [${chatChannelMemberId}]`,
+      `ChatChannelMember => delete()`,
+    );
+
+    const requester: User = req.user;
+
+    //Validate user rights in the channel before doing anything (defo better way to doing this)
+    try {
+      const userToDelete: ChatChannelMember =
+        await this.chatChannelMemberService.findOne(chatChannelMemberId);
+      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
+        chatChannelId,
+      );
+      const isRequesterAdmin: boolean =
+        await this.chatChannelMemberService.isUserAdmin(
+          requester.id,
+          chatChannel.id,
+        );
+      validateAction(
+        requester,
+        userToDelete,
+        chatChannel,
+        isRequesterAdmin,
+        'kick',
+      );
+    } catch (error) {
+      throw new CustomException(
+        `${error.response.message}`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannelMember => remove()`,
+      );
+    }
+
+    return this.chatChannelMemberService.remove(chatChannelMemberId);
   }
 }

@@ -50,9 +50,9 @@ export class ContentController {
           callback(
             null,
             'avatar-userId-' +
-            req.user.id +
-            '.' +
-            file.originalname.split('.').pop(),
+              req.user.id +
+              '.' +
+              file.originalname.split('.').pop(),
           );
         },
       }),

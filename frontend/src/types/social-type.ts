@@ -9,7 +9,7 @@ export interface Channel {
   id: number;
   isAdmin: boolean;
   ownerId: number;
-  isBlackListed: boolean;
+  isBlacklisted: boolean;
   mutedUntil: null;
   chatChannel: ChatChannel;
 }
@@ -18,7 +18,7 @@ export interface ChannelMember {
   id: number;
   isAdmin: boolean;
   ownerId: number;
-  isBlackListed: boolean;
+  isBlacklisted: boolean;
   mutedUntil: null;
   user: UserInfo;
 }
