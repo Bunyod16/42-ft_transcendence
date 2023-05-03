@@ -31,9 +31,9 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { FriendRequestService } from 'src/friend_request/friend_request.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
-import {
-  findUserSocketWithNamespace,
-} from 'src/utils/socket-utils';
+import { findUserSocketWithNamespace } from 'src/utils/socket-utils';
+import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
+import { UpdateChatChannelMemberDto } from 'src/chat_channel_member/dto/update-chat_channel_member.dto';
 
 class ChatMessage {
   @IsNotEmpty()
@@ -241,11 +241,57 @@ export class ChatSocketsGateway
     const message = body.message;
     const chatChannelId = body.chatChannelId;
     const roomName = `chatChannel/${chatChannelId}`;
+    const chatChannelMember: ChatChannelMember =
+      await this.chatChannelMemberService.findByUserIdAndChatChatChannelId(
+        userId,
+        chatChannelId,
+      );
+
+    //if user still muted
+    if (chatChannelMember.mutedUntil) {
+      if (new Date() < chatChannelMember.mutedUntil) {
+        throw new CustomWSException(
+          `Muted user can't send messages`,
+          HttpStatus.BAD_REQUEST,
+          `ChatSocketsGateway => handleSendMessage()`,
+        );
+      }
+      //if user mute date has already passed
+      const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
+      updateChatChannelMemberDto.mutedUntil = null;
+
+      try {
+        await this.chatChannelMemberService.update(
+          chatChannelMember.id,
+          updateChatChannelMemberDto,
+        );
+        Logger.log(
+          `Unmuting ChatChannelMember with chatChannelMemberId = [${chatChannelMember.id}]`,
+          `ChatChannelMember => handleSendMessage()`,
+        );
+      } catch (error) {
+        throw new CustomWSException(
+          `Something Bad Happened`,
+          HttpStatus.BAD_REQUEST,
+          `ChatSocketsGateway => handleSendMessage()`,
+        );
+      }
+    }
+
+    //if user is Blacklisted
+    if (chatChannelMember.isBlacklisted) {
+      throw new CustomWSException(
+        `Blacklisted user can't send messages`,
+        HttpStatus.BAD_REQUEST,
+        `ChatSocketsGateway => handleSendMessage()`,
+      );
+    }
 
     Logger.log(
       `send ${message} to room = ${roomName}`,
       `ChatSocketsGateway => sendMessage()`,
     );
+
     this.io.in(`chatChannel/${chatChannelId}`).emit('chatMessage', {
       text: message,
       sender: {

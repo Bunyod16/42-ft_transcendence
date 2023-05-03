@@ -321,6 +321,32 @@ export class ChatChannelMemberService {
     return chatChannelMember;
   }
 
+  async findByUserIdAndChatChatChannelId(
+    userId: number,
+    chatChannelId: number,
+  ) {
+    const chatChannelMember = await this.chatChannelMemberRepository
+      .createQueryBuilder('chatChannelMember')
+      .select(['chatChannelMember'])
+      .leftJoin('chatChannelMember.user', 'user')
+      .leftJoin('chatChannelMember.chatChannel', 'chatChannel')
+      .where('user.id = :userId AND chatChannel.id = :chatChannelId', {
+        userId: userId,
+        chatChannelId: chatChannelId,
+      })
+      .getOne();
+
+    if (chatChannelMember === null) {
+      throw new CustomException(
+        `ChatChannelMember with id = [${userId}] is not in ChatChannel with id = [${chatChannelId}]`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannelMember => findByUserIdAndChatChatChannelId()',
+      );
+    }
+
+    return chatChannelMember;
+  }
+
   async isUserAdmin(userId: number, chatChannelId: number) {
     const chatChannelMember = await this.chatChannelMemberRepository
       .createQueryBuilder('chatChannelMember')
