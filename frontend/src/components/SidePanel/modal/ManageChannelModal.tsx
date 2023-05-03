@@ -1,4 +1,9 @@
-import { Channel, ChannelMember, UserInfo } from "@/types/social-type";
+import {
+  Channel,
+  ChannelMember,
+  ChatChannel,
+  UserInfo,
+} from "@/types/social-type";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import {
   Modal,
@@ -14,34 +19,151 @@ import {
   Avatar,
   TextField,
 } from "@mui/material";
-import { use, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import BlockSharpIcon from "@mui/icons-material/BlockSharp";
 import VolumeOffSharpIcon from "@mui/icons-material/VolumeOffSharp";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
+import dayjs, { Dayjs } from "dayjs";
 import GrassSharpIcon from "@mui/icons-material/GrassSharp";
 import LocalFireDepartmentSharpIcon from "@mui/icons-material/LocalFireDepartmentSharp";
 import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
-import OwnerAccordian from "./OwnerAccordian";
+import MuteDateModal from "./MuteDateModal";
 
 interface MemberListItemProps {
   member: ChannelMember;
+  chatChannel: ChatChannel;
+  // showDateModal: boolean;
+  // setShowDateModal: Dispatch<SetStateAction<boolean>>;
+  setMembers: () => void;
   ownerId: number;
   isAdmin: boolean;
 }
-const MemberListItem = ({ member, ownerId, isAdmin }: MemberListItemProps) => {
-  const handleKick = (member: UserInfo) => {
-    axios.delete(`/chat-channel-member/${member.id}`).then;
+
+const MemberListItem = ({
+  member,
+  ownerId,
+  isAdmin,
+  chatChannel,
+  // showDateModal,
+  // setShowDateModal,
+  setMembers,
+}: MemberListItemProps) => {
+  const [isBlacklisted, setIsBlacklisted] = useState<boolean>(
+    member.isBlacklisted,
+  );
+  const [isMuted, setIsMuted] = useState<boolean>(
+    member.mutedUntil ? true : false,
+  );
+  const [showDateModal, setShowDateModal] = useState<boolean>(false);
+  const [muteDate, setMuteDate] = useState<Dayjs>(
+    dayjs(member.mutedUntil) || dayjs(),
+  );
+
+  const confirmToast = (action: string, callback: () => void) => {
+    toast.loading(
+      (t) => (
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Typography sx={{ textAlign: "center" }}>
+            Are you sure you want to {action} {member.user.nickName}?
+          </Typography>
+          <span
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              sx={{ ml: 1 }}
+              onClick={() => {
+                toast.dismiss(t.id);
+                callback();
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={() => toast.dismiss(t.id)}>No</Button>
+          </span>
+        </span>
+      ),
+      {
+        icon: <EmojiPeopleSharpIcon color="error" />,
+        id: "leaveConfirm",
+      },
+    );
   };
 
-  const handleBan = () => {
-    console.log("ban");
+  const handleUnmute = () => {
+    axios
+      .patch(`chat-channel-member/${member.id}/unmute`, {
+        chatChannelId: chatChannel.id,
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been unmuted.`);
+        console.log(`Member ${member.user.nickName} has been unmuted`);
+        setIsMuted(false);
+      })
+      .catch((err) => {
+        console.log(err?.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
   };
 
-  const handleMute = () => {
-    console.log("mute");
+  const handleBlacklist = () => {
+    axios
+      .patch(`chat-channel-member/${member.id}/blacklisted`, {
+        isBlacklisted: !member.isBlacklisted,
+        chatChannelId: chatChannel.id,
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been blacklisted.`);
+        console.log(`Member ${member.user.nickName} has been blacklisted.`);
+        setIsBlacklisted(!isBlacklisted);
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
+  };
+
+  const handleKick = () => {
+    axios
+      .delete(`/chat-channel-member/${member.id}`, {
+        data: {
+          chatChannelId: chatChannel.id,
+        },
+      })
+      .then(() => {
+        toast.success(`Member ${member.user.nickName} has been kicked.`);
+        console.log(`Member ${member.user.nickName} has been kicked.`);
+        setMembers();
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
   };
 
   return (
@@ -59,7 +181,15 @@ const MemberListItem = ({ member, ownerId, isAdmin }: MemberListItemProps) => {
           disableTypography
           sx={{ display: "flex", alignItems: "center" }}
         >
-          <Typography marginRight={1}>{member.user.nickName}</Typography>
+          <Typography
+            marginRight={1}
+            sx={{
+              color: isBlacklisted ? "text.secondary" : "text.primary",
+              textDecoration: isBlacklisted ? "line-through" : "none",
+            }}
+          >
+            {member.user.nickName}
+          </Typography>
           {ownerId === member.user.id ? (
             <LocalFireDepartmentSharpIcon
               sx={{ fontSize: 20, color: "#FDDA0D" }}
@@ -73,21 +203,72 @@ const MemberListItem = ({ member, ownerId, isAdmin }: MemberListItemProps) => {
 
         {isAdmin && (
           <>
+            <Tooltip
+              title={
+                isMuted
+                  ? `Unmute. ${"\n"}Muted Until ${muteDate.toDate()}`
+                  : "Mute"
+              }
+              followCursor
+            >
+              <IconButton
+                size="small"
+                sx={{ ml: 1 }}
+                color={!isMuted ? "default" : "error"}
+                onClick={() => {
+                  if (isMuted) {
+                    confirmToast("unmute", handleUnmute);
+                  } else {
+                    setShowDateModal(true);
+                  }
+                }}
+              >
+                <MuteDateModal
+                  showDateModal={showDateModal}
+                  setShowDateModal={setShowDateModal}
+                  muteDate={muteDate}
+                  setMuteDate={setMuteDate}
+                  member={member}
+                  chatChannel={chatChannel}
+                  setIsMuted={setIsMuted}
+                />
+                <VolumeOffSharpIcon
+                  fontSize="inherit"
+                  color={!isMuted ? "inherit" : "error"}
+                />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip
+              title={!isBlacklisted ? "Blacklist" : "Unblacklist"}
+              followCursor
+            >
+              <IconButton
+                size="small"
+                sx={{ ml: 1 }}
+                color={!isBlacklisted ? "default" : "error"}
+                onClick={() =>
+                  confirmToast(
+                    !isBlacklisted ? "blacklist" : "unblacklist",
+                    handleBlacklist,
+                  )
+                }
+              >
+                <BlockSharpIcon
+                  fontSize="inherit"
+                  color={!isBlacklisted ? "inherit" : "error"}
+                />
+              </IconButton>
+            </Tooltip>
+
             <Tooltip title="Kick" followCursor>
-              <IconButton size="small" sx={{ ml: 1 }}>
-                <DeleteSharpIcon fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Ban" followCursor>
-              <IconButton size="small" sx={{ ml: 1 }}>
-                <BlockSharpIcon fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Mute" followCursor>
-              <IconButton size="small" sx={{ ml: 1 }}>
-                <VolumeOffSharpIcon fontSize="inherit" />
+              <IconButton
+                size="small"
+                sx={{ ml: 1 }}
+                color="error"
+                onClick={() => confirmToast("kick", handleKick)}
+              >
+                <DeleteSharpIcon fontSize="inherit" color="error" />
               </IconButton>
             </Tooltip>
           </>
@@ -102,6 +283,7 @@ interface ManageChannelModalProp {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   channel: Channel;
 }
+
 const ManageChannelModal = ({
   open,
   setOpen,
@@ -150,9 +332,10 @@ const ManageChannelModal = ({
     axios
       .get(`/chat-channel-member/${channel.chatChannel.id}/usersInChatChannel`)
       .then((res) => setMembers(res.data))
-      .catch((err) => console.log(err.response));
-  }, []);
+      .catch((err) => console.log(err));
+  }, [open]);
 
+  // console.log(showDateModal);
   return (
     <Modal
       open={open}
@@ -197,6 +380,16 @@ const ManageChannelModal = ({
         {members.map((member, i) => (
           <MemberListItem
             member={member}
+            chatChannel={channel.chatChannel}
+            // showDateModal={showDateModal}
+            // setShowDateModal={setShowDateModal}
+            setMembers={() => {
+              setMembers((previous) => [
+                ...previous.filter((m) => {
+                  return m.user.id != member.user.id;
+                }),
+              ]);
+            }}
             key={i}
             ownerId={channel.chatChannel.ownerId.id}
             isAdmin={channel.isAdmin}
