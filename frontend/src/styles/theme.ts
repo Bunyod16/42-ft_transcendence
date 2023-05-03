@@ -189,14 +189,14 @@ theme = createTheme(theme, {
             backgroundColor: "transparent",
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-            backgroundColor: "#00000020",
+            backgroundColor: theme.palette.primary.main,
             borderRadius: "20px",
             // border: "6px solid transparent",
             backgroundClip: "content-box",
           },
           "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
             {
-              backgroundColor: "#ffffff20",
+              backgroundColor: "#ffffff40",
             },
         },
       },
