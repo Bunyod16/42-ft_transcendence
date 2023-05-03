@@ -83,11 +83,13 @@ export class ChatSocketsGateway
   }
 
   handleConnection(client: SocketWithAuthData) {
-    console.log(`Amount of clients connected = ${this.io.sockets.size}`);
-    console.log(`client with id = ${client.id} connected to chatSocket`);
-    console.log(
+    // console.log(`Amount of clients connected = ${this.io.sockets.size}`);
+    // Logger.log(`client with id = ${client.id} connected to chatSocket`);
+    Logger.log(
       `User with nickName = ${client.user.nickName} connected to chatSocket`,
+      `ChatSocketsGateway => handleConnection()`,
     );
+
     this.io.emit('connected');
     this.userService.setOnline(client.user);
     this.emitConnectedToFriends(client.user);
@@ -106,10 +108,11 @@ export class ChatSocketsGateway
   }
 
   handleDisconnect(client: SocketWithAuthData) {
-    console.log(`Amount of clients disconnected = ${this.io.sockets.size}`);
-    console.log(`client with id = ${client.id} disconnected to chatSocket`);
-    console.log(
+    // console.log(`Amount of clients disconnected = ${this.io.sockets.size}`);
+    // console.log(`client with id = ${client.id} disconnected to chatSocket`);
+    Logger.log(
       `User with nickName = ${client.user.nickName} disconnected from chatSocket`,
+      `ChatSocketsGateway => handleDisconnect()`,
     );
     this.io.emit('disconnected');
     this.userService.setOffline(client.user);
