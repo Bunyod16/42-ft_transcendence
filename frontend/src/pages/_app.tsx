@@ -8,7 +8,7 @@ import theme from "@/styles/theme";
 import createEmotionCache from "@/styles/createEmotionCache";
 import axios from "../components/apiClient/apiClient";
 import { Toaster } from "react-hot-toast";
-import Auth from "@/utils/Auth";
+import Auth from "@/components/utils/Auth";
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
@@ -29,7 +29,26 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            style: {
+              // background: "green",
+              // color: `${theme.palette.text.primary}`,
+              fontFamily: `${theme.typography.body1}`,
+            },
+            success: {
+              style: {
+                background: "green",
+                color: `${theme.palette.text.primary}`,
+              },
+            },
+            error: {
+              style: {
+                background: `${theme.palette.error.dark}`,
+              },
+            },
+          }}
+        />
 
         <Auth>
           <Component {...pageProps} />

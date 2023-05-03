@@ -6,8 +6,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
-const OwnerManageModal = () => {
+const OwnerManagePanel = () => {
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
@@ -57,4 +58,4 @@ const OwnerManageModal = () => {
   );
 };
 
-export default OwnerManageModal;
+export default OwnerManagePanel;

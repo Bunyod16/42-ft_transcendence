@@ -1,23 +1,15 @@
-import {
-  Channel,
-  ChannelMember,
-  ChatChannel,
-  UserInfo,
-} from "@/types/social-type";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { Channel, ChannelMember, ChatChannel } from "@/types/social-type";
 import {
   Modal,
   Box,
   Typography,
   Button,
   IconButton,
-  InputAdornment,
   ListItem,
   ListItemButton,
   ListItemText,
   Tooltip,
   Avatar,
-  TextField,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";

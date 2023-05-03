@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import CustomGameModal from "./customGame/CustomGameModal";
 import toast, { Toaster } from "react-hot-toast";
 import { UserProfile } from "@/types/user-profile-type";
-import Loading from "@/utils/Loading";
+import Loading from "@/components/utils/Loading";
 
 interface QueueingStateProp {
   handleQueueLeave: () => void;

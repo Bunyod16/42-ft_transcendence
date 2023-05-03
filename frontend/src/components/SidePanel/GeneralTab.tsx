@@ -35,7 +35,8 @@ export default function GeneralTab() {
     await updateFriendList();
     await updateBlocked();
     await updateRequests();
-    toast.dismiss(toastId);
+
+    setTimeout(() => toast.dismiss(toastId), 3000);
   };
 
   return (
