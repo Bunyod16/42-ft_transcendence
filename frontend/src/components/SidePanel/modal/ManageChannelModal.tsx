@@ -14,20 +14,24 @@ import {
   Avatar,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
 import BlockSharpIcon from "@mui/icons-material/BlockSharp";
 import VolumeOffSharpIcon from "@mui/icons-material/VolumeOffSharp";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
-
+import GrassSharpIcon from "@mui/icons-material/GrassSharp";
+import LocalFireDepartmentSharpIcon from "@mui/icons-material/LocalFireDepartmentSharp";
 import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
+import OwnerAccordian from "./OwnerAccordian";
 
 interface MemberListItemProps {
   member: ChannelMember;
+  ownerId: number;
+  isAdmin: boolean;
 }
-const MemberListItem = ({ member }: MemberListItemProps) => {
+const MemberListItem = ({ member, ownerId, isAdmin }: MemberListItemProps) => {
   const handleKick = (member: UserInfo) => {
     axios.delete(`/chat-channel-member/${member.id}`).then;
   };
@@ -44,31 +48,50 @@ const MemberListItem = ({ member }: MemberListItemProps) => {
     <ListItem disablePadding>
       <ListItemButton disableTouchRipple sx={{ cursor: "default" }}>
         {/* <ListItemAvatar> */}
+
         <Avatar
           src={member.user.avatar}
-          sx={{ width: 24, height: 24, mr: 2 }}
+          sx={{ width: 24, height: 24, mr: 1 }}
         />
         {/* </ListItemAvatar> */}
 
-        <ListItemText primary={member.user.nickName} />
+        <ListItemText
+          disableTypography
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <Typography marginRight={1}>{member.user.nickName}</Typography>
+          {ownerId === member.user.id ? (
+            <LocalFireDepartmentSharpIcon
+              sx={{ fontSize: 20, color: "#FDDA0D" }}
+            />
+          ) : (
+            member.isAdmin && (
+              <GrassSharpIcon color="secondary" sx={{ fontSize: 20 }} />
+            )
+          )}
+        </ListItemText>
 
-        <Tooltip title="Kick" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
-            <DeleteSharpIcon fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
+        {isAdmin && (
+          <>
+            <Tooltip title="Kick" followCursor>
+              <IconButton size="small" sx={{ ml: 1 }}>
+                <DeleteSharpIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
 
-        <Tooltip title="Ban" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
-            <BlockSharpIcon fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
+            <Tooltip title="Ban" followCursor>
+              <IconButton size="small" sx={{ ml: 1 }}>
+                <BlockSharpIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
 
-        <Tooltip title="Mute" followCursor>
-          <IconButton size="small" sx={{ ml: 1 }}>
-            <VolumeOffSharpIcon fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
+            <Tooltip title="Mute" followCursor>
+              <IconButton size="small" sx={{ ml: 1 }}>
+                <VolumeOffSharpIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
       </ListItemButton>
     </ListItem>
   );
@@ -85,21 +108,16 @@ const ManageChannelModal = ({
   channel,
 }: ManageChannelModalProp) => {
   // const [open, setOpen] = useState(false);
+
   const handleClose = () => {
     setOpen(false);
     toast.dismiss();
   };
   const [members, setMembers] = useState<ChannelMember[]>([]);
-  const [showPassword, setShowPassword] = useState(false);
   const setPanel = useUserStore((state) => state.setPanel);
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault();
-  };
+  const id = useUserStore((state) => state.id);
+  const [showManage, setShowManage] = useState(false);
 
   const leaveChannel = () => {
     toast.loading(
@@ -132,7 +150,7 @@ const ManageChannelModal = ({
     axios
       .get(`/chat-channel-member/${channel.chatChannel.id}/usersInChatChannel`)
       .then((res) => setMembers(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   }, []);
 
   return (
@@ -171,66 +189,18 @@ const ManageChannelModal = ({
             <EmojiPeopleSharpIcon />
           </IconButton>
         </Tooltip>
-        <Typography variant="h6" paddingTop={3}>
-          Manage channel
-        </Typography>
-        {/* <Typography paddingTop={1}>Set a channel name</Typography> */}
-        {/* <FormControl sx={{ my: 1 }} variant="outlined" size="small" fullWidth>
-          <InputLabel htmlFor="outlined-adornment-password">
-            New password
-          </InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-password"
-            type={showPassword ? "text" : "password"}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="New password"
-          />
-        </FormControl> */}
-
-        <TextField
-          id="input-with-icon-textfield"
-          label="New password"
-          type={showPassword ? "text" : "password"}
-          sx={{ my: 2 }}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          variant="outlined"
-          size="small"
-        />
-
-        <Button color="secondary" variant="contained" fullWidth>
-          Change password
-        </Button>
+        {channel.chatChannel.ownerId.id === id && <></>}
 
         <Typography variant="h6" marginTop={3} marginBottom={1}>
           Channel members
         </Typography>
         {members.map((member, i) => (
-          <MemberListItem member={member} key={i} />
+          <MemberListItem
+            member={member}
+            key={i}
+            ownerId={channel.chatChannel.ownerId.id}
+            isAdmin={channel.isAdmin}
+          />
         ))}
       </Box>
     </Modal>

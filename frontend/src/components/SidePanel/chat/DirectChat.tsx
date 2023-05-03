@@ -5,10 +5,16 @@ import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 // import { chatSocket } from "../socket/socket";
 import axios from "axios";
-import { ChannelMember, PanelData, UserInfo } from "@/types/social-type";
+import {
+  Channel,
+  ChannelMember,
+  PanelData,
+  UserInfo,
+} from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import ManageChannelModal from "../modal/ManageChannelModal";
 import useUserStore from "@/store/userStore";
+import ChannelDetail from "./ChannelDetaill";
 
 export interface ChatType {
   id?: number;
@@ -122,37 +128,6 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
   //   // owner?: UserInfo;
   //   members?: ChannelMember[];
   // }
-  const ChannelDetail = () => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <Box component={"div"} sx={{ p: 1 }}>
-        <Typography variant="h6" sx={{ display: "inline-block" }}>
-          {panel.chatChannel.chatChannel.name}
-        </Typography>
-
-        {/* {panel.chatChannel.isAdmin && ( */}
-        <Button
-          fullWidth
-          sx={{
-            color: "white",
-            border: "2px solid #F2F4F3",
-            mt: 2,
-          }}
-          onClick={() => setOpen(true)}
-          size="small"
-        >
-          Manage Channel
-        </Button>
-        {/* )} */}
-        <ManageChannelModal
-          open={open}
-          setOpen={setOpen}
-          channel={panel.chatChannel}
-        />
-      </Box>
-    );
-  };
 
   return (
     <Box
@@ -172,7 +147,6 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         component="div"
         sx={{
           display: "flex",
-          // padding: "10px",
           flexDirection: "column",
           width: "100%",
         }}
@@ -180,7 +154,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
         {panel.chatChannel.chatChannel.chatType === "direct_message" ? (
           <FriendDetail />
         ) : (
-          <ChannelDetail />
+          <ChannelDetail channel={panel.chatChannel} />
         )}
       </Box>
     </Box>

@@ -12,7 +12,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import axios from "../../apiClient/apiClient"
+import axios from "../../apiClient/apiClient";
 import { ChatChannel, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import { toast } from "react-hot-toast";
@@ -35,8 +35,8 @@ const PasswordModal = ({ modalData, setModalData }: PasswordModalProp) => {
       })
       .then(() => toast.success(`Joined ${modalData.channel.name}!`))
       .catch((err) => {
-        toast.error("Something went wrong!");
-        console.log(err);
+        toast.error(err.response.data.message);
+        console.log(err.response);
       });
     handleClose();
   };
@@ -139,25 +139,45 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
 
   const handleCreateChannel = () => {
     if (channelValue.name === "")
-      return toast.error("Channel name is missing!");
-    if (isProtected)
+      return toast.error("Channel name is missing!", { id: "createChannel" });
+
+    if (isProtected) {
       if (channelValue.password === "")
-        return toast.error("Channel password is missing!");
-    axios
-      .post("/chat-channels/groupMessage", { name: channelValue.name })
-      .then((res) => {
-        const newChannelId = res.data.id;
-        if (isProtected)
-          axios
-            .patch(`/chat-channels/${newChannelId}`, {
-              ...channelValue,
-              channelType: "protected",
-            })
-            .then((res) => console.log("success", { res }))
-            .catch((err) => console.log(err));
-        toast.success(`Created ${channelValue.name}!`);
-        setOpen(false);
-      });
+        return toast.error("Channel password is missing!", {
+          id: "createChannel",
+        });
+
+      axios
+        .post("/chat-channels/protectedGroupMessage", {
+          name: channelValue.name,
+          // password: channelValue.password,
+        })
+        .then(() => {
+          toast.success(`Created ${channelValue.name}!`, {
+            icon: "🔒",
+            id: "createChannel",
+          });
+        })
+        .catch((err) => {
+          console.log(err.response);
+          toast.error(err.response.data.message, { id: "createChannel" });
+        })
+        .finally(() => setOpen(false));
+    } else {
+      axios
+        .post("/chat-channels/groupMessage", {
+          name: channelValue.name,
+        })
+        .then(() =>
+          toast.success(`Created ${channelValue.name}!`, {
+            id: "createChannel",
+          }),
+        )
+        .catch((err) =>
+          toast.error(err.response.data.message, { id: "createChannel" }),
+        )
+        .finally(() => setOpen(false));
+    }
   };
 
   const handleJoinChannel = (channel: ChatChannel) => {
@@ -172,8 +192,8 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
         })
         .then(() => toast.success(`Joined ${channel.name}!`))
         .catch((err) => {
-          toast.error("Something went wrong!");
-          console.log(err);
+          toast.error(err.response.data.message);
+          console.log(err.response);
         });
   };
 
