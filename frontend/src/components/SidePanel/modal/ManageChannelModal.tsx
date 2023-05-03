@@ -159,10 +159,6 @@ const MemberListItem = ({
         }
       });
   };
-  // console.log("now", dayjs().toDate());
-  // console.log("muteDate", muteDate.toDate());
-  // console.log("showDateModal", showDateModal);
-  // console.log("isMuted", isMuted);
 
   return (
     <ListItem disablePadding>
