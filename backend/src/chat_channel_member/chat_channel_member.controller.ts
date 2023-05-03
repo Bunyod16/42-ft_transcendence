@@ -429,7 +429,7 @@ export class ChatChannelMemberController {
       `ChatChannelMember => update_unmute()`,
     );
 
-    // return chatChannelMember;
+    return chatChannelMember;
   }
 
   @Delete('/byUserInChatChannel')
