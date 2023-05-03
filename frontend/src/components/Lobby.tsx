@@ -49,10 +49,7 @@ const Lobby = () => {
     socket.connect();
     socket.emit("queueEnter");
 
-    // updateView("Game");
-    // updateStatus("InGame");
     console.log("trying to queue");
-    // setTimeout(() => onMatchFound(null), 3000); // for development
   };
 
   //! queue leave function
