@@ -1,7 +1,6 @@
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
 import AvatarSettings from "./AvatarSettings";
 import UsernameSettings from "./UsernameSettings";
 import TwoFactorSettings from "./TwoFactorSettings";
@@ -80,25 +79,6 @@ export default function Settings() {
         <UsernameSettings />
         <TwoFactorSettings />
       </Box>
-      {/* <Toaster
-        toastOptions={{
-          style: {
-            background: "green",
-            color: `${theme.palette.text.primary}`,
-          },
-          success: {
-            style: {
-              background: "green",
-              color: `${theme.palette.text.primary}`,
-            },
-          },
-          error: {
-            style: {
-              background: `${theme.palette.accent?.main}`,
-            },
-          },
-        }}
-      /> */}
     </Box>
   );
 }
