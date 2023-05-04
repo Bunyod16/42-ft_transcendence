@@ -23,6 +23,7 @@ import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
 import MuteDateModal from "./MuteDateModal";
+import useConfirmToast from "@/hooks/useConfirmToast";
 
 interface MemberListItemProps {
   member: ChannelMember;
@@ -292,32 +293,21 @@ const ManageChannelModal = ({
 
   const id = useUserStore((state) => state.id);
   const [showManage, setShowManage] = useState(false);
+  const { confirmToast } = useConfirmToast();
 
-  const leaveChannel = () => {
-    toast.loading(
-      (t) => (
-        <span>
-          Really leaving?
-          <Button
-            sx={{ ml: 1 }}
-            onClick={() => {
-              toast.dismiss(t.id);
+  const handleLeaveChannel = () => {
               axios
                 .delete(`/chat-channel-member/${channel.id}`)
                 .then(() => toast(`You left ${channel.chatChannel.name}!`));
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
               setPanel(undefined);
-            }}
-          >
-            Yes
-          </Button>
-          <Button onClick={() => toast.dismiss(t.id)}>No</Button>
-        </span>
-      ),
-      {
-        icon: <EmojiPeopleSharpIcon color="error" />,
-        id: "leaveConfirm",
-      },
-    );
   };
 
   useEffect(() => {
@@ -359,7 +349,12 @@ const ManageChannelModal = ({
           <IconButton
             color="error"
             sx={{ float: "right" }}
-            onClick={leaveChannel}
+            onClick={() =>
+              confirmToast(
+                `leave ${channel.chatChannel.name}`,
+                handleLeaveChannel,
+              )
+            }
           >
             <EmojiPeopleSharpIcon />
           </IconButton>
