@@ -1,9 +1,15 @@
 import { UserAchievement } from 'src/user_achievement/entities/user_achievement.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Achievement {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @Column({ unique: true })
@@ -11,6 +17,9 @@ export class Achievement {
 
   @Column({ unique: true })
   description: string;
+
+  @Column({})
+  url: string;
 
   @OneToMany(
     () => UserAchievement,

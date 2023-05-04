@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Welcome Noobie",
+    "description": "play one game",
+    "url": "https://img.icons8.com/?size=512&id=bfzB1emH0tgY&format=png"
+  },
+  {
+    "id": 2,
+    "name": "Pro",
+    "description": "win one game",
+    "url": "https://img.icons8.com/?size=512&id=ACi0kAlgSTlE&format=png"
+  },
+  {
+    "id": 3,
+    "name": "Get better",
+    "description": "loose one game",
+    "url": "https://img.icons8.com/?size=512&id=emyUwCx81sp5&format=png"
+  }
+]

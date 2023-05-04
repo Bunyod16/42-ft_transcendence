@@ -11,6 +11,7 @@ export interface UserProfile {
       achievement: {
         name: string;
         description: string;
+        url: string;
         createdAt: Date;
       };
       createdAt: Date;
