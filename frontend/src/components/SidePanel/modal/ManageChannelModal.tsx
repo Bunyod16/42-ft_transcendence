@@ -23,6 +23,7 @@ import axios from "../../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
 import MuteDateModal from "./MuteDateModal";
+import OwnerManagePanel from "./OwnerManagePanel";
 import useConfirmToast from "@/hooks/useConfirmToast";
 
 interface MemberListItemProps {
@@ -296,7 +297,7 @@ const ManageChannelModal = ({
   const { confirmToast } = useConfirmToast();
 
   const handleLeaveChannel = () => {
-              axios
+    axios
       .delete(`/chat-channel-member/byUserInChatChannel`, {
         data: {
           chatChannelId: channel.chatChannel.id,
@@ -311,7 +312,7 @@ const ManageChannelModal = ({
           toast.error(`${message}`);
         }
       });
-              setPanel(undefined);
+    setPanel(undefined);
   };
 
   useEffect(() => {
@@ -363,29 +364,39 @@ const ManageChannelModal = ({
             <EmojiPeopleSharpIcon />
           </IconButton>
         </Tooltip>
-        {channel.chatChannel.ownerId.id === id && <></>}
 
-        <Typography variant="h6" marginTop={3} marginBottom={1}>
-          Channel members
-        </Typography>
-        {members.map((member, i) => (
-          <MemberListItem
-            member={member}
-            chatChannel={channel.chatChannel}
-            // showDateModal={showDateModal}
-            // setShowDateModal={setShowDateModal}
-            setMembers={() => {
-              setMembers((previous) => [
-                ...previous.filter((m) => {
-                  return m.user.id != member.user.id;
-                }),
-              ]);
-            }}
-            key={i}
-            ownerId={channel.chatChannel.ownerId.id}
-            isAdmin={channel.isAdmin}
-          />
-        ))}
+        {!showManage ? (
+          <>
+            {channel.chatChannel.ownerId.id === id && (
+              <Button variant="contained" size="small" fullWidth>
+                Channel settings
+              </Button>
+            )}
+            <Typography variant="h6" marginTop={3} marginBottom={1}>
+              Channel members
+            </Typography>
+            {members.map((member, i) => (
+              <MemberListItem
+                member={member}
+                chatChannel={channel.chatChannel}
+                // showDateModal={showDateModal}
+                // setShowDateModal={setShowDateModal}
+                setMembers={() => {
+                  setMembers((previous) => [
+                    ...previous.filter((m) => {
+                      return m.user.id != member.user.id;
+                    }),
+                  ]);
+                }}
+                key={i}
+                ownerId={channel.chatChannel.ownerId.id}
+                isAdmin={channel.isAdmin}
+              />
+            ))}
+          </>
+        ) : (
+          <OwnerManagePanel setShow={setShowManage} members={members} />
+        )}
       </Box>
     </Modal>
   );
