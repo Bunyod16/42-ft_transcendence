@@ -10,10 +10,14 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Modal,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddModeratorSharpIcon from "@mui/icons-material/AddModeratorSharp";
+import RemoveModeratorSharpIcon from "@mui/icons-material/RemoveModeratorSharp";
 import { ChannelMember } from "@/types/social-type";
 
 interface OwnerManagePanelProp {
@@ -31,9 +35,17 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
   };
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleChangePassword = () => {};
+  const handleChangePassword = () => {
+    console.log("changed Password?");
+  };
 
-  const handleTransferOwnership = () => {};
+  const handleTransferOwnership = () => {
+    console.log("Transfer ownership?");
+  };
+
+  const handleManageAdmin = (member: ChannelMember) => {
+    console.log("change admin to?", member.isAdmin);
+  };
 
   return (
     <Box component="div">
@@ -76,7 +88,7 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
       </Button>
 
       <Typography variant="h6" paddingTop={4}>
-        Transfer ownership
+        Manage admin
       </Typography>
 
       <List>
@@ -84,15 +96,10 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
           <ListItemButton
             disableTouchRipple
             key={i}
-            selected={selected === i}
+            // selected={selected === i}
             onClick={() => setSelected(i)}
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#fefefe10",
-                "&:hover": {
-                  backgroundColor: "#fefefe20",
-                },
-              },
+              cursor: "default",
             }}
           >
             <Avatar
@@ -103,17 +110,33 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
             <ListItemText disableTypography>
               {member.user.nickName}
             </ListItemText>
+            <Tooltip
+              title={member.isAdmin ? "Remove admin" : "Add admin"}
+              followCursor
+            >
+              <IconButton
+                size="small"
+                sx={{ ml: 1 }}
+                onClick={() => handleManageAdmin(member)}
+              >
+                {member.isAdmin ? (
+                  <RemoveModeratorSharpIcon fontSize="inherit" />
+                ) : (
+                  <AddModeratorSharpIcon fontSize="inherit" />
+                )}
+              </IconButton>
+            </Tooltip>
           </ListItemButton>
         ))}
       </List>
       <Button
-        disabled={selected === -1}
-        color="secondary"
+        // disabled={selected === -1}
+        color="accent"
         variant="contained"
         fullWidth
         sx={{ mt: 1 }}
       >
-        Transfer
+        Transfer Ownership
       </Button>
     </Box>
   );
