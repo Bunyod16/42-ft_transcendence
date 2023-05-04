@@ -8,6 +8,7 @@ import { UserModule } from 'src/user/user.module';
 import { ChatLineModule } from 'src/chat_line/chat_line.module';
 import { ChatChannelMemberModule } from 'src/chat_channel_member/chat_channel_member.module';
 import { FriendRequestModule } from 'src/friend_request/friend_request.module';
+import { UserAchievementModule } from 'src/user_achievement/user_achievement.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { FriendRequestModule } from 'src/friend_request/friend_request.module';
     ChatLineModule,
     ChatChannelMemberModule,
     FriendRequestModule,
+    UserAchievementModule,
   ],
   providers: [ChatSocketsGateway, ChatSocketsService],
   exports: [ChatSocketsService],

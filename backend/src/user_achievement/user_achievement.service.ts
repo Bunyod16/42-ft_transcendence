@@ -9,12 +9,14 @@ import { Achievement } from 'src/achievement/entities/achievement.entity';
 import { AchievementService } from 'src/achievement/achievement.service';
 import { UserService } from 'src/user/user.service';
 import { CustomException } from 'src/utils/app.exception-filter';
+import { MatchService } from 'src/match/match.service';
 
 @Injectable()
 export class UserAchievementService {
   constructor(
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
+    private readonly matchService: MatchService,
     private readonly achievementService: AchievementService,
     private readonly userService: UserService,
   ) {}
@@ -91,6 +93,70 @@ export class UserAchievementService {
     }
 
     return userAchievement;
+  }
+
+  async findUserAchievements(userId: number) {
+    const userAchievement = await this.userAchievementRepository
+      .createQueryBuilder('userAchievement')
+      .where({ user: userId })
+      .select(['userAchievement', 'achievement', 'user.id', 'user.nickName'])
+      .leftJoin('userAchievement.achievement', 'achievement')
+      .leftJoin('userAchievement.user', 'user')
+      .getMany();
+
+    if (userAchievement === null) {
+      throw new CustomException(
+        `UserAchievement with userId = [${userId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'UserAchievement => findOne()',
+      );
+    }
+
+    return userAchievement;
+  }
+
+  async checkAchivementEligibility(user: User) {
+    const achievements = await this.findUserAchievements(user.id);
+    const matches = await this.matchService.findMatchesForUser(user.id);
+    console.log(matches);
+    console.log(achievements);
+    //give 'Welcome Noobie' achievement
+    if (
+      matches.length > 0 &&
+      !achievements.some((a) => a.achievement.id == 1)
+    ) {
+      this.create(user.id, 1);
+    }
+
+    // //give 'Pro' achievement
+    if (
+      matches.some((match) => {
+        return (
+          (match.playerOne.id == user.id &&
+            match.playerOneScore > match.playerTwoScore) ||
+          (match.playerTwo.id == user.id &&
+            match.playerTwoScore > match.playerOneScore)
+        );
+      }) &&
+      !achievements.some((a) => a.achievement.id == 2)
+    ) {
+      this.create(user.id, 2);
+    }
+
+    // //give 'Get better' achievement
+    if (
+      matches.some((match) => {
+        return (
+          (match.playerOne.id == user.id &&
+            match.playerOneScore < match.playerTwoScore) ||
+          (match.playerTwo.id == user.id &&
+            match.playerTwoScore < match.playerOneScore)
+        );
+      }) &&
+      !achievements.some((a) => a.achievement.id == 3)
+    ) {
+      this.create(user.id, 3);
+    }
   }
 
   async update(id: number, achievementId: number) {

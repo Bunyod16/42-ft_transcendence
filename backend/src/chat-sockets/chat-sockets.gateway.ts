@@ -34,6 +34,7 @@ import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_m
 import {
   findUserSocketWithNamespace,
 } from 'src/utils/socket-utils';
+import { UserAchievementService } from 'src/user_achievement/user_achievement.service';
 
 class ChatMessage {
   @IsNotEmpty()
@@ -64,6 +65,7 @@ export class ChatSocketsGateway
     private readonly chatLineService: ChatLineService,
     private readonly chatChannelMemberService: ChatChannelMemberService,
     private readonly friendRequestService: FriendRequestService,
+    private userAchievementsService: UserAchievementService,
   ) {}
 
   afterInit() {
@@ -91,6 +93,7 @@ export class ChatSocketsGateway
     this.io.emit('connected');
     this.userService.setOnline(client.user);
     this.emitConnectedToFriends(client.user);
+    this.userAchievementsService.checkAchivementEligibility(client.user);
   }
 
   async emitDisconnectedToFriends(user: User) {

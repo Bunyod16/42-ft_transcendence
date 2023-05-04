@@ -5,7 +5,7 @@ import { UpdateAchievementDto } from './dto/update-achievement.dto';
 import { Achievement } from './entities/achievement.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomException } from 'src/utils/app.exception-filter';
-import * as data from "./generated-achievements/achievements.json";
+import * as data from './generated-achievements/achievements.json';
 
 @Injectable()
 export class AchievementService implements OnModuleInit {
@@ -18,13 +18,13 @@ export class AchievementService implements OnModuleInit {
     const achievement = await this.achievementRepository.find();
     if (achievement.length === 0) {
       console.log('Populating achievements');
-      // const data = require('./generated-achievements/achievements.json');
       for (let i = 0; i < data.length; i++) {
         var createAchievementDto: CreateAchievementDto =
           new CreateAchievementDto();
         createAchievementDto.name = data[i].name;
         createAchievementDto.description = data[i].description;
         createAchievementDto.url = data[i].url;
+        createAchievementDto.id = data[i].id;
         await this.achievementRepository.save(createAchievementDto);
       }
     }
