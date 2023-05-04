@@ -320,9 +320,8 @@ const ManageChannelModal = ({
       .get(`/chat-channel-member/${channel.chatChannel.id}/usersInChatChannel`)
       .then((res) => setMembers(res.data))
       .catch((err) => console.log(err));
-  }, [open]);
+  }, [open, channel.chatChannel.id]);
 
-  // console.log(showDateModal);
   return (
     <Modal
       open={open}
@@ -368,7 +367,13 @@ const ManageChannelModal = ({
         {!showManage ? (
           <>
             {channel.chatChannel.ownerId.id === id && (
-              <Button variant="contained" size="small" fullWidth>
+              <Button
+                variant="contained"
+                fullWidth
+                color="secondary"
+                sx={{ mt: 2 }}
+                onClick={() => setShowManage(true)}
+              >
                 Channel settings
               </Button>
             )}
