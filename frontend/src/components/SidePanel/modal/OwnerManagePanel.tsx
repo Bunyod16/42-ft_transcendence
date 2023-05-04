@@ -7,10 +7,8 @@ import {
   IconButton,
   InputAdornment,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
-  Modal,
   TextField,
   Tooltip,
   Typography,
@@ -19,6 +17,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddModeratorSharpIcon from "@mui/icons-material/AddModeratorSharp";
 import RemoveModeratorSharpIcon from "@mui/icons-material/RemoveModeratorSharp";
 import { ChannelMember } from "@/types/social-type";
+import TransferOwnerModal from "./TransferOwnerModal";
+import useConfirmToast from "@/hooks/useConfirmToast";
+import toast from "react-hot-toast";
 
 interface OwnerManagePanelProp {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,7 +27,9 @@ interface OwnerManagePanelProp {
 }
 const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [selected, setSelected] = useState(-1);
+  const [password, setPassword] = useState("");
+
+  const { confirmToast } = useConfirmToast();
 
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -36,15 +39,11 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleChangePassword = () => {
-    console.log("changed Password?");
-  };
-
-  const handleTransferOwnership = () => {
-    console.log("Transfer ownership?");
+    toast(`changed Password to ${password}?`);
   };
 
   const handleManageAdmin = (member: ChannelMember) => {
-    console.log("change admin to?", member.isAdmin);
+    toast(`change admin to ${!member.isAdmin}`);
   };
 
   return (
@@ -81,9 +80,17 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
         }}
         variant="outlined"
         size="small"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.target.value)
+        }
       />
 
-      <Button color="secondary" variant="contained" fullWidth>
+      <Button
+        color="secondary"
+        variant="contained"
+        fullWidth
+        onClick={() => confirmToast("change password", handleChangePassword)}
+      >
         Change password
       </Button>
 
@@ -96,8 +103,6 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
           <ListItemButton
             disableTouchRipple
             key={i}
-            // selected={selected === i}
-            onClick={() => setSelected(i)}
             sx={{
               cursor: "default",
             }}
@@ -129,15 +134,7 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
           </ListItemButton>
         ))}
       </List>
-      <Button
-        // disabled={selected === -1}
-        color="accent"
-        variant="contained"
-        fullWidth
-        sx={{ mt: 1 }}
-      >
-        Transfer Ownership
-      </Button>
+      <TransferOwnerModal members={members} />
     </Box>
   );
 };
