@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
 import AvatarSettings from "./AvatarSettings";
@@ -9,8 +9,6 @@ import { useRouter } from "next/router";
 export default function Settings() {
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
   const router = useRouter();
-
-  const theme = useTheme();
 
   useEffect(() => {
     setIsHydrated(true);
