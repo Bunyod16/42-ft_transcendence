@@ -297,8 +297,12 @@ const ManageChannelModal = ({
 
   const handleLeaveChannel = () => {
               axios
-                .delete(`/chat-channel-member/${channel.id}`)
-                .then(() => toast(`You left ${channel.chatChannel.name}!`));
+      .delete(`/chat-channel-member/byUserInChatChannel`, {
+        data: {
+          chatChannelId: channel.chatChannel.id,
+        },
+      })
+      .then(() => toast(`You left ${channel.chatChannel.name}!`))
       .catch((err) => {
         console.log(err.response);
         if (err.response.status === 400) {

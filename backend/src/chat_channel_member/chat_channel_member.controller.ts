@@ -432,18 +432,21 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
+  // One delete for user to leave channel
   @Delete('/byUserInChatChannel')
+  @UseGuards(UserAuthGuard)
   async removeByUser(
-    @Body('userId', ParseIntPipe) userId: number,
+    @Req() req: any,
     @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
+    const requester: User = req.user;
     Logger.log(
-      `Deleting ChatChannelMember with userId = [${userId}]`,
+      `Deleting ChatChannelMember with userId = [${requester.id}]`,
       `ChatChannelMember => delete()`,
     );
 
     return this.chatChannelMemberService.removeByUserInChatChannel(
-      userId,
+      requester.id,
       chatChannelId,
     );
   }
