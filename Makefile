@@ -10,9 +10,19 @@ DEV_NGINX_CDN_VOLUME = dev_cdn_volume
 all : dev
 
 dev :
+ifeq ($(OS),Windows_NT)
+	copy .\envs\dev.env .\.env
+else
+	cp .\envs\dev.env .\.env
+endif
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 prod :
+ifeq ($(OS),Windows_NT)
+	copy .\envs\prod.env .\.env
+else
+	cp .\envs\prod.env .\.env
+endif
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 down :

@@ -5,11 +5,14 @@ services:
     container_name: postgresdb
     image: postgres:14.7-alpine3.17
     restart: unless-stopped
-    configs:
-      - source: postgres_initsql
-        target: /docker-entrypoint-initdb.d/init.sh
     networks:
       - ft_trancendence
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    expose:
+      - ${DB_PORT}
 
   redis:
     container_name: redis
@@ -61,6 +64,14 @@ services:
       - ft_trancendence
     environment:
       REDIS_HOST: ${REDIS_HOST}
+      HOST: ${NEST_LISTEN_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      LISTEN_PORT: ${NEST_LISTEN_PORT}
+      ENV: ${ENV}
       CDN_HOST: ${CDN_HOST}
       CDN_PORT: ${CDN_PORT}
 
@@ -81,8 +92,6 @@ services:
 configs:
   nginx_42trancendence_conf_template:
     file: ./backend/nginx/conf/42trancendence_cdn.conf.template
-  postgres_initsql:
-    file: ./backend/postgres/conf/init.sh
   redis_config:
     file: ./backend/redis/conf/redis.conf
 
