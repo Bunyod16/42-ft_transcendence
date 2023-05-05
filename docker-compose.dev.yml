@@ -24,14 +24,6 @@ services:
       - dev_cdn_volume:/var/www/42trancendence/avatar:ro
 
   nestjs:
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      LISTEN_PORT: ${NEST_LISTEN_PORT}
-      ENV: ${ENV}
     volumes:
       - dev_cdn_volume:/trancendence_nestjs/avatars
       - ./backend:/trancendence_nestjs
