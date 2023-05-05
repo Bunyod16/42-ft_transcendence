@@ -1,12 +1,67 @@
 import { UserProfile } from "@/types/user-profile-type";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Avatar, Typography, IconButton } from "@mui/material";
+import { Box, Avatar, Typography, IconButton, Button } from "@mui/material";
 import { useRouter } from "next/router";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import useUserStore from "@/store/userStore";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+
+function handleAddFriend(nickName: string) {
+  axios
+    .post("/friend-request/addFriendByNickName", {
+      nickName: nickName,
+    })
+    .then((response) => {
+      console.log(response);
+      toast.success("Request successful!");
+    })
+    .catch((err) => {
+      toast.error("Request failed!");
+      console.log(err);
+    });
+}
+
+function CustomAddButton({
+  personalNickName,
+  userNickName,
+}: {
+  personalNickName: string;
+  userNickName: string;
+}) {
+  if (personalNickName === userNickName) return <></>;
+  return (
+    <Button
+      onClick={() => handleAddFriend(userNickName)}
+      sx={{
+        textTransform: "uppercase",
+        textAlign: "center",
+        lineHeight: "50px",
+        backgroundColor: "primary.200",
+        borderRadius: "8px",
+        padding: "15px 5px",
+        width: "150px",
+        fontWeight: "700",
+        fontSize: "1.5em",
+        margin: "0px",
+        transition: "all 0.2s ease",
+        "&:hover": {
+          backgroundColor: "primary.main",
+        },
+        "&:active": {
+          transform: "scale(0.9)",
+        },
+      }}
+    >
+      <PersonAddIcon sx={{ fill: "white" }} />
+    </Button>
+  );
+}
 
 export default function BannerProfile(user: UserProfile) {
+  const nickName = useUserStore((state) => state.nickName);
   const router = useRouter();
   /*
-   
    * Wins worth 2 points
    * Losses worth 1 point
    *
@@ -99,19 +154,32 @@ export default function BannerProfile(user: UserProfile) {
             width: "100%",
           }}
         >
-          <Typography
-            variant="h3"
+          <Box
+            component="div"
             sx={{
-              fontSize: "3em",
-              fontWeight: "800",
-              margin: "0px",
-              lineHeight: "0.8em",
-              color: "text.primary",
-              textTransform: "uppercase",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
           >
-            {user.nickName}
-          </Typography>
+            <Typography
+              variant="h3"
+              sx={{
+                fontSize: "3em",
+                fontWeight: "800",
+                margin: "0px",
+                lineHeight: "0.8em",
+                color: "text.primary",
+                textTransform: "uppercase",
+              }}
+            >
+              {user.nickName}
+            </Typography>
+            <CustomAddButton
+              personalNickName={nickName}
+              userNickName={user.nickName}
+            />
+          </Box>
           <Box
             component="div"
             sx={{
