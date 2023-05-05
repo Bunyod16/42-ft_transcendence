@@ -63,6 +63,7 @@ services:
     networks:
       - ft_trancendence
     environment:
+      HOST_IP: ${HOST_IP}
       REDIS_HOST: ${REDIS_HOST}
       HOST: ${NEST_LISTEN_PORT}
       DB_HOST: ${DB_HOST}
@@ -84,6 +85,8 @@ services:
     image: 42-ft_transendence-nextjs
     build:
       context: ./frontend
+    environment:
+      HOST_IP: ${HOST_IP}
     ports:
       - "8080:${NEXT_LISTEN_PORT}"
     depends_on:
