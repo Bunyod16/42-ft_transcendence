@@ -20,8 +20,6 @@ services:
       - cdn_volume:/var/www/42trancendence/avatar:ro
 
   nestjs:
-    expose:
-      - ${NEST_LISTEN_PORT}
     volumes:
       - cdn_volume:/trancendence_nestjs/src/avatars
     entrypoint: ["node", "dist/main"]

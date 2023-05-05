@@ -28,10 +28,6 @@ services:
       - dev_cdn_volume:/trancendence_nestjs/avatars
       - ./backend:/trancendence_nestjs
       - /trancendence_nestjs/node_modules/
-    ports:
-      - "3000:${NEST_LISTEN_PORT}"
-    expose:
-      - ${NEST_LISTEN_PORT}
     entrypoint: ["npx", "nest", "start", "--watch"]
 
   nextjs:
