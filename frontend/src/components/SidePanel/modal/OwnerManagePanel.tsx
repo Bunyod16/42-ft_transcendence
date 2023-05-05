@@ -43,7 +43,7 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
   };
 
   const handleManageAdmin = (member: ChannelMember) => {
-    toast(`change admin to ${!member.isAdmin}`);
+    toast(`add or remove member as admin ${!member.isAdmin}`);
   };
 
   return (
