@@ -14,6 +14,8 @@ RUN pnpm install
 
 COPY ./ /trancendence_nextjs/
 
+RUN pnpm build
+
 EXPOSE 3000
 
 ENTRYPOINT ["npx", "next", "start"]

@@ -74,6 +74,10 @@ services:
       ENV: ${ENV}
       CDN_HOST: ${CDN_HOST}
       CDN_PORT: ${CDN_PORT}
+    ports:
+      - "3000:${NEST_LISTEN_PORT}"
+    expose:
+      - ${NEST_LISTEN_PORT}
 
   nextjs:
     container_name: frontend
