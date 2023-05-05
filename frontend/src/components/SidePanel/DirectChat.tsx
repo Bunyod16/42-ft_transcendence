@@ -5,8 +5,10 @@ import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { chatSocket } from "../socket/socket";
 import axios from "axios";
-import { PanelData } from "@/types/social-type";
-import BlockIcon from "@mui/icons-material/Block";
+import { PanelData, UserInfo } from "@/types/social-type";
+import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
+import ManageChannelModal from "./modal/ManageChannelModal";
+import useUserStore from "@/store/userStore";
 
 export interface ChatType {
   id?: number;
@@ -59,23 +61,23 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
           sx={{ display: "flex", mb: 1, alignItems: "center" }}
         >
           <Button
-            component={"div"}
+            variant="outlined"
+            component="div"
             sx={{
               display: "flex",
-              // flexDirection: "row",
               alignItems: "center",
               p: 1,
               cursor: "pointer",
               color: "text.primary",
-              bgcolor: "#00000020",
               borderRadius: 2,
               flex: 1,
+              mr: 1,
             }}
             onClick={() => console.log("show friend")}
           >
             <Avatar
               src="/jakoh_smol.jpg"
-              sx={{ width: 50, height: 50, mr: 2, float: "left" }}
+              sx={{ width: 50, height: 50, mr: 1, float: "left" }}
               alt="profile pic"
             />
             <Box component={"div"} sx={{ flex: 1 }}>
@@ -84,8 +86,8 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             </Box>
             {/* TODO add block friend here!! */}
           </Button>
-          <IconButton>
-            <BlockIcon />
+          <IconButton sx={{ color: "#EF9A9A50" }}>
+            <PersonOffSharpIcon />
           </IconButton>
         </Box>
         <Button
@@ -103,26 +105,55 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
     );
   };
 
+  interface ChannelInfo {
+    owner?: UserInfo;
+    members?: UserInfo[];
+  }
   const ChannelDetail = () => {
     // console.log(panel.chatChannel);
+    const [channelDetail, setChannelDetail] = useState<
+      ChannelInfo | undefined
+    >();
+    const [open, setOpen] = useState(false);
+    useEffect(() => {
+      // get channel details
+      axios
+        .get("/chat-channels/${panel.chatChannel.chatChannel.id}")
+        .then((res) => {
+          setChannelDetail({ ...channelDetail, ...res.data });
+        })
+        .catch((err) => console.log(err));
+      axios
+        .get("/chat-channel-member/${chatChannelId}/usersInChatChannel")
+        .then((res) => setChannelDetail({ ...channelDetail, ...res.data }))
+        .catch((err) => console.log(err));
+    }, []);
+
     return (
-      <Box component={"div"} sx={{ justifySelf: "center" }}>
-        <Typography variant="h6">
+      <Box component={"div"} sx={{ p: 1 }}>
+        <Typography variant="h6" sx={{ display: "inline-block" }}>
           {panel.chatChannel.chatChannel.name}
         </Typography>
-        {panel.chatChannel.isAdmin && (
-          <Button
-            fullWidth
-            sx={{
-              color: "white",
-              border: "2px solid #F2F4F3",
-            }}
-            onClick={() => console.log("Havent Connect Send Invite")}
-            size="small"
-          >
-            Manage Channel
-          </Button>
-        )}
+
+        {/* {panel.chatChannel.isAdmin && ( */}
+        <Button
+          fullWidth
+          sx={{
+            color: "white",
+            border: "2px solid #F2F4F3",
+            mt: 2,
+          }}
+          onClick={() => setOpen(true)}
+          size="small"
+        >
+          Manage Channel
+        </Button>
+        {/* )} */}
+        <ManageChannelModal
+          open={open}
+          setOpen={setOpen}
+          channel={panel.chatChannel}
+        />
       </Box>
     );
   };
@@ -132,18 +163,13 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
       component="div"
       sx={{
         display: "flex",
-        // padding: "10px",
         flexDirection: "row",
         alignItems: "start",
-        p: 1,
+        p: "6px 6px 6px 0px",
         borderBottom: "1px black solid",
       }}
     >
-      <IconButton
-        // sx={{ m: "auto", p: "auto", w: "8px", h: "8px" }}
-        onClick={handleBack}
-        // sx={{ display: "inline-block" }}
-      >
+      <IconButton onClick={handleBack}>
         <ArrowBackIcon sx={{ fill: "white" }} />
       </IconButton>
       <Box
@@ -165,13 +191,17 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
   );
 };
 
-interface DirectChatPropsType {
-  panel: PanelData;
-  setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-}
-export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
+// interface DirectChatPropsType {
+//   panel: PanelData;
+//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
+// }
+export default function DirectChat() {
   // const chatLineOffset = 100;
   const [chats, setChats] = useState<ChatType[]>([]);
+  const [panel, setPanel] = useUserStore((state) => [
+    state.panel,
+    state.setPanel,
+  ]);
   // const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
@@ -237,6 +267,7 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
   //   setMessage("");
   // }
 
+  if (panel === undefined) return <></>;
   return (
     <Box
       component="div"
@@ -249,7 +280,15 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
     >
       {
         /* top part */
-        panel && <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
+        panel && (
+          <>
+            <TopBar panel={panel} handleBack={() => setPanel(undefined)} />
+            <ChatBox
+              chats={chats}
+              chatChannelId={panel.chatChannel.chatChannel.id || 0}
+            />
+          </>
+        )
       }
 
       {/* <Box
@@ -265,7 +304,6 @@ export default function DirectChat({ panel, setPanel }: DirectChatPropsType) {
           border: "1px solid #048BA8",
         }}
       > */}
-      <ChatBox chats={chats} chatChannelId={panel.chatChannel.chatChannel.id} />
 
       {/* </Box> */}
     </Box>

@@ -6,11 +6,13 @@ interface FriendsStoreType {
   friends: FriendType[] | [];
   setFriendList: (friendQuery: any[]) => void;
   resetFriendList: () => void;
+  setOnline: (friend: FriendType) => void;
+  setOffline: (friend: FriendType) => void;
 }
 
 const useFriendsStore = create<FriendsStoreType>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       friends: [],
       setFriendList: (friendQuery) => {
         const friendList: FriendType[] = [];
@@ -35,6 +37,26 @@ const useFriendsStore = create<FriendsStoreType>()(
         set(() => ({
           friends: [],
         }));
+      },
+      setOnline: (friend: FriendType) => {
+        const friendList: FriendType[] = [];
+        get().friends.map((qFriend) => {
+          if (qFriend.id == friend.id) {
+            qFriend.online = true;
+          }
+          friendList.push(qFriend);
+        });
+        set(() => ({ friends: friendList }));
+      },
+      setOffline: (friend: FriendType) => {
+        const friendList: FriendType[] = [];
+        get().friends.map((qFriend) => {
+          if (qFriend.id == friend.id) {
+            qFriend.online = false;
+          }
+          friendList.push(qFriend);
+        });
+        set(() => ({ friends: friendList }));
       },
     }),
     {

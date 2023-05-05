@@ -24,7 +24,7 @@ export const inconsolata = Inconsolata({
 const theme = createTheme({
   palette: {
     background: {
-      default: "#26333A",
+      default: "#1B2429",
     },
     text: {
       primary: "#F2F4F3",
@@ -33,8 +33,9 @@ const theme = createTheme({
     primary: {
       main: "#26333A",
       "100": "#1b2429",
-      "200": "rgba(0,0,0,0.2)",
+      "200": "#161D21",
       "300": "#00000066",
+
       contrastText: "#fefefe",
     },
     secondary: {
@@ -62,6 +63,15 @@ const theme = createTheme({
     h3: {
       fontFamily: oswald.style.fontFamily,
     },
+    h4: {
+      fontFamily: oswald.style.fontFamily,
+    },
+    h5: {
+      fontFamily: oswald.style.fontFamily,
+    },
+    h6: {
+      fontFamily: oswald.style.fontFamily,
+    },
   },
   components: {
     MuiMenu: {
@@ -72,39 +82,70 @@ const theme = createTheme({
         },
       },
     },
-    MuiTextField : {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          color: "#fefefe60",
+          marginRight: "8px",
+          lineHeight: "0.75",
+          padding: "0px",
+          minHeight: "36px",
+          minWidth: "80px",
+          "&.Mui-selected": {
+            color: "#fefefe",
+          },
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          minHeight: "36px",
+          "& .MuiTabs-indicator": {
+            backgroundColor: "#fefefe",
+          },
+        },
+      },
+    },
+    MuiTextField: {
       variants: [
         {
-          props: { variant: "outlined"},
+          props: { variant: "outlined" },
           style: {
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#616161',
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#616161",
               },
-              '&:hover fieldset': {
-                borderColor: '#A8A8A8',
+              "&:hover fieldset": {
+                borderColor: "#A8A8A8",
               },
             },
-            '& label':{
-              color:"grey",
+            "& label": {
+              color: "grey",
             },
-            '& .MuiOutlinedInput-root.Mui-focused': {
-              '& > fieldset': {
-                borderColor: '#D9D9D9',
+            "& .MuiOutlinedInput-root.Mui-focused": {
+              "& > fieldset": {
+                borderColor: "#D9D9D9",
               },
             },
             "& label.Mui-focused": {
-                color: "#D9D9D9"
-              },
-              
-          }
-        }
-      ]
+              color: "#D9D9D9",
+            },
+          },
+        },
+      ],
     },
-    MuiButton: {},
     MuiCssBaseline: {
       styleOverrides: {
         body: {
+          overflow: "hidden",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
             width: "8px",
             // background-color: #"F5F5F5";

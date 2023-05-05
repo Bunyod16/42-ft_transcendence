@@ -4,9 +4,11 @@ import { CustomException } from 'src/utils/app.exception-filter';
 import { Repository } from 'typeorm';
 import { CreateChatLineDto } from './dto/create-chat_line.dto';
 import { UpdateChatLineDto } from './dto/update-chat_line.dto';
-import { ChatLine } from './entities/chat_line.entity';
+import { ChatLine, ChatLineType } from './entities/chat_line.entity';
 import { ChatChannelsService } from 'src/chat_channels/chat_channels.service';
 import { User } from 'src/user/entities/user.entity';
+import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
+import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
 
 @Injectable()
 export class ChatLineService {
@@ -14,6 +16,7 @@ export class ChatLineService {
     @InjectRepository(ChatLine)
     private chatLineRepository: Repository<ChatLine>,
     private readonly chatChannelService: ChatChannelsService,
+    private readonly chatChannelMemberService: ChatChannelMemberService,
   ) {}
 
   async create(text: string, channel_id: number, sender: User) {
@@ -22,6 +25,16 @@ export class ChatLineService {
     chatLine.chatChannel = await this.chatChannelService.findOne(channel_id);
     chatLine.text = text;
     chatLine.sender = sender;
+    return await this.chatLineRepository.save(chatLine);
+  }
+
+  async createInvite(text: string, channel_id: number, sender: User) {
+    const chatLine: CreateChatLineDto = new CreateChatLineDto();
+
+    chatLine.chatChannel = await this.chatChannelService.findOne(channel_id);
+    chatLine.text = text;
+    chatLine.sender = sender;
+    chatLine.chatLineType = ChatLineType.ACTIVEINVITE;
     return await this.chatLineRepository.save(chatLine);
   }
 
@@ -46,7 +59,28 @@ export class ChatLineService {
         'ChatLine => findOne()',
       );
     }
-
+  }
+  async findInvite(inviteReceiver: User, inviteSender: User) {
+    const directMessage: ChatChannelMember =
+      await this.chatChannelMemberService.findUserChatWithFriend(
+        inviteReceiver.id,
+        inviteSender.id,
+      );
+    console.log(directMessage, inviteReceiver, inviteSender);
+    const chatLine = await this.chatLineRepository
+      .createQueryBuilder('chatLine')
+      .select(['chatLine'])
+      .where('chatLine.senderId = :inviteSender', {
+        inviteSender: inviteSender.id,
+      })
+      .andWhere('chatLine.chatChannelId = :directMessage', {
+        directMessage: directMessage.chatChannel.id,
+      })
+      .andWhere('chatLine.chatLineType = :chatLineType', {
+        chatLineType: ChatLineType.ACTIVEINVITE,
+      })
+      .getOne();
+    console.log(chatLine);
     return chatLine;
   }
 
@@ -108,6 +142,23 @@ export class ChatLineService {
         HttpStatus.NOT_FOUND,
         'ChatLine => remove()',
       );
+    }
+  }
+
+  async deactivateInvites(user: User) {
+    console.log(user);
+    if (!user) return;
+    try {
+      const chatLine = await this.chatLineRepository
+        .createQueryBuilder('chatLine')
+        .where('senderId = :userId', { userId: user.id })
+        .andWhere('chatLineType = :chatLineType', {
+          chatLineType: ChatLineType.ACTIVEINVITE,
+        })
+        .delete()
+        .execute();
+    } catch (error) {
+      console.log(error);
     }
   }
 }

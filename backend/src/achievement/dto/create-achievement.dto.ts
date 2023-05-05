@@ -15,4 +15,7 @@ export class CreateAchievementDto {
 
   @IsString()
   description: string;
+
+  @IsString()
+  url: string;
 }

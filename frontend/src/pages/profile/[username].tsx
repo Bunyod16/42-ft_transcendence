@@ -1,14 +1,13 @@
 import DefaultLayout from "@/components/layout/DefaultLayout";
-import ProfileIconBox from "@/components/profile/ProfileIconBox";
-import StatsBox from "@/components/profile/StatsBox";
 import useUserStore from "@/store/userStore";
 import { UserProfile } from "@/types/user-profile-type";
 import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import Profile from "@/components/profile/Profile";
 
-export default function Profile() {
+export default function ProfilePage() {
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
@@ -76,8 +75,7 @@ export default function Profile() {
         <>
           {user !== undefined && (
             <>
-              <ProfileIconBox {...user}></ProfileIconBox>
-              <StatsBox {...user}></StatsBox>
+                <Profile {...user}/>
             </>
           )}
         </>
