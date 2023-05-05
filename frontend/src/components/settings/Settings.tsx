@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
 import AvatarSettings from "./AvatarSettings";
@@ -7,35 +7,40 @@ import TwoFactorSettings from "./TwoFactorSettings";
 import { useRouter } from "next/router";
 
 export default function Settings() {
-  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+  // const [isHydrated, setIsHydrated] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  // useEffect(() => {
+  //   setIsHydrated(true);
+  // }, []);
 
-  return !isHydrated ? (
-    <></>
-  ) : (
+  return (
     <Box
       component="div"
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        padding: "10px 50px 10px 50px",
+        padding: "10px 24px",
         backgroundColor: "primary.100",
       }}
     >
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginBottom: "10px",
-        }}
+      <Button
+        variant="text"
+        startIcon={<ArrowBackIcon />}
+        sx={{ color: "text.primary" }}
+        onClick={() => router.push("/")}
       >
-        <IconButton
+        <Typography
+          variant="h5"
+          sx={{
+            textTransform: "uppercase",
+          }}
+        >
+          Settings
+        </Typography>
+      </Button>
+      {/* <IconButton
           sx={{
             padding: "0px",
           }}
@@ -51,8 +56,8 @@ export default function Settings() {
               color: "text.primary",
             }}
           />
-        </IconButton>
-        <Typography
+        </IconButton> */}
+      {/* <Typography
           variant="h2"
           sx={{
             color: "text.secondary",
@@ -62,14 +67,14 @@ export default function Settings() {
           }}
         >
           Settings
-        </Typography>
-      </Box>
+        </Typography> */}
+      {/* </Box> */}
       <Box
         component="div"
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-around",
+          // justifyContent: "space-around",
           height: "100%",
         }}
       >
