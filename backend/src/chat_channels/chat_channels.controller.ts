@@ -211,12 +211,15 @@ export class ChatChannelsController {
   }
 
   @Patch(':id')
+  @UseGuards(UserAuthGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: any,
     @Body('channelType') channelType?: string,
     @Body('password') password?: string,
     @Body('name') name?: string,
   ) {
+    const requester: User = req.user;
     //validate channelType is actually a valid enum
     if (typeof channelType !== 'undefined') {
       channelType = channelType.toLowerCase();
@@ -233,12 +236,32 @@ export class ChatChannelsController {
       }
     }
 
-    return this.chatChannelsService.update(
+    //validate that owner is making request
+    if (
+      requester.id !==
+      ((await this.chatChannelsService.findOne(id)).ownerId as any).id
+    ) {
+      throw new CustomException(
+        `Only owner can edit ChatChannel settings`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    Logger.log(
+      `Updating ChatChannel with id = [${id}]`,
+      'ChatChannel => transferOwner()',
+    );
+
+    const res = await this.chatChannelsService.update(
       id,
       channelType as ChannelType,
       password,
       name,
     );
+
+    console.log(res);
+    return res;
   }
 
   @Delete(':id')

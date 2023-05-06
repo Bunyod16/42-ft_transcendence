@@ -305,12 +305,15 @@ export class ChatChannelsService {
     const updateChannelDto = new UpdateChatChannelDto();
     updateChannelDto.name = name ?? chatChannel.name;
     updateChannelDto.channel_type = channelType ?? chatChannel.channel_type;
-    updateChannelDto.password = password ?? chatChannel.password;
+    updateChannelDto.password =
+      encodePassword(password) ?? chatChannel.password;
+
+    console.log(updateChannelDto);
 
     //if protected and no password
     if (
-      updateChannelDto.channel_type == ChannelType.PROTECTED &&
-      updateChannelDto.password == null
+      updateChannelDto.channel_type === ChannelType.PROTECTED &&
+      updateChannelDto.password === null
     )
       throw new CustomException(
         'ChannelType protected must have password',
@@ -319,11 +322,12 @@ export class ChatChannelsService {
       );
 
     //remove password if private or public
+    //(edit i now change the type to protected when password is passed in)
     if (
       updateChannelDto.channel_type !== ChannelType.PROTECTED &&
-      updateChannelDto.password != null
+      updateChannelDto.password !== null
     ) {
-      updateChannelDto.password = null;
+      updateChannelDto.channel_type = ChannelType.PROTECTED;
     }
 
     const savedChannel = await this.chatChannelRepository.update(

@@ -45,7 +45,20 @@ const OwnerManagePanel = ({
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleChangePassword = () => {
-    toast(`changed Password to ${password}?`);
+    axios
+      .patch(`chat-channels/${channel.chatChannel.id}`, {
+        password: password,
+      })
+      .then(() => {
+        toast.success("Password succesfully changed");
+      })
+      .catch((err) => {
+        if (err?.statusCode === 400) {
+          let message: string = err.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        }
+      });
   };
 
   const handleManageAdmin = (member: ChannelMember) => {
