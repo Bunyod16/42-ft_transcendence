@@ -11,7 +11,7 @@ export interface ServerToClientEvents {
   fuck: () => void;
   gameEnded: (data: GameState) => void;
   matchBegin: (data: GameState) => void;
-  gameInvite: (data: UserProfile) => void;
+  gameInvite: (data: UserProfile) => void; // listen for game invite
   acceptInviteRejected: () => void;
 }
 
@@ -20,13 +20,13 @@ export interface ClientToServerEvents {
   queueEnter: () => void;
   queueLeave: () => void;
   cancelPlayWithFriend: () => void;
-  inviteFriend: (data: { friendId: string }) => void;
+  inviteFriend: (data: { friendId: string }) => void; // 1
   userConnected: (data: { skin: any }) => void;
   userDisconnected: () => void;
   playerUp: (data: { gameId: string }) => void;
   playerDown: (data: { gameId: string }) => void;
   leaveGame: () => void;
-  acceptInvite: (data: UserProfile) => void;
+  acceptInvite: (data: UserProfile) => void; // 2
 }
 
 // export interface MatchFoundData {

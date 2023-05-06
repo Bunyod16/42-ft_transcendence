@@ -15,7 +15,8 @@ import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import ManageChannelModal from "../modal/ManageChannelModal";
 import useUserStore from "@/store/userStore";
 import ChannelDetail from "./ChannelDetaill";
-
+import { chatSocket } from "@/components/socket/socket";
+import { useRouter } from "next/router";
 export interface ChatType {
   id?: number;
   createdAt?: Date;
@@ -59,6 +60,7 @@ interface TopBarProps {
   handleBack: () => void;
 }
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
+  const route = useRouter();
   const FriendDetail = () => {
     const setPanel = useUserStore((state) => state.setPanel);
     const handleBlockFriend = () => {
@@ -69,6 +71,16 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
       setPanel(undefined);
     };
 
+    function handleGameInvite() {
+      // wrong type
+      chatSocket.emit("inviteFriend", {
+        friendId: panel.friendInfo?.id ? panel.friendInfo?.id.toString() : "",
+      });
+    }
+
+    function handleShowProfile() {
+      route.push(`/profile/${panel.friendInfo?.nickName}`);
+    }
     return (
       <>
         <Box
@@ -88,7 +100,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
               flex: 1,
               mr: 1,
             }}
-            onClick={() => console.log("show friend")}
+            onClick={handleShowProfile}
           >
             <Avatar
               src={panel.friendInfo?.avatar}
@@ -115,7 +127,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
             color: "white",
             border: "2px solid #F2F4F3",
           }}
-          onClick={() => console.log("Havent Connect Send Invite")}
+          onClick={handleGameInvite}
           size="small"
         >
           Invite

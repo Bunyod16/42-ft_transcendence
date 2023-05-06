@@ -1,7 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "./socket-types";
 import { FriendType } from "@/types/social-type";
-
+import { UserProfile } from "@/types/user-profile-type";
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = "http://localhost:3000";
 
@@ -23,6 +23,8 @@ interface ChatClientToServerType {
   joinRoomDirectMessage: (data: { chatChannelId: number }) => void;
   joinRoom: (data: { chatChannelId: number }) => void;
   sendMessage: (data: { message: string; chatChannelId: number }) => void;
+  acceptInvite: (data: UserProfile) => void;
+  inviteFriend: (data: { friendId: string }) => void;
 }
 
 interface ChatServerToClientType {
@@ -32,6 +34,7 @@ interface ChatServerToClientType {
   }) => void;
   friendOnline: (data: FriendType) => void;
   friendOffline: (data: FriendType) => void;
+  gameInvite: (data: UserProfile) => void;
 }
 
 export const chatSocket: Socket<

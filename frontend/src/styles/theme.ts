@@ -114,6 +114,13 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           // textTransform: "none",
+          transition: "all 0.2s ease",
+          "&:hover": {
+            backgroundColor: "primary.main",
+          },
+          "&:active": {
+            transform: "scale(0.9)",
+          },
         },
       },
     },

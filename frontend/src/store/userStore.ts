@@ -15,6 +15,8 @@ interface UserStore {
   view: Views;
   panel: PanelData | undefined;
   tabs: number;
+  isAuthed?: boolean;
+  needAuth?: boolean;
   login: (name: string, id: number, avatar: string) => void;
   logout: () => void;
   updateName: (name: string) => void;
@@ -36,6 +38,8 @@ const useUserStore = create<UserStore>()(
       view: "Lobby",
       panel: undefined,
       tabs: TabTypes.friends,
+      needAuth: false,
+      isAuthed: false,
       // Persist state to localStorage
       // This will allow the state to be restored even if the user leaves the site
       // or refreshes the page
