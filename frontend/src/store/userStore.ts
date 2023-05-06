@@ -8,6 +8,7 @@ type Views = "Lobby" | "Game" | "Profile" | "Settings";
 
 interface UserStore {
   isLoggedIn: boolean;
+  isAuthenticated: boolean;
   id: number | null;
   nickName: string;
   avatar: string;
@@ -15,7 +16,8 @@ interface UserStore {
   view: Views;
   panel: PanelData | undefined;
   tabs: number;
-  login: (name: string, id: number) => void;
+  login: (name: string, id: number, avatar: string) => void;
+  authenticate: (isAuthenticated: boolean) => void;
   logout: () => void;
   updateName: (name: string) => void;
   updateState: (state: States) => void;
@@ -28,6 +30,7 @@ interface UserStore {
 const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
+      isAuthenticated: false,
       isLoggedIn: false,
       id: null,
       nickName: "",
@@ -46,11 +49,21 @@ const useUserStore = create<UserStore>()(
       // for better performance and reliability.
       // See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
       // for more information.
-      login: (nickName: string, id: number) => {
+      login: (nickName: string, id: number, avatar: string) => {
+        let newAvatar = avatar;
+        if (avatar === "default-stormtrooper.png")
+          newAvatar = `https://source.boringavatars.com/beam/40/${id}?square`;
+
         set(() => ({
           isLoggedIn: true,
           id,
           nickName,
+          avatar: newAvatar,
+        }));
+      },
+      authenticate: (isAuthenticated: boolean) => {
+        set(() => ({
+          isAuthenticated: isAuthenticated,
         }));
       },
       updateName: (nickName: string) => {

@@ -1,4 +1,5 @@
 import { FriendType } from "@/types/social-type";
+import axios from "axios";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -8,6 +9,7 @@ interface FriendsStoreType {
   resetFriendList: () => void;
   setOnline: (friend: FriendType) => void;
   setOffline: (friend: FriendType) => void;
+  updateFriendList: () => void;
 }
 
 const useFriendsStore = create<FriendsStoreType>()(
@@ -18,12 +20,6 @@ const useFriendsStore = create<FriendsStoreType>()(
         const friendList: FriendType[] = [];
         friendQuery.map((query) => {
           friendList.push({
-            // id: query.id,
-            // nickName: query.nickName,
-            // avatar: query.avatar,
-            // wins: query.wins,
-            // losses: query.losses,
-            // online: query.online,
             ...query.friend,
             chatChannel: query.directMessage,
           });
@@ -57,6 +53,13 @@ const useFriendsStore = create<FriendsStoreType>()(
           friendList.push(qFriend);
         });
         set(() => ({ friends: friendList }));
+      },
+      updateFriendList: async () => {
+        const res = await axios.get(
+          "/friend-request/findUserFriendsWithDirectMessage",
+        );
+        get().setFriendList(res.data);
+        return;
       },
     }),
     {

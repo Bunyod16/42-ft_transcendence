@@ -6,4 +6,5 @@ node_modules
 node_modules
 .DS_Store
 backend/uploads/
+backend/avatars/
 yarn.lock

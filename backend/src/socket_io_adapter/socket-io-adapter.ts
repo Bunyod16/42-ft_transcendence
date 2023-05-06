@@ -70,11 +70,10 @@ const createSocketTokenAuthMiddleware =
   async (socket: SocketWithAuthData, next) => {
     // socket.handshake.headers['token'] is only for postman compatibility
     // Postman provides no way to append this field (socket.handshake.auth.token). Therefore, we'll pass a token header, and fall back to that.
-    const token = parse(socket.handshake.headers.cookie);
-
-    logger.log(`Validating token before connection: ${token}`);
 
     try {
+      const token = parse(socket.handshake.headers.cookie);
+      logger.log(`Validating token before connection: ${token}`);
       const user = await jwtAccessService.verifyAccessToken(
         token.Authentication,
       );

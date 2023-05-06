@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import DirectChat from "./SidePanel/DirectChat";
+import DirectChat from "./SidePanel/chat/DirectChat";
 import GeneralTab from "./SidePanel/GeneralTab";
 import { chatSocket } from "./socket/socket";
 import { PanelData } from "@/types/social-type";

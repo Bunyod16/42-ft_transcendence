@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import axios from "axios";
 
 interface RequestType {
   friend: {
@@ -18,18 +19,19 @@ interface pendingFriendStoreType {
   incomingRequests: RequestType[];
   outgoingRequests: RequestType[];
   setRequests: (pendingRequest: PendingRequest) => void;
+  updateRequests: () => void;
   resetRequests: () => void;
 }
 
 const usePendingFriendStore = create<pendingFriendStoreType>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       incomingRequests: [],
       outgoingRequests: [],
       setRequests: (pendingRequest: PendingRequest) => {
         const inReq: RequestType[] = [];
         const outReq: RequestType[] = [];
-        console.log(pendingRequest);
+        // console.log(pendingRequest);
         if (pendingRequest.incomingRequests.length) {
           pendingRequest.incomingRequests.map((req) => {
             inReq.push({ friend: req.friend });
@@ -43,6 +45,10 @@ const usePendingFriendStore = create<pendingFriendStoreType>()(
           incomingRequests: inReq,
           outgoingRequests: outReq,
         }));
+      },
+      updateRequests: async () => {
+        const res = await axios.get("/friend-request/findUserPendingRequest");
+        get().setRequests(res.data);
       },
       resetRequests: () => {
         set(() => ({

@@ -3,13 +3,13 @@ export interface ChatChannel {
   name: string;
   channel_type: "public" | "protected";
   chatType: "group_message" | "direct_message";
+  ownerId: UserInfo;
 }
 
 export interface Channel {
   id: number;
   isAdmin: boolean;
-  ownerId: number;
-  isBlackListed: boolean;
+  isBlacklisted: boolean;
   mutedUntil: null;
   chatChannel: ChatChannel;
 }
@@ -17,8 +17,7 @@ export interface Channel {
 export interface ChannelMember {
   id: number;
   isAdmin: boolean;
-  ownerId: number;
-  isBlackListed: boolean;
+  isBlacklisted: boolean;
   mutedUntil: null;
   user: UserInfo;
 }

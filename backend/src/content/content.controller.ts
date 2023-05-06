@@ -34,9 +34,7 @@ export class ContentController {
     FileInterceptor('avatar', {
       storage: diskStorage({
         destination: (req: RequestWithUser, _, cb) => {
-          const avatarFilename: string = `avatars/${req.user.avatar
-            .split('/')
-            .pop()}`;
+          const avatarFilename = `avatars/${req.user.avatar.split('/').pop()}`;
           if (avatarFilename !== 'default-stormtrooper.png') {
             if (fs.existsSync(avatarFilename)) fs.unlinkSync(avatarFilename);
           }
@@ -50,9 +48,9 @@ export class ContentController {
           callback(
             null,
             'avatar-userId-' +
-            req.user.id +
-            '.' +
-            file.originalname.split('.').pop(),
+              req.user.id +
+              '.' +
+              file.originalname.split('.').pop(),
           );
         },
       }),

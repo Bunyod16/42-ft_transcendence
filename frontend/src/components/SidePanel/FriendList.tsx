@@ -8,18 +8,16 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import axios from "../apiClient/apiClient";
 import useFriendsStore from "@/store/friendsStore";
-import PendingBox from "./PendingBox";
 import useUserStore from "@/store/userStore";
 import { FriendType } from "@/types/social-type";
 import { chatSocket } from "../socket/socket";
-// import { UserProfile } from "@/types/user-profile-type";
+import ManageFriendAccordian from "./ManageFriendAccordian";
+import usePendingFriendStore from "@/store/pendingFriendStore";
+import { toast } from "react-hot-toast";
 
-// interface FriendPanelType {
-//   setPanel: React.Dispatch<React.SetStateAction<PanelData | undefined>>;
-// }
 function FriendBox() {
   const [friends] = useFriendsStore((state) => [state.friends]);
   const setPanel = useUserStore((state) => state.setPanel);
@@ -31,14 +29,12 @@ function FriendBox() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        // height: "100%",
         overflow: "auto",
         pr: 1,
         flex: 1,
       }}
       aria-label="contacts"
     >
-      {/** map new friend state */}
       {friends.map((friend, index) => (
         <ListItem
           key={index}
@@ -58,7 +54,7 @@ function FriendBox() {
               });
             }}
           >
-            <Avatar src={"/jakoh_smol.jpg"} sx={{ width: 32, height: 32 }} />
+            <Avatar src={friend.avatar} sx={{ width: 32, height: 32 }} />
             <ListItemText sx={{ ml: "12px" }} primary={friend.nickName} />
             <CircleIcon
               sx={{
@@ -76,23 +72,25 @@ function FriendBox() {
 }
 
 export default function FriendList() {
-  const [setFriendList, setOnline, setOffline] = useFriendsStore((state) => [
-    state.setFriendList,
+  const [updateFriendList, setOnline, setOffline] = useFriendsStore((state) => [
+    state.updateFriendList,
     state.setOnline,
     state.setOffline,
   ]);
-  const [pendingActive, setPendingActive] = useState(false);
+  const updateRequests = usePendingFriendStore((state) => state.updateRequests);
+  // const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
-    axios
-      .get("/friend-request/findUserFriendsWithDirectMessage")
-      .then((response) => {
-        setFriendList(response.data);
-        // alert("YOU NOW HAVE FRENS");
-      })
-      .catch((error) => {
-        console.log("error: ", error);
-        // alert("KENOT SET FRIEND");
-      });
+    // axios
+    //   .get("/friend-request/findUserFriendsWithDirectMessage")
+    //   .then((response) => {
+    //     setFriendList(response.data);
+    //     // alert("YOU NOW HAVE FRENS");
+    //   })
+    //   .catch((error) => {
+    //     console.log("error: ", error);
+    //     // alert("KENOT SET FRIEND");
+    //   });
+    updateFriendList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -107,21 +105,29 @@ export default function FriendList() {
 
     chatSocket.on("friendOnline", handleFriendOnline);
     chatSocket.on("friendOffline", handleFriendOffline);
+
+    return () => {
+      chatSocket.off("friendOnline", handleFriendOnline);
+      chatSocket.off("friendOffline", handleFriendOffline);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleFriend() {
+  function handleAddFriend() {
     const promptFriend: string = prompt("Enter friend Name") || "";
     axios
       .post("/friend-request/addFriendByNickName", {
         nickName: promptFriend,
       })
       .then((response) => {
-        alert("BEFRIENDING SUCCESSFUL");
+        // alert("BEFRIENDING SUCCESSFUL");
         console.log(response);
+        updateRequests();
+        toast.success("Request successful!");
       })
       .catch((err) => {
-        alert("BEFRIENDING FAIL");
+        toast.error("Request failed!");
+        // alert("BEFRIENDING FAIL");
         console.log(err);
       });
   }
@@ -151,14 +157,14 @@ export default function FriendList() {
             border: "2px solid #626262",
           },
         }}
-        onClick={handleFriend}
+        onClick={handleAddFriend}
       >
         Add Friend
       </Button>
 
       <FriendBox />
       {/* <Typography>Pending</Typography> */}
-      <Button
+      {/* <Button
         // variant="outlined"
         // color="primary"
         fullWidth
@@ -175,7 +181,26 @@ export default function FriendList() {
       >
         Pending
       </Button>
-      {pendingActive && <PendingBox />}
+      <Button
+        // variant="outlined"
+        // color="primary"
+        fullWidth
+        sx={{
+          mt: "8px",
+          color: "#FEFEFE",
+          // border: "2px solid #A3A3A3",
+          justifyContent: "start",
+          "&:hover": {
+            backgroundColor: "#00000050",
+          },
+        }}
+        onChange={handlePendingActive("hello")}
+      >
+        Blocked
+      </Button> */}
+
+      {/* {pendingActive && <PendingBox />} */}
+      <ManageFriendAccordian />
     </Box>
   );
 }

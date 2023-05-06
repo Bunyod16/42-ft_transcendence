@@ -163,9 +163,33 @@ export class UserService {
     ];
   }
 
+  async getRefreshToken2FA(user: User) {
+    const q = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: user.id })
+      .addSelect('user.refreshToken2FA')
+      .getOneOrFail();
+    return q;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       return await this.userRepository.update({ id: id }, updateUserDto);
+    } catch (error) {
+      throw new CustomException(
+        `User nickName already exist`,
+        HttpStatus.BAD_REQUEST,
+        'User => update()',
+        error,
+      );
+    }
+  }
+
+  async setRefeshToken2FA(userId: number, isAuthenticated: boolean) {
+    try {
+      return await this.userRepository.update(userId, {
+        refreshToken2FA: isAuthenticated,
+      });
     } catch (error) {
       throw new CustomException(
         `User nickName already exist`,
