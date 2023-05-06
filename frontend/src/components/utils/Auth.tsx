@@ -34,10 +34,11 @@ export default function Auth({ children }: { children: ReactElement }) {
     axios
       .get("auth/profile")
       .then((res) => {
+        console.log(`IS LOGGED IN ${isLoggedIn}`);
+        authenticate(res.data.isAuthenticated);
         if (isLoggedIn) return;
         login(res.data.nickName, res.data.id, res.data.avatar);
-        authenticate(res.data.isAuthenticated);
-        console.log("user authenticated");
+        console.log(`user authenticated ${res.data.isAuthenticated}`);
         socket.connect();
       })
       .catch((err) => {
@@ -64,7 +65,7 @@ export default function Auth({ children }: { children: ReactElement }) {
     );
 
   if (!isHydrated) return <Loading />;
-
+  console.log(`user authenticated 2fa ${isAuthenticated}`);
   return (
     <>
       {/* <Toaster /> */}

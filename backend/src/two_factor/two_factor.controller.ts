@@ -103,8 +103,9 @@ export class TwoFactorController {
   async verifyTwoFactor(
     @Param('userId', ParseIntPipe) userId: number,
     @Query('twoFactorCode') twoFactorCode: string,
-    @Body() body :any,
+    @Body() body: any,
   ) {
+    console.log('Attemp to verify two factor');
     const verification = await this.twoFactorService.verifyUserTwoFactor(
       userId,
       body.twoFactorCode,
@@ -113,8 +114,7 @@ export class TwoFactorController {
     Logger.log(
       `Trying to get verify-testing TwoFactor for user with id = [${userId}]`,
       'TwoFactor => verify()',
-    );
-    console.log(verification);
+    );      
     return { verified: verification };
   }
 

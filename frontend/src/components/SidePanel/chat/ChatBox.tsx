@@ -23,6 +23,38 @@ interface ChatType {
   chatLineType?: "message" | "activeinvite";
 }
 
+enum FriendStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+  BLOCKED = "blocked",
+}
+
+interface BlockedUser {
+  friend: UserInfo;
+  friendRequest: {
+    id: number;
+    createdAt: Date;
+    friendStatus: FriendStatus;
+  };
+}
+
+enum FriendStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+  BLOCKED = "blocked",
+}
+
+interface BlockedUser {
+  friend: UserInfo;
+  friendRequest: {
+    id: number;
+    createdAt: Date;
+    friendStatus: FriendStatus;
+  };
+}
+
 export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   const [message, setMessage] = useState<string>("");
   const [chats, setChats] = useState<ChatType[]>([]);
@@ -30,11 +62,21 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   const [isLoading, setIsLoading] = useState(false);
   const prevHeight = useRef(0);
   const [channelMembers, setChannelMembers] = useState<ChannelMember[]>([]);
+  const [blockedFriends, setBlockedFriends] = useState<BlockedUser[]>([]);
   const panel = useUserStore((state) => state.panel);
   const [gameUserProfile, setGameUserProfile] = useState<UserProfile | null>(
     null,
   );
   useEffect(() => {
+    axios
+      .get("/friend-request/findUserBlockedFriends")
+      .then((res) => {
+        setBlockedFriends(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     function onChatMessage(data: {
       text: string;
       sender: { id: number; nickName: string };
@@ -64,7 +106,6 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   }, []);
 
   useEffect(() => {
-    // axios.get();
     axios
       .get(`/chat-channel-member/${chatChannelId}/usersInChatChannel`)
       .then((res) => setChannelMembers([...res.data]))

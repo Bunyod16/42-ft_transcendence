@@ -52,6 +52,7 @@ interface TopBarProps {
   panel: PanelData;
   handleBack: () => void;
 }
+
 const TopBar = ({ panel, handleBack }: TopBarProps) => {
   const route = useRouter();
   const FriendDetail = () => {

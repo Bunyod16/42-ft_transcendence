@@ -245,17 +245,52 @@ export class ChatChannelMemberController {
     return chatChannelMember;
   }
 
-  @Patch(':id/admin')
+  @Patch(':chatChannelMemberId/admin')
+  @UseGuards(UserAuthGuard)
   async update_admin(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('chatChannelMemberId', ParseIntPipe) chatChannelMemberId: number,
+    @Req() req: any,
     @Query('isAdmin', ParseBoolPipe) isAdmin: boolean,
+    @Body('chatChannelId', ParseIntPipe) chatChannelId: number,
   ) {
+    const requester: User = req.user;
+    try {
+      const userToDelete: ChatChannelMember =
+        await this.chatChannelMemberService.findOne(chatChannelMemberId);
+      const chatChannel: ChatChannel = await this.chatChannelService.findOne(
+        chatChannelId,
+      );
+      const isRequesterAdmin: boolean =
+        await this.chatChannelMemberService.isUserAdmin(
+          requester.id,
+          chatChannel.id,
+        );
+      validateAction(
+        requester,
+        userToDelete,
+        chatChannel,
+        isRequesterAdmin,
+        'modify admin status on',
+      );
+    } catch (error) {
+      throw new CustomException(
+        `${error.response.message}`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannelMember => remove()`,
+      );
+    }
+
     const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
     updateChatChannelMemberDto.isAdmin = isAdmin;
 
     const chatChannelMember = await this.chatChannelMemberService.update(
-      id,
+      chatChannelMemberId,
       updateChatChannelMemberDto,
+    );
+
+    Logger.log(
+      `Change admin status of user with chatChannelMemberId = [${chatChannelMemberId}] to ${isAdmin}`,
+      'ChatChannelMember => update_admin()',
     );
 
     return chatChannelMember;
