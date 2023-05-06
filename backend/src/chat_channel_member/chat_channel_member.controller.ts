@@ -258,6 +258,11 @@ export class ChatChannelMemberController {
       updateChatChannelMemberDto,
     );
 
+    Logger.log(
+      `Change admin status of user with id = [${1}] to ${isAdmin}`,
+      'ChatChannelMember => update_admin()',
+    );
+
     return chatChannelMember;
   }
 
