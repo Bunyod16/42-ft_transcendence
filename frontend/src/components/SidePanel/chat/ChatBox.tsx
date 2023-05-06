@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
 // import { ChatType } from "./DirectChat";
 import { useEffect, useRef, useState } from "react";
-import { chatSocket } from "../../socket/socket";
+import { chatSocket, socket } from "../../socket/socket";
 import useUserStore from "@/store/userStore";
 import axios from "axios";
 import { ChannelMember, FriendType } from "@/types/social-type";
@@ -46,7 +46,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
     function onGameInvite(data: UserProfile) {
       if (panel && data.nickName === panel.friendInfo?.nickName) {
         const newData: ChatType = {
-          text: "Join My Game",
+          text: "Accept Game Invite",
           sender: { id: data.id, nickName: data.nickName },
           chatLineType: "activeinvite",
         };
@@ -56,10 +56,10 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
     }
 
     chatSocket.on("chatMessage", onChatMessage);
-    chatSocket.on("gameInvite", onGameInvite);
+    socket.on("gameInvite", onGameInvite);
     return () => {
       chatSocket.off("chatMessage", onChatMessage);
-      chatSocket.off("gameInvite", onGameInvite);
+      socket.off("gameInvite", onGameInvite);
     };
   }, []);
 
@@ -95,8 +95,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
     setMessage("");
   }
   function handleAcceptInvite() {
-    if (gameUserProfile !== null)
-      chatSocket.emit("acceptInvite", gameUserProfile);
+    if (gameUserProfile !== null) socket.emit("acceptInvite", gameUserProfile);
   }
 
   const handleScroll = async () => {
@@ -156,7 +155,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                 sx={{ width: 24, height: 24, position: "absolute", top: 8 }}
                 src={avatar}
               />
-              {chat.chatLineType !== "activeinvite" ? (
+              {chat.chatLineType === "activeinvite" ? (
                 <Button
                   sx={{
                     color: "accent.main",
@@ -175,7 +174,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                   }}
                   onClick={handleAcceptInvite}
                 >
-                  Accept Game Invite
+                  {chat.text}
                 </Button>
               ) : (
                 <>

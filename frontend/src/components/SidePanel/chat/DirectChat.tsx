@@ -15,7 +15,7 @@ import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import ManageChannelModal from "../modal/ManageChannelModal";
 import useUserStore from "@/store/userStore";
 import ChannelDetail from "./ChannelDetaill";
-import { chatSocket } from "@/components/socket/socket";
+import { socket } from "@/components/socket/socket";
 import { useRouter } from "next/router";
 export interface ChatType {
   id?: number;
@@ -73,7 +73,7 @@ const TopBar = ({ panel, handleBack }: TopBarProps) => {
 
     function handleGameInvite() {
       // wrong type
-      chatSocket.emit("inviteFriend", {
+      socket.emit("inviteFriend", {
         friendId: panel.friendInfo?.id ? panel.friendInfo?.id.toString() : "",
       });
     }
