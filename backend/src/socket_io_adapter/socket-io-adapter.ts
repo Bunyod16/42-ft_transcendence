@@ -25,7 +25,8 @@ export class SocketIOAdapter extends IoAdapter {
     const cors: CorsOptions = {
       origin: [
         `${hostUrl}:8080`, // outside the container network
-        `${clientHost}:${clientPort}` // within the container network
+        `${clientHost}:${clientPort}`, // within the container network
+        'http://localhost:8080'
       ],
       credentials: true,
     };
