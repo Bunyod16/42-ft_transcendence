@@ -13,7 +13,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ChatChannelsService } from './chat_channels.service';
-import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { ChannelType } from './entities/chat_channel.entity';
@@ -173,13 +172,54 @@ export class ChatChannelsController {
     return chatChannel;
   }
 
+  @Patch(':chatChannelId/transferOwner')
+  @UseGuards(UserAuthGuard)
+  async transferOwner(
+    @Param('chatChannelId', ParseIntPipe) chatChannelId: number,
+    @Req() req: any,
+    @Body('newOwnerId', ParseIntPipe) newOwnerId: number,
+  ) {
+    const requester: User = req.user;
+
+    //check if requester is owner (the entity is fucked)
+    if (
+      requester.id !==
+      ((await this.chatChannelsService.findOne(chatChannelId)).ownerId as any)
+        .id
+    ) {
+      throw new CustomException(
+        `Only owner can transfer Ownership`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    if (requester.id === newOwnerId) {
+      throw new CustomException(
+        `Owner cannot transfer ownership to himself`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    Logger.log(
+      `Updating ChatChannel ownership with id = [${chatChannelId}] to new user with id = [${newOwnerId}]`,
+      'ChatChannel => transferOwner()',
+    );
+
+    return this.chatChannelsService.transferOwner(chatChannelId, newOwnerId);
+  }
+
   @Patch(':id')
-  update(
+  @UseGuards(UserAuthGuard)
+  async update(
     @Param('id', ParseIntPipe) id: number,
+    @Req() req: any,
     @Body('channelType') channelType?: string,
     @Body('password') password?: string,
     @Body('name') name?: string,
   ) {
+    const requester: User = req.user;
     //validate channelType is actually a valid enum
     if (typeof channelType !== 'undefined') {
       channelType = channelType.toLowerCase();
@@ -189,19 +229,39 @@ export class ChatChannelsController {
         )
       ) {
         throw new CustomException(
-          `Bad Request: Invalid ChannelType Status`,
+          `Invalid ChannelType Status`,
           HttpStatus.BAD_REQUEST,
           `ChatChannel => update()`,
         );
       }
     }
 
-    return this.chatChannelsService.update(
+    //validate that owner is making request
+    if (
+      requester.id !==
+      ((await this.chatChannelsService.findOne(id)).ownerId as any).id
+    ) {
+      throw new CustomException(
+        `Only owner can edit ChatChannel settings`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    Logger.log(
+      `Updating ChatChannel with id = [${id}]`,
+      'ChatChannel => transferOwner()',
+    );
+
+    const res = await this.chatChannelsService.update(
       id,
       channelType as ChannelType,
       password,
       name,
     );
+
+    console.log(res);
+    return res;
   }
 
   @Delete(':id')

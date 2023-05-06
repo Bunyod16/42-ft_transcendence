@@ -270,6 +270,30 @@ export class ChatChannelsService {
     return chatChannel;
   }
 
+  async transferOwner(chatChannelId: number, newOwnerId: number) {
+    //check if new owner exist
+    await this.userService.findOne(newOwnerId);
+
+    const updateChannelDto = new UpdateChatChannelDto();
+    updateChannelDto.ownerId = newOwnerId;
+
+    const savedChannel = await this.chatChannelRepository.update(
+      { id: chatChannelId },
+      updateChannelDto,
+    );
+
+    if (savedChannel.affected === 0) {
+      throw new CustomException(
+        `ChatChannel with id = [${chatChannelId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannel => transferOwner()',
+      );
+    }
+
+    savedChannel.raw = await this.findOne(chatChannelId);
+    return savedChannel;
+  }
+
   async update(
     id: number,
     channelType: ChannelType,
@@ -281,12 +305,15 @@ export class ChatChannelsService {
     const updateChannelDto = new UpdateChatChannelDto();
     updateChannelDto.name = name ?? chatChannel.name;
     updateChannelDto.channel_type = channelType ?? chatChannel.channel_type;
-    updateChannelDto.password = password ?? chatChannel.password;
+    updateChannelDto.password =
+      encodePassword(password) ?? chatChannel.password;
+
+    console.log(updateChannelDto);
 
     //if protected and no password
     if (
-      updateChannelDto.channel_type == ChannelType.PROTECTED &&
-      updateChannelDto.password == null
+      updateChannelDto.channel_type === ChannelType.PROTECTED &&
+      updateChannelDto.password === null
     )
       throw new CustomException(
         'ChannelType protected must have password',
@@ -295,11 +322,12 @@ export class ChatChannelsService {
       );
 
     //remove password if private or public
+    //(edit i now change the type to protected when password is passed in)
     if (
       updateChannelDto.channel_type !== ChannelType.PROTECTED &&
-      updateChannelDto.password != null
+      updateChannelDto.password !== null
     ) {
-      updateChannelDto.password = null;
+      updateChannelDto.channel_type = ChannelType.PROTECTED;
     }
 
     const savedChannel = await this.chatChannelRepository.update(
