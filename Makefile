@@ -21,16 +21,22 @@ host_url:
 
 dev :
 ifeq ($(OS),Windows_NT)
-	copy .\envs\prod.env .\.env
+	copy .\envs\dev.env .\.env
 else
-	cp ./envs/prod.env ./.env
+	cp ./envs/dev.env ./.env
 endif
 ifeq ($(OS),Windows_NT)
 	powershell -Command "(gc .\.env) -replace 'HOST_URL=.*', 'HOST_URL=$(HOST_URL)' | Out-File -encoding ASCII .\.env"
+	powershell -Command "(gc .\backend\.env) -replace 'AUTH_REDIRECT_URI=.*', 'AUTH_REDIRECT_URI=$(HOST_URL):8080' | Out-File -encoding ASCII .\backend\.env"
+	powershell -Command "(gc .\frontend\.env) -replace 'NEXT_PUBLIC_API_URL=.*', 'NEXT_PUBLIC_API_URL=$(HOST_URL):3000' | Out-File -encoding ASCII .\frontend\.env"
 else ifeq ($(shell uname -s),Linux)
 	sed -i 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
+	sed -i 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
+	sed -i 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 else ifeq ($(shell uname -s),Darwin)
 	sed -i '' 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
+	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
+	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 endif
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
@@ -42,10 +48,16 @@ else
 endif
 ifeq ($(OS),Windows_NT)
 	powershell -Command "(gc .\.env) -replace 'HOST_URL=.*', 'HOST_URL=$(HOST_URL)' | Out-File -encoding ASCII .\.env"
+	powershell -Command "(gc .\backend\.env) -replace 'AUTH_REDIRECT_URI=.*', 'AUTH_REDIRECT_URI=$(HOST_URL):8080' | Out-File -encoding ASCII .\backend\.env"
+	powershell -Command "(gc .\frontend\.env) -replace 'NEXT_PUBLIC_API_URL=.*', 'NEXT_PUBLIC_API_URL=$(HOST_URL):3000' | Out-File -encoding ASCII .\frontend\.env"
 else ifeq ($(shell uname -s),Linux)
 	sed -i 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
+	sed -i 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
+	sed -i 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 else ifeq ($(shell uname -s),Darwin)
 	sed -i '' 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
+	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
+	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 endif
 	docker-compose up --build
 
