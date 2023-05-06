@@ -35,22 +35,25 @@ export class AuthController {
 
   @Get('login')
   login(@Res() res) {
+    const hostUrl: string = this.configService.get('HOST_URL');
+    const hostIp = hostUrl.slice(hostUrl.lastIndexOf('/') + 1, hostUrl.length);
     console.log('User attempting to login');
     return res.redirect(
       `https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
         'FORTY_TWO_API_UID',
-      )}&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
+      )}&redirect_uri=http%3A%2F%2F${hostIp}%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
     );
   }
 
   @Get('callback')
   async ftAuthRedirect(@Query() query, @Req() request: RequestWithUser) {
+    const hostUrl = this.configService.get('HOST_URL');
     const { user } = request;
     const postData = {
       grant_type: 'authorization_code',
       client_id: this.configService.get('FORTY_TWO_API_UID'),
       client_secret: this.configService.get('FORTY_TWO_API_SECRET'),
-      redirect_uri: 'http://127.0.0.1:3000/auth/callback',
+      redirect_uri: `${hostUrl}:3000/auth/callback`,
       code: `${query.code}`,
     };
 
