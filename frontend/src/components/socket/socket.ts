@@ -23,8 +23,6 @@ interface ChatClientToServerType {
   joinRoomDirectMessage: (data: { chatChannelId: number }) => void;
   joinRoom: (data: { chatChannelId: number }) => void;
   sendMessage: (data: { message: string; chatChannelId: number }) => void;
-  acceptInvite: (data: UserProfile) => void;
-  inviteFriend: (data: { friendId: string }) => void;
 }
 
 interface ChatServerToClientType {
@@ -34,7 +32,6 @@ interface ChatServerToClientType {
   }) => void;
   friendOnline: (data: FriendType) => void;
   friendOffline: (data: FriendType) => void;
-  gameInvite: (data: UserProfile) => void;
 }
 
 export const chatSocket: Socket<
