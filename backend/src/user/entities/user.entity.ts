@@ -70,6 +70,10 @@ export class User {
   @Exclude()
   public currentHashedRefreshToken?: string;
 
+  @Column({ nullable: true, select: false, default: true })
+  @Exclude()
+  public refreshToken2FA?: boolean;
+
   //chatLine Correlation
   @OneToMany(() => ChatLine, (chatLine) => chatLine.sender)
   @JoinColumn({ name: 'sender' })

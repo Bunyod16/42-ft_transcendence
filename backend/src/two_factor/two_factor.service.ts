@@ -153,6 +153,7 @@ export class TwoFactorService {
     const secretKey = await this.userService.findOne(userId);
 
     //decrypt secret
+    console.log(userId, twoFactorToken);
     const decryptedSecretKey = decryptTOTP(
       twoFactor.key,
       secretKey.created_at.toString(),
