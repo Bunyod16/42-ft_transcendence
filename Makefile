@@ -8,7 +8,7 @@ NGINX_CDN_VOLUME = cdn_volume
 DEV_NGINX_CDN_VOLUME = dev_cdn_volume
 
 ifeq ($(OS),Windows_NT)
-HOST_IP :=localhost
+HOST_IP :=127.0.0.1
 else ifeq ($(shell uname -s),Linux)
 HOST_IP := $(shell ip addr show | grep 'inet ' | awk '{print $2}' | tail -n 1 | cut -d/ -f1 | sed 's/inet //')
 else ifeq ($(shell uname -s),Darwin)
@@ -17,23 +17,22 @@ endif
 
 all : dev
 
+ip:
+	echo $(HOST_IP)
+
 dev :
 ifeq ($(OS),Windows_NT)
 	copy .\envs\dev.env .\.env
-	echo HOST_IP=$(HOST_IP) >> .\.env
 else
 	cp ./envs/dev.env ./.env
-	echo HOST_IP=$(HOST_IP) >> ./.env
 endif
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 prod :
 ifeq ($(OS),Windows_NT)
 	copy .\envs\prod.env .\.env
-	echo HOST_IP=$(HOST_IP) >> .\.env
 else
 	cp ./envs/prod.env ./.env
-	echo HOST_IP=$(HOST_IP) >> ./.env
 endif
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
