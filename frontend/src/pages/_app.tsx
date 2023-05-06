@@ -16,8 +16,8 @@ export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
-axios.defaults.withCredentials = true;
+// axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+// axios.defaults.withCredentials = true;
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;

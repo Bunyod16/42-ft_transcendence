@@ -1,6 +1,5 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useState, useEffect } from "react";
 import AvatarSettings from "./AvatarSettings";
 import UsernameSettings from "./UsernameSettings";
 import TwoFactorSettings from "./TwoFactorSettings";
