@@ -67,15 +67,19 @@ const OwnerManagePanel = ({
     axios
       .patch(
         `/chat-channel-member/${member.id}/admin?isAdmin=${!member.isAdmin}`,
+        {
+          chatChannelId: channel.chatChannel.id,
+        },
       )
       .then((res) => {
         const newMember: ChannelMember = res.data.raw;
 
         setUpdatedMembers(
-          updatedMembers.map((m, i) =>
-            i === updatedMembers.indexOf(newMember) ? newMember : m,
-          ),
+          updatedMembers.map((m, i) => {
+            return i === updatedMembers.indexOf(member) ? newMember : m;
+          }),
         );
+
         if (newMember.isAdmin) {
           toast.success(`Made ${member.user.nickName} into an admin`);
           console.log(`Made ${member.user.nickName} into an admin`);
