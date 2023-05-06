@@ -75,13 +75,13 @@ export default function ProfilePage() {
         <>
           {user !== undefined && (
             <>
-                <Profile {...user}/>
+              <Profile {...user} />
             </>
           )}
         </>
       ) : (
         <Box component="div" sx={{ margin: "auto" }}>
-          <Typography variant="h2" sx={{fontSize:"2.2em"}}>
+          <Typography variant="h2" sx={{ fontSize: "2.2em" }}>
             User {username} {"doesn't"} exist ):
           </Typography>
         </Box>

@@ -46,7 +46,6 @@ const Lobby = () => {
 
   // *start queue here
   const handleQueue = () => {
-    socket.connect();
     socket.emit("queueEnter");
 
     console.log("trying to queue");
@@ -88,13 +87,14 @@ const Lobby = () => {
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }
-
+    socket.connect();
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);
 
     return () => {
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
       socket.off("matchFound", onMatchFound);
+      // socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

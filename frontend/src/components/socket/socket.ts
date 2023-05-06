@@ -1,7 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "./socket-types";
 import { FriendType } from "@/types/social-type";
-
+import { UserProfile } from "@/types/user-profile-type";
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = "http://localhost:3000";
 
