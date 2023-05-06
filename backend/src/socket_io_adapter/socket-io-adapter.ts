@@ -18,11 +18,16 @@ export class SocketIOAdapter extends IoAdapter {
   }
 
   createIOServer(port: number, options?: ServerOptions): any {
+    const hostUrl = this.configService.get('HOST_URL') || 'localhost';
     const clientHost = this.configService.get('NEXT_HOST');
-    const clientPort = parseInt(this.configService.get('NEXT_PORT'));
+    const clientPort = this.configService.get<number>('NEXT_PORT');
 
     const cors: CorsOptions = {
-      origin: [`http://localhost:8080`, `${clientHost}:${clientPort}`],
+      origin: [
+        `${hostUrl}:8080`, // outside the container network
+        `${clientHost}:${clientPort}`, // within the container network
+        'http://localhost:8080'
+      ],
       credentials: true,
     };
 

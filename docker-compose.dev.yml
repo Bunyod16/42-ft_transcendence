@@ -7,17 +7,12 @@ services:
     volumes:
       - dev_trancendence_posgresdb:/var/lib/postgresql/data
     # to ensure database is alive before starting every other service
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   redis:
     volumes:
       - dev_redis_volume:/data
     ports:
-      - "3002:6379"
+      - "3002:${REDIS_PORT}"
 
   nginx:
     volumes:

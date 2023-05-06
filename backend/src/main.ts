@@ -13,8 +13,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // To be passed to custom socketIO adapter
   const configService = app.get(ConfigService);
+  const hostUrl = configService.get('HOST_URL')
+  console.log(hostUrl);
   app.enableCors({
-    origin: ['http://localhost:8080'],
+    origin: [
+      `${hostUrl}:8080`,
+      'http://localhost:8080',
+    ],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
     credentials: true,
   });
@@ -45,7 +50,7 @@ async function bootstrap() {
   // Custom socketIO adapter for custom cors on all websockets
   app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 
-  const port: number = parseInt(configService.get('HOST')) || parseInt(process.env.HOST) || 3000;
+  const port: number = configService.get<number>('NESTJS_PORT') || 3000;
 
   await app.listen(port);
 }

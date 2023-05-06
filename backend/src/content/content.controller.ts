@@ -70,12 +70,12 @@ export class ContentController {
     file: Express.Multer.File,
   ) {
     const { user } = req;
-    const cdnURI = 'http://localhost:7001'; //delete this later
-    // const cdnURI: string =
-    //   (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
-    //   ':' +
-    //   (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
-    const avatarURL = `${cdnURI}/avatar/${file.filename}`;
+    // const cdnURI: string = 'http://localhost:7001'; //delete this later
+    const cdnURI: string =
+      this.configService.get('HOST_URL') +
+      ':' +
+      this.configService.get<number>('CDN_PORT').toString();
+    const avatarURL: string = `${cdnURI}/avatar/${file.filename}`;
 
     this.logger.log(
       `Saving avatar for user ${user.nickName} to ${process.cwd()}/${

@@ -13,6 +13,13 @@ services:
       POSTGRES_DB: ${DB_NAME}
     expose:
       - ${DB_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - trancendence_posgresdb:/var/lib/postgresql/data
 
   redis:
     container_name: redis
@@ -24,12 +31,14 @@ services:
     networks:
       - ft_trancendence
     expose:
-      - "6379"
+      - ${REDIS_PORT}
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 3
+    volumes:
+      - redis_volume:/data
     entrypoint: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
   nginx:
@@ -48,6 +57,8 @@ services:
     configs:
       - source: nginx_42trancendence_conf_template
         target: /etc/nginx/templates/42trancendence_cdn.conf.template
+    volumes:
+      - cdn_volume:/var/www/42trancendence/avatar:ro
 
   nestjs:
     container_name: backend
@@ -63,27 +74,31 @@ services:
     networks:
       - ft_trancendence
     environment:
+      HOST_URL: ${HOST_URL}
       REDIS_HOST: ${REDIS_HOST}
-      HOST: ${NEST_LISTEN_PORT}
+      REDIS_PORT: ${REDIS_PORT}
+      NESTJS_PORT: ${NEST_LISTEN_PORT}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      LISTEN_PORT: ${NEST_LISTEN_PORT}
       ENV: ${ENV}
-      CDN_HOST: ${CDN_HOST}
       CDN_PORT: ${CDN_PORT}
     ports:
       - "3000:${NEST_LISTEN_PORT}"
     expose:
       - ${NEST_LISTEN_PORT}
+    volumes:
+      - cdn_volume:/trancendence_nestjs/src/avatars
 
   nextjs:
     container_name: frontend
     image: 42-ft_transendence-nextjs
     build:
       context: ./frontend
+    environment:
+      HOST_URL: ${HOST_URL}
     ports:
       - "8080:${NEXT_LISTEN_PORT}"
     depends_on:
@@ -101,3 +116,8 @@ configs:
 
 networks:
   ft_trancendence:
+
+volumes:
+  cdn_volume:
+  redis_volume:
+  trancendence_posgresdb:

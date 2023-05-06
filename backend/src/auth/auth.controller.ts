@@ -35,22 +35,25 @@ export class AuthController {
 
   @Get('login')
   login(@Res() res) {
+    const hostUrl: string = this.configService.get('HOST_URL');
+    const hostIp = hostUrl.slice(hostUrl.lastIndexOf('/') + 1, hostUrl.length);
     console.log('User attempting to login');
     return res.redirect(
       `https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
         'FORTY_TWO_API_UID',
-      )}&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
+      )}&redirect_uri=http%3A%2F%2F${hostIp}%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
     );
   }
 
   @Get('callback')
   async ftAuthRedirect(@Query() query, @Req() request: RequestWithUser) {
+    const hostUrl = this.configService.get('HOST_URL');
     const { user } = request;
     const postData = {
       grant_type: 'authorization_code',
       client_id: this.configService.get('FORTY_TWO_API_UID'),
       client_secret: this.configService.get('FORTY_TWO_API_SECRET'),
-      redirect_uri: 'http://localhost:3000/auth/callback',
+      redirect_uri: `${hostUrl}:3000/auth/callback`,
       code: `${query.code}`,
     };
 
@@ -85,6 +88,7 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Req() req: RequestWithUser, @Res() res) {
+    const hostUrl = this.configService.get('HOST_URL') || 'localhost';
     try {
       const cookieString = req.headers?.cookie;
       if (!cookieString) throw Error('Cookie is missing in request');
@@ -98,7 +102,7 @@ export class AuthController {
     } catch (error) {
       console.log(error);
       req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-      return res.redirect('http://localhost:8080');
+      return res.redirect(`${hostUrl}:8080`);
     }
   }
 
