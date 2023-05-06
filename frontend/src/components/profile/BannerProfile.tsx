@@ -1,6 +1,6 @@
 import { UserProfile } from "@/types/user-profile-type";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Avatar, Typography, IconButton, Button } from "@mui/material";
+import { Box, Avatar, Typography, Button } from "@mui/material";
 import { useRouter } from "next/router";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useUserStore from "@/store/userStore";
