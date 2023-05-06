@@ -19,6 +19,7 @@ export class AuthService {
       const new_user = new CreateUserDto();
 
       new_user.intraName = username;
+      new_user.avatar = `https://source.boringavatars.com/beam/40/${username}?square`;
       await this.usersService.create(new_user);
     }
     const user = await this.usersService.findOneByIntraname(username);

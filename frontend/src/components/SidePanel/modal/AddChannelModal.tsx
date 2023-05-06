@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,37 +11,39 @@ import {
   TextField,
   FormControlLabel,
   Checkbox,
-  Icon,
-  useRadioGroup,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../../apiClient/apiClient";
 import { ChatChannel, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import { toast } from "react-hot-toast";
 import LockSharpIcon from "@mui/icons-material/LockSharp";
-import { channel } from "diagnostics_channel";
 
 interface PasswordModalProp {
-  open: boolean;
-  setOpen: (boo: boolean) => void;
-  returnPassword: (password: string) => void;
+  modalData: { open: boolean; channel: ChatChannel; id: number };
+  setModalData: (data: any) => void;
 }
-const PasswordModal = ({
-  open,
-  setOpen,
-  returnPassword,
-}: PasswordModalProp) => {
-  const handleClose = () => setOpen(false);
+const PasswordModal = ({ modalData, setModalData }: PasswordModalProp) => {
+  const handleClose = () => setModalData({ open: false });
   const [password, setPassword] = useState("");
 
   const handleEnterPassword = () => {
-    returnPassword(password);
+    axios
+      .post("/chat-channel-member/protected", {
+        userId: modalData.id,
+        chatChannelId: modalData.channel.id,
+        password: password,
+      })
+      .then(() => toast.success(`Joined ${modalData.channel.name}!`))
+      .catch((err) => {
+        toast.error(err.response.data.message);
+        console.log(err.response);
+      });
     handleClose();
   };
 
   return (
     <Modal
-      open={open}
+      open={modalData.open}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -90,18 +92,25 @@ const PasswordModal = ({
 interface AddChannelModalProp {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // onUpdateChannel: (channels: Channel[]) => void;
 }
 const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
-  // const [open, setOpen] = useState(false);
+  // for creating channel
   const handleClose = () => setOpen(false);
   const [isProtected, setIsProtected] = useState(false);
   const [channelValue, setChannelValue] = useState({
     name: "",
     password: "",
   });
+
+  // for join channel
   const [newChannels, setNewChannels] = useState<ChatChannel[]>([]);
   const id = useUserStore((state) => state.id);
-  const [openPwd, setOpenPwd] = useState(false);
+  const [openPwd, setOpenPwd] = useState({
+    open: false,
+    channel: newChannels[0],
+    id: id || 0,
+  });
   const [password, setPassword] = useState("");
 
   function getAllChannels() {
@@ -112,6 +121,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
     return axios.get("/chat-channel-member/usersGroupMessages");
   }
 
+  // get lists of availble channels to join
   useEffect(() => {
     Promise.all([getAllChannels(), getUserChannels()]).then(function ([
       allChannelsRes,
@@ -128,30 +138,53 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
   }, [open]);
 
   const handleCreateChannel = () => {
-    if (channelValue.name === "") return alert("Channel name is missing");
-    if (isProtected)
+    if (channelValue.name === "")
+      return toast.error("Channel name is missing!", { id: "createChannel" });
+
+    if (isProtected) {
       if (channelValue.password === "")
-        return alert("Channel password is missing");
-    axios
-      .post("/chat-channels/groupMessage", { name: channelValue.name })
-      .then((res) => {
-        const newChannelId = res.data.id;
-        if (isProtected)
-          axios
-            .patch(`/chat-channels/${newChannelId}`, {
-              ...channelValue,
-              channelType: "Private",
-            })
-            .then((res) => console.log("success", { res }))
-            .catch((err) => console.log(err));
-        alert("Created Channel!");
-        setOpen(false);
-      });
+        return toast.error("Channel password is missing!", {
+          id: "createChannel",
+        });
+
+      axios
+        .post("/chat-channels/protectedGroupMessage", {
+          name: channelValue.name,
+          // password: channelValue.password,
+        })
+        .then(() => {
+          toast.success(`Created ${channelValue.name}!`, {
+            icon: "🔒",
+            id: "createChannel",
+          });
+        })
+        .catch((err) => {
+          console.log(err.response);
+          toast.error(err.response.data.message, { id: "createChannel" });
+        })
+        .finally(() => setOpen(false));
+    } else {
+      axios
+        .post("/chat-channels/groupMessage", {
+          name: channelValue.name,
+        })
+        .then(() =>
+          toast.success(`Created ${channelValue.name}!`, {
+            id: "createChannel",
+          }),
+        )
+        .catch((err) =>
+          toast.error(err.response.data.message, { id: "createChannel" }),
+        )
+        .finally(() => setOpen(false));
+    }
   };
 
   const handleJoinChannel = (channel: ChatChannel) => {
-    if (channel.channel_type === "protected") setOpenPwd(true);
-    else
+    if (channel.channel_type === "protected") {
+      // getPassword().then();
+      setOpenPwd({ open: true, channel: channel, id: id || -1 });
+    } else
       axios
         .post("/chat-channel-member", {
           userId: id,
@@ -159,8 +192,8 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
         })
         .then(() => toast.success(`Joined ${channel.name}!`))
         .catch((err) => {
-          toast.error("Something went wrong!");
-          console.log(err);
+          toast.error(err.response.data.message);
+          console.log(err.response);
         });
   };
 
@@ -185,11 +218,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           p: 4,
         }}
       >
-        <PasswordModal
-          open={openPwd}
-          setOpen={setOpenPwd}
-          returnPassword={setPassword}
-        />
+        <PasswordModal modalData={openPwd} setModalData={setOpenPwd} />
         <Typography variant="h6">Join a channel</Typography>
         <List sx={{ maxHeight: 300, overflow: "auto", mb: 2, pr: 1 }}>
           {newChannels.length ? (
@@ -234,7 +263,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           color="secondary"
           size="small"
           fullWidth
-          sx={{ mt: 1 }}
+          sx={{ mt: 2 }}
           value={channelValue.name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setChannelValue({ ...channelValue, name: e.target.value })
@@ -260,7 +289,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
               color="secondary"
               size="small"
               fullWidth
-              sx={{ mt: 1, mb: 2 }}
+              sx={{ mb: 2 }}
               value={channelValue.password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setChannelValue({ ...channelValue, password: e.target.value })
@@ -274,6 +303,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           fullWidth
           sx={{
             textTransform: "none",
+            mt: 2,
           }}
           onClick={handleCreateChannel}
         >

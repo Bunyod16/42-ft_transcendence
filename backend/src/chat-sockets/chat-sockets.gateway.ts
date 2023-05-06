@@ -31,9 +31,9 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { FriendRequestService } from 'src/friend_request/friend_request.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
-import {
-  findUserSocketWithNamespace,
-} from 'src/utils/socket-utils';
+import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
+import { UpdateChatChannelMemberDto } from 'src/chat_channel_member/dto/update-chat_channel_member.dto';
+import { findUserSocketWithNamespace } from 'src/utils/socket-utils';
 import { UserAchievementService } from 'src/user_achievement/user_achievement.service';
 
 class ChatMessage {
@@ -85,11 +85,13 @@ export class ChatSocketsGateway
   }
 
   handleConnection(client: SocketWithAuthData) {
-    console.log(`Amount of clients connected = ${this.io.sockets.size}`);
-    console.log(`client with id = ${client.id} connected to chatSocket`);
-    console.log(
+    // console.log(`Amount of clients connected = ${this.io.sockets.size}`);
+    // Logger.log(`client with id = ${client.id} connected to chatSocket`);
+    Logger.log(
       `User with nickName = ${client.user.nickName} connected to chatSocket`,
+      `ChatSocketsGateway => handleConnection()`,
     );
+
     this.io.emit('connected');
     this.userService.setOnline(client.user);
     this.emitConnectedToFriends(client.user);
@@ -109,10 +111,11 @@ export class ChatSocketsGateway
   }
 
   handleDisconnect(client: SocketWithAuthData) {
-    console.log(`Amount of clients disconnected = ${this.io.sockets.size}`);
-    console.log(`client with id = ${client.id} disconnected to chatSocket`);
-    console.log(
+    // console.log(`Amount of clients disconnected = ${this.io.sockets.size}`);
+    // console.log(`client with id = ${client.id} disconnected to chatSocket`);
+    Logger.log(
       `User with nickName = ${client.user.nickName} disconnected from chatSocket`,
+      `ChatSocketsGateway => handleDisconnect()`,
     );
     this.io.emit('disconnected');
     this.userService.setOffline(client.user);
@@ -170,7 +173,6 @@ export class ChatSocketsGateway
   ) {
     const user: User = socket.user;
 
-    console.log('ASDFASDF');
     try {
       const chatChannel = await this.chatChannelService.findOne(chatChannelId);
       const roomName = `chatChannel/${chatChannel.id}`;
@@ -245,11 +247,57 @@ export class ChatSocketsGateway
     const message = body.message;
     const chatChannelId = body.chatChannelId;
     const roomName = `chatChannel/${chatChannelId}`;
+    const chatChannelMember: ChatChannelMember =
+      await this.chatChannelMemberService.findByUserIdAndChatChatChannelId(
+        userId,
+        chatChannelId,
+      );
+
+    //if user still muted
+    if (chatChannelMember.mutedUntil) {
+      if (new Date() < chatChannelMember.mutedUntil) {
+        throw new CustomWSException(
+          `Muted user can't send messages`,
+          HttpStatus.BAD_REQUEST,
+          `ChatSocketsGateway => handleSendMessage()`,
+        );
+      }
+      //if user mute date has already passed
+      const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
+      updateChatChannelMemberDto.mutedUntil = null;
+
+      try {
+        await this.chatChannelMemberService.update(
+          chatChannelMember.id,
+          updateChatChannelMemberDto,
+        );
+        Logger.log(
+          `Unmuting ChatChannelMember with chatChannelMemberId = [${chatChannelMember.id}]`,
+          `ChatChannelMember => handleSendMessage()`,
+        );
+      } catch (error) {
+        throw new CustomWSException(
+          `Something Bad Happened`,
+          HttpStatus.BAD_REQUEST,
+          `ChatSocketsGateway => handleSendMessage()`,
+        );
+      }
+    }
+
+    //if user is Blacklisted
+    if (chatChannelMember.isBlacklisted) {
+      throw new CustomWSException(
+        `Blacklisted user can't send messages`,
+        HttpStatus.BAD_REQUEST,
+        `ChatSocketsGateway => handleSendMessage()`,
+      );
+    }
 
     Logger.log(
       `send ${message} to room = ${roomName}`,
       `ChatSocketsGateway => sendMessage()`,
     );
+
     this.io.in(`chatChannel/${chatChannelId}`).emit('chatMessage', {
       text: message,
       sender: {

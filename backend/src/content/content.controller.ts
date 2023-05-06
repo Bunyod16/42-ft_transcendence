@@ -34,9 +34,7 @@ export class ContentController {
     FileInterceptor('avatar', {
       storage: diskStorage({
         destination: (req: RequestWithUser, _, cb) => {
-          const avatarFilename: string = `avatars/${req.user.avatar
-            .split('/')
-            .pop()}`;
+          const avatarFilename = `avatars/${req.user.avatar.split('/').pop()}`;
           if (avatarFilename !== 'default-stormtrooper.png') {
             if (fs.existsSync(avatarFilename)) fs.unlinkSync(avatarFilename);
           }
@@ -50,9 +48,9 @@ export class ContentController {
           callback(
             null,
             'avatar-userId-' +
-            req.user.id +
-            '.' +
-            file.originalname.split('.').pop(),
+              req.user.id +
+              '.' +
+              file.originalname.split('.').pop(),
           );
         },
       }),
@@ -72,12 +70,12 @@ export class ContentController {
     file: Express.Multer.File,
   ) {
     const { user } = req;
-    const cdnURI: string = 'http://localhost:7001'; //delete this later
+    const cdnURI = 'http://localhost:7001'; //delete this later
     // const cdnURI: string =
     //   (this.configService.get('CDN_HOST') || process.env.CDN_HOST) +
     //   ':' +
     //   (this.configService.get('CDN_PORT') || process.env.CDN_PORT);
-    const avatarURL: string = `${cdnURI}/avatar/${file.filename}`;
+    const avatarURL = `${cdnURI}/avatar/${file.filename}`;
 
     this.logger.log(
       `Saving avatar for user ${user.nickName} to ${process.cwd()}/${

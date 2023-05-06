@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Tooltip } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import useUserStore from "@/store/userStore";
 import toast from "react-hot-toast";
 
@@ -47,83 +47,81 @@ export default function AvatarSettings() {
   };
 
   return (
-    <Box component="div">
-      <Box
-        component="div"
+    <Box
+      component="div"
+      sx={{
+        bgcolor: "primary.200",
+        display: "flex",
+        flexDirection: "column",
+        padding: "12px 16px",
+        borderRadius: 2,
+      }}
+    >
+      <Typography
         sx={{
-          backgroundColor: "none",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          color: "text.primary",
+          fontSize: "1.4em",
+          fontWeight: "800",
+          marginBottom: "10px",
         }}
       >
-        <Typography
-          sx={{
-            color: "text.primary",
-            fontSize: "1.4em",
-            fontWeight: "800",
-            marginBottom: "10px",
-          }}
-        >
-          Avatar
-        </Typography>
-        <form
-          onSubmit={handleSubmitAvatar}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Tooltip title="Choose Image" followCursor>
-            <Button
-              sx={{
-                borderRadius: "8px",
-                width: "140px",
-                height: "140px",
-                backgroundImage: newAvatarUrl
-                  ? `url("${newAvatarUrl}")`
-                  : `url("${avatar}")`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                "&:hover": {
-                  opacity: "0.5",
-                },
-              }}
-              component="label"
-            >
-              <input
-                type="file"
-                name="file"
-                accept="image/*"
-                onChange={(e) => getImageFile(e)}
-                hidden
-              />
-            </Button>
-          </Tooltip>
+        Avatar
+      </Typography>
+      <form
+        onSubmit={handleSubmitAvatar}
+        style={{
+          display: "flex",
+          // flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Tooltip title="Choose Image" followCursor>
           <Button
             sx={{
-              color: "text.primary",
-              fontSize: "1em",
-              fontWeight: "600",
-              backgroundColor:
-                newAvatar === undefined ? "accent.main" : "accent.light",
-              marginTop: "10px",
-              textTransform: "none",
-              width: "210px",
-              height: "40px",
-              "&:hover": { backgroundColor: "primary.main" },
+              borderRadius: "8px",
+              width: "140px",
+              height: "140px",
+              backgroundImage: newAvatarUrl
+                ? `url("${newAvatarUrl}")`
+                : `url("${avatar}")`,
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              "&:hover": {
+                opacity: "0.5",
+              },
             }}
-            type="submit"
-            disabled={newAvatar === undefined}
+            component="label"
           >
-            Change Avatar
+            <input
+              type="file"
+              name="file"
+              accept="image/*"
+              onChange={(e) => getImageFile(e)}
+              hidden
+            />
           </Button>
-        </form>
-      </Box>
+        </Tooltip>
+        <Button
+          sx={{
+            color: "text.primary",
+            fontSize: "1em",
+            fontWeight: "600",
+            backgroundColor:
+              newAvatar === undefined ? "accent.main" : "accent.light",
+            marginTop: "10px",
+            textTransform: "none",
+            width: "210px",
+            height: "40px",
+            "&:hover": { backgroundColor: "primary.main" },
+            ml: 3,
+          }}
+          type="submit"
+          disabled={newAvatar === undefined}
+        >
+          Change Avatar
+        </Button>
+      </form>
     </Box>
   );
 }
