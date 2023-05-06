@@ -1,11 +1,12 @@
-import { Avatar, Box, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
 // import { ChatType } from "./DirectChat";
 import { useEffect, useRef, useState } from "react";
-import { chatSocket } from "../../socket/socket";
+import { chatSocket, socket } from "../../socket/socket";
+import useUserStore from "@/store/userStore";
 import axios from "axios";
 import { ChannelMember, UserInfo } from "@/types/social-type";
+import { UserProfile } from "@/types/user-profile-type";
 // import { button, useControls } from "leva";
-
 interface ChatBoxProps {
   chatChannelId: number;
   // members?: FriendType[];
@@ -19,6 +20,7 @@ interface ChatType {
     id?: number;
     nickName: string;
   };
+  chatLineType?: "message" | "activeinvite";
 }
 
 enum FriendStatus {
@@ -45,7 +47,10 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   const prevHeight = useRef(0);
   const [channelMembers, setChannelMembers] = useState<ChannelMember[]>([]);
   const [blockedFriends, setBlockedFriends] = useState<BlockedUser[]>([]);
-
+  const panel = useUserStore((state) => state.panel);
+  const [gameUserProfile, setGameUserProfile] = useState<UserProfile | null>(
+    null,
+  );
   useEffect(() => {
     axios
       .get("/friend-request/findUserBlockedFriends")
@@ -59,14 +64,28 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
     function onChatMessage(data: {
       text: string;
       sender: { id: number; nickName: string };
+      chatLineType?: "message" | "activeinvite";
     }) {
       setChats((prev: ChatType[]) => [data, ...prev]);
     }
 
-    chatSocket.on("chatMessage", onChatMessage);
+    function onGameInvite(data: UserProfile) {
+      if (panel && data.nickName === panel.friendInfo?.nickName) {
+        const newData: ChatType = {
+          text: "Accept Game Invite",
+          sender: { id: data.id, nickName: data.nickName },
+          chatLineType: "activeinvite",
+        };
+        setChats((prev: ChatType[]) => [newData, ...prev]);
+        setGameUserProfile(data);
+      }
+    }
 
+    chatSocket.on("chatMessage", onChatMessage);
+    socket.on("gameInvite", onGameInvite);
     return () => {
       chatSocket.off("chatMessage", onChatMessage);
+      socket.off("gameInvite", onGameInvite);
     };
   }, []);
 
@@ -99,6 +118,9 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
       chatChannelId: chatChannelId,
     });
     setMessage("");
+  }
+  function handleAcceptInvite() {
+    if (gameUserProfile !== null) socket.emit("acceptInvite", gameUserProfile);
   }
 
   const handleScroll = async () => {
@@ -140,64 +162,78 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
         ref={listInnerRef}
         onScroll={handleScroll}
       >
-        {chats
-          // .filter((chat) =>
-          //   blockedFriends.some(
-          //     (friend) => friend.friend.id !== chat.sender.id,
-          //   ),
-          // )
-          .map((chat, i) => {
-            const avatar =
-              channelMembers.find((member) => member.user.id === chat.sender.id)
-                ?.user.avatar || "notihing";
-            return (
-              <Box
-                component="div"
-                sx={{
-                  mb: 1,
-                  wordWrap: "break-word",
-                  position: "relative",
-                  // textAlign: chat.sender.nickName !== nickName ? "left" : "right",
-                }}
-                key={i}
-              >
-                <Avatar
-                  sx={{ width: 24, height: 24, position: "absolute", top: 8 }}
-                  src={avatar}
-                />
-                {/* {(chats[i !== 0 ? i - 1 : i].sender.nickName !=
-              chat.sender.nickName ||
-              i === 0) && ( */}
-                <Typography
+        {chats.map((chat, i) => {
+          const avatar =
+            channelMembers.find((member) => member.user.id === chat.sender.id)
+              ?.user.avatar || "nothing";
+          return (
+            <Box
+              component="div"
+              sx={{
+                mb: 1,
+                wordWrap: "break-word",
+                position: "relative",
+              }}
+              key={i}
+            >
+              <Avatar
+                sx={{ width: 24, height: 24, position: "absolute", top: 8 }}
+                src={avatar}
+              />
+              {chat.chatLineType === "activeinvite" ? (
+                <Button
                   sx={{
-                    color: "gray",
+                    color: "text.primary",
                     ml: 4,
+                    alignSelf: "center",
+                    backgroundColor: "accent.main",
+                    borderRadius: "8px",
+                    fontWeight: "700",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      backgroundColor: "accent.dark",
+                    },
+                    "&:active": {
+                      transform: "scale(0.9)",
+                    },
                   }}
+                  onClick={handleAcceptInvite}
                 >
-                  {`${chat.sender.nickName}`}
-                </Typography>
-                {/* )} */}
-                {blockedFriends.some(
-                  (friend) => friend.friend.id !== chat.sender.id,
-                ) ? (
-                  <Typography sx={{ lineHeight: 1, ml: 4 }}>
-                    {chat.text}
-                  </Typography>
-                ) : (
+                  {chat.text}
+                </Button>
+              ) : (
+                <>
                   <Typography
                     sx={{
-                      lineHeight: 1,
+                      color: "gray",
                       ml: 4,
-                      fontStyle: "italic",
-                      color: "text.secondary",
                     }}
                   >
-                    You blocked {chat.sender.nickName}
+                    {`${chat.sender.nickName}`}
                   </Typography>
-                )}
-              </Box>
-            );
-          })}
+                  {blockedFriends.some(
+                    (friend) => friend.friend.id !== chat.sender.id,
+                  ) ? (
+                    <Typography sx={{ lineHeight: 1, ml: 4 }}>
+                      {chat.text}
+                    </Typography>
+                  ) : (
+                    <Typography
+                      sx={{
+                        lineHeight: 1,
+                        ml: 4,
+                        fontStyle: "italic",
+                        color: "text.secondary",
+                      }}
+                    >
+                      You blocked {chat.sender.nickName}
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Box>
+          );
+        })}
       </Box>
 
       {/* Textbox input here */}
