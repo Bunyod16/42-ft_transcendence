@@ -3,6 +3,7 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { JwtAccessService } from 'src/jwt_access/jwt_access.service';
 import { JwtRefreshService } from 'src/jwt_refresh/jwt_refresh.service';
+import { TwoFactorService } from 'src/two_factor/two_factor.service';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
     private readonly jwtAccessService: JwtAccessService,
     private readonly jwtRefreshService: JwtRefreshService,
     private usersService: UserService,
+    private readonly twoFactorService: TwoFactorService,
   ) {}
 
   async signIn(username: string) {
@@ -23,6 +25,14 @@ export class AuthService {
       await this.usersService.create(new_user);
     }
     const user = await this.usersService.findOneByIntraname(username);
+    await this.usersService.setRefeshToken2FA(user.id, true);
+    try {
+      await this.twoFactorService.findOneWithUserId(user.id);
+      console.log('user has 2fa');
+      await this.usersService.setRefeshToken2FA(user.id, false);
+    } catch {
+      console.log('user doesnt have 2fa');
+    }
     const accessToken = this.jwtAccessService.generateAccessToken(user);
     const refreshToken = this.jwtRefreshService.generateRefreshToken(user);
     await this.usersService.setCurrentRefreshToken(refreshToken.token, user.id);

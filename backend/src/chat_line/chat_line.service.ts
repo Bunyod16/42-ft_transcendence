@@ -66,7 +66,6 @@ export class ChatLineService {
         inviteReceiver.id,
         inviteSender.id,
       );
-    console.log(directMessage, inviteReceiver, inviteSender);
     const chatLine = await this.chatLineRepository
       .createQueryBuilder('chatLine')
       .select(['chatLine'])

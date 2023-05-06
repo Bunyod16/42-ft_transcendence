@@ -118,8 +118,7 @@ export class UserAchievementService {
   async checkAchivementEligibility(user: User) {
     const achievements = await this.findUserAchievements(user.id);
     const matches = await this.matchService.findMatchesForUser(user.id);
-    console.log(matches);
-    console.log(achievements);
+
     //give 'Welcome Noobie' achievement
     if (
       matches.length > 0 &&

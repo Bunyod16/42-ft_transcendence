@@ -7,9 +7,11 @@ import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
 import { toast } from "react-hot-toast";
 import { Box } from "@mui/material";
+import TwoFactorAuthPage from "@/pages/two-factor-auth";
 
 export default function Auth({ children }: { children: ReactElement }) {
-  const { isLoggedIn, logout, login, nickName } = useUserStore();
+  const { isLoggedIn, isAuthenticated, logout, login, authenticate, nickName } =
+    useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
   const [error, setError] = useState("");
 
@@ -34,6 +36,7 @@ export default function Auth({ children }: { children: ReactElement }) {
       .then((res) => {
         if (isLoggedIn) return;
         login(res.data.nickName, res.data.id, res.data.avatar);
+        authenticate(res.data.isAuthenticated);
         console.log("user authenticated");
         socket.connect();
       })
@@ -65,7 +68,15 @@ export default function Auth({ children }: { children: ReactElement }) {
   return (
     <>
       {/* <Toaster /> */}
-      {nickName == null ? <PickUsername /> : isLoggedIn ? children : <Login />}
+      {nickName == null ? (
+        <PickUsername />
+      ) : !isAuthenticated ? (
+        <TwoFactorAuthPage />
+      ) : isLoggedIn ? (
+        children
+      ) : (
+        <Login />
+      )}
     </>
   );
 }

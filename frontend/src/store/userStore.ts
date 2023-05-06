@@ -8,6 +8,7 @@ type Views = "Lobby" | "Game" | "Profile" | "Settings";
 
 interface UserStore {
   isLoggedIn: boolean;
+  isAuthenticated: boolean;
   id: number | null;
   nickName: string;
   avatar: string;
@@ -18,6 +19,7 @@ interface UserStore {
   isAuthed?: boolean;
   needAuth?: boolean;
   login: (name: string, id: number, avatar: string) => void;
+  authenticate: (isAuthenticated: boolean) => void;
   logout: () => void;
   updateName: (name: string) => void;
   updateState: (state: States) => void;
@@ -30,6 +32,7 @@ interface UserStore {
 const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
+      isAuthenticated: false,
       isLoggedIn: false,
       id: null,
       nickName: "",
@@ -60,6 +63,11 @@ const useUserStore = create<UserStore>()(
           id,
           nickName,
           avatar: newAvatar,
+        }));
+      },
+      authenticate: (isAuthenticated: boolean) => {
+        set(() => ({
+          isAuthenticated: isAuthenticated,
         }));
       },
       updateName: (nickName: string) => {
