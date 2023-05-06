@@ -18,9 +18,10 @@ export default function ProfilePage() {
   const nickName = useUserStore((state) => state.nickName);
 
   const getUserProfile = async (username: string) => {
+    const host_url = process.env.HOST_URL || 'localhost';
     try {
       const res = await fetch(
-        `http://localhost:3000/user/findOneProfileByUsername/${username}`,
+        `${host_url}:3000/user/findOneProfileByUsername/${username}`,
       );
       const data = await res.json();
       const status = res.status;

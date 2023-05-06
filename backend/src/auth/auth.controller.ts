@@ -39,7 +39,7 @@ export class AuthController {
     return res.redirect(
       `https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
         'FORTY_TWO_API_UID',
-      )}&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
+      )}&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fauth%2Fcallback&response_type=code&scope=public`,
     );
   }
 
@@ -50,7 +50,7 @@ export class AuthController {
       grant_type: 'authorization_code',
       client_id: this.configService.get('FORTY_TWO_API_UID'),
       client_secret: this.configService.get('FORTY_TWO_API_SECRET'),
-      redirect_uri: 'http://localhost:3000/auth/callback',
+      redirect_uri: 'http://127.0.0.1:3000/auth/callback',
       code: `${query.code}`,
     };
 
@@ -87,6 +87,7 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Req() req: RequestWithUser, @Res() res) {
+    const host_url = this.configService.get('HOST_URL') || 'localhost';
     try {
       const cookieString = req.headers?.cookie;
       if (!cookieString)
@@ -102,7 +103,7 @@ export class AuthController {
     } catch (error) {
       console.log(error);
       req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-      return res.redirect('http://localhost:8080');
+      return res.redirect(`${host_url}:8080`);
     }
   }
 
