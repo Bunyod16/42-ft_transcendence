@@ -109,8 +109,12 @@ const MemberListItem = ({
       })
       .catch((err) => {
         console.log(err?.response);
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        } else if (err?.statusCode === 400) {
+          let message: string = err.message;
           message = message.slice(message.indexOf(":") + 1, message.length);
           toast.error(`${message}`);
         }
@@ -130,8 +134,12 @@ const MemberListItem = ({
       })
       .catch((err) => {
         console.log(err.response);
-        if (err.response.status === 400) {
+        if (err?.response?.status === 400) {
           let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        } else if (err?.statusCode === 400) {
+          let message: string = err.message;
           message = message.slice(message.indexOf(":") + 1, message.length);
           toast.error(`${message}`);
         }
@@ -152,8 +160,12 @@ const MemberListItem = ({
       })
       .catch((err) => {
         console.log(err.response);
-        if (err.response.status === 400) {
+        if (err?.response?.status === 400) {
           let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        } else if (err?.statusCode === 400) {
+          let message: string = err.message;
           message = message.slice(message.indexOf(":") + 1, message.length);
           toast.error(`${message}`);
         }
@@ -161,114 +173,158 @@ const MemberListItem = ({
   };
 
   return (
-    <ListItem disablePadding>
-      <ListItemButton disableTouchRipple sx={{ cursor: "default" }}>
-        {/* <ListItemAvatar> */}
+    <>
+      {member.user.id === ownerId ? (
+        <>
+          <ListItem disablePadding>
+            <ListItemButton disableTouchRipple sx={{ cursor: "default" }}>
+              {/* <ListItemAvatar> */}
 
-        <Avatar
-          src={member.user.avatar}
-          sx={{ width: 24, height: 24, mr: 1 }}
-        />
-        {/* </ListItemAvatar> */}
+              <Avatar
+                src={member.user.avatar}
+                sx={{ width: 24, height: 24, mr: 1 }}
+              />
+              {/* </ListItemAvatar> */}
 
-        <ListItemText
-          disableTypography
-          sx={{ display: "flex", alignItems: "center" }}
-        >
-          <Typography
-            marginRight={1}
-            sx={{
-              color: isBlacklisted ? "text.secondary" : "text.primary",
-              textDecoration: isBlacklisted ? "line-through" : "none",
-            }}
-          >
-            {member.user.nickName}
-          </Typography>
-          {ownerId === member.user.id ? (
-            <LocalFireDepartmentSharpIcon
-              sx={{ fontSize: 20, color: "#FDDA0D" }}
-            />
-          ) : (
-            member.isAdmin && (
-              <GrassSharpIcon color="secondary" sx={{ fontSize: 20 }} />
-            )
-          )}
-        </ListItemText>
-
-        {isAdmin && (
-          <>
-            <Tooltip
-              title={
-                isMuted
-                  ? `Unmute. ${"\n"}Muted Until ${muteDate.toDate()}`
-                  : "Mute"
-              }
-              followCursor
-            >
-              <IconButton
-                size="small"
-                sx={{ ml: 1 }}
-                color={!isMuted ? "default" : "error"}
-                onClick={() => {
-                  if (isMuted) {
-                    confirmToast("unmute", handleUnmute);
-                  } else {
-                    setShowDateModal(true);
-                  }
-                }}
+              <ListItemText
+                disableTypography
+                sx={{ display: "flex", alignItems: "center" }}
               >
-                <MuteDateModal
-                  showDateModal={showDateModal}
-                  setShowDateModal={setShowDateModal}
-                  muteDate={muteDate}
-                  setMuteDate={setMuteDate}
-                  member={member}
-                  chatChannel={chatChannel}
-                  setIsMuted={setIsMuted}
-                />
-                <VolumeOffSharpIcon
-                  fontSize="inherit"
-                  color={!isMuted ? "inherit" : "error"}
-                />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip
-              title={!isBlacklisted ? "Blacklist" : "Unblacklist"}
-              followCursor
-            >
-              <IconButton
-                size="small"
-                sx={{ ml: 1 }}
-                color={!isBlacklisted ? "default" : "error"}
-                onClick={() =>
-                  confirmToast(
-                    !isBlacklisted ? "blacklist" : "unblacklist",
-                    handleBlacklist,
+                <Typography
+                  marginRight={1}
+                  sx={{
+                    color: isBlacklisted ? "text.secondary" : "text.primary",
+                    textDecoration: isBlacklisted ? "line-through" : "none",
+                  }}
+                >
+                  {member.user.nickName}
+                </Typography>
+                {ownerId === member.user.id ? (
+                  <LocalFireDepartmentSharpIcon
+                    sx={{ fontSize: 20, color: "#FDDA0D" }}
+                  />
+                ) : (
+                  member.isAdmin && (
+                    <GrassSharpIcon color="secondary" sx={{ fontSize: 20 }} />
                   )
-                }
-              >
-                <BlockSharpIcon
-                  fontSize="inherit"
-                  color={!isBlacklisted ? "inherit" : "error"}
-                />
-              </IconButton>
-            </Tooltip>
+                )}
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+        </>
+      ) : (
+        <>
+          <MuteDateModal
+            showDateModal={showDateModal}
+            setShowDateModal={setShowDateModal}
+            muteDate={muteDate}
+            setMuteDate={setMuteDate}
+            member={member}
+            chatChannel={chatChannel}
+            setIsMuted={setIsMuted}
+          />
+          <ListItem disablePadding>
+            <ListItemButton disableTouchRipple sx={{ cursor: "default" }}>
+              {/* <ListItemAvatar> */}
 
-            <Tooltip title="Kick" followCursor>
-              <IconButton
-                size="small"
-                sx={{ ml: 1 }}
-                color="error"
-                onClick={() => confirmToast("kick", handleKick)}
+              <Avatar
+                src={member.user.avatar}
+                sx={{ width: 24, height: 24, mr: 1 }}
+              />
+              {/* </ListItemAvatar> */}
+
+              <ListItemText
+                disableTypography
+                sx={{ display: "flex", alignItems: "center" }}
               >
-                <DeleteSharpIcon fontSize="inherit" color="error" />
-              </IconButton>
-            </Tooltip>
-          </>
-        )}
-      </ListItemButton>
-    </ListItem>
+                <Typography
+                  marginRight={1}
+                  sx={{
+                    color: isBlacklisted ? "text.secondary" : "text.primary",
+                    textDecoration: isBlacklisted ? "line-through" : "none",
+                  }}
+                >
+                  {member.user.nickName}
+                </Typography>
+                {ownerId === member.user.id ? (
+                  <LocalFireDepartmentSharpIcon
+                    sx={{ fontSize: 20, color: "#FDDA0D" }}
+                  />
+                ) : (
+                  member.isAdmin && (
+                    <GrassSharpIcon color="secondary" sx={{ fontSize: 20 }} />
+                  )
+                )}
+              </ListItemText>
+
+              {isAdmin && (
+                <>
+                  <Tooltip
+                    title={
+                      isMuted
+                        ? `Unmute. ${"\n"}Muted Until ${muteDate.toDate()}`
+                        : "Mute"
+                    }
+                    followCursor
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ ml: 1 }}
+                      color={!isMuted ? "default" : "error"}
+                      onClick={() => {
+                        if (isMuted) {
+                          confirmToast("unmute", handleUnmute);
+                        } else {
+                          setShowDateModal(true);
+                        }
+                      }}
+                    >
+                      <VolumeOffSharpIcon
+                        fontSize="inherit"
+                        color={!isMuted ? "inherit" : "error"}
+                      />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip
+                    title={!isBlacklisted ? "Blacklist" : "Unblacklist"}
+                    followCursor
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ ml: 1 }}
+                      color={!isBlacklisted ? "default" : "error"}
+                      onClick={() =>
+                        confirmToast(
+                          !isBlacklisted ? "blacklist" : "unblacklist",
+                          handleBlacklist,
+                        )
+                      }
+                    >
+                      <BlockSharpIcon
+                        fontSize="inherit"
+                        color={!isBlacklisted ? "inherit" : "error"}
+                      />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Kick" followCursor>
+                    <IconButton
+                      size="small"
+                      sx={{ ml: 1 }}
+                      color="error"
+                      onClick={() => confirmToast("kick", handleKick)}
+                    >
+                      <DeleteSharpIcon fontSize="inherit" color="error" />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              )}
+            </ListItemButton>
+          </ListItem>
+        </>
+      )}
+    </>
   );
 };
 
@@ -400,7 +456,11 @@ const ManageChannelModal = ({
             ))}
           </>
         ) : (
-          <OwnerManagePanel setShow={setShowManage} members={members} />
+          <OwnerManagePanel
+            setShow={setShowManage}
+            members={members}
+            channel={channel}
+          />
         )}
       </Box>
     </Modal>

@@ -51,8 +51,13 @@ export const MuteDateModal = ({
       })
       .catch((err) => {
         console.log(err?.response);
-        if (err.response.status === 400) {
+        if (err?.response?.status === 400) {
           let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        } else if (err?.statusCode === 400) {
+          let message: string = err.message;
+          console.log(message);
           message = message.slice(message.indexOf(":") + 1, message.length);
           toast.error(`${message}`);
         }
