@@ -1,6 +1,6 @@
 import useUserStore from "@/store/userStore";
 import React, { ReactElement, useState } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
@@ -48,7 +48,8 @@ export default function Auth({ children }: { children: ReactElement }) {
           setError(`${err.code} | The server is down. Try again later...`);
           return;
         }
-        console.log("auth/profile");
+        console.log("auth/profil");
+        console.log(`${axios.defaults.baseURL}`);
         console.log("READ THIS", err);
         refreshToken();
       })

@@ -62,7 +62,7 @@ axios.interceptors.response.use(
     return Promise.reject(error.message);
   },
 );
-
+console.log(`THE BASE URL IS THIS "${process.env.NEXT_PUBLIC_API_URL}"`);
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 axios.defaults.withCredentials = true;
 

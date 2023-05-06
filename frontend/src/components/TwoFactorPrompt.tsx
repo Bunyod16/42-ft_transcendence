@@ -1,6 +1,6 @@
 import useUserStore from "@/store/userStore";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
-import axios from "axios";
+import axios from "./apiClient/apiClient";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -34,7 +34,7 @@ const TwoFactorPrompt = () => {
       return toast.error("Code is not 6 digits!");
     if (twoFactorVerificationCode == null) return;
     axios
-      .post(`http://localhost:3000/two-factor/${id}/verify-two-factor`, {
+      .post(`/two-factor/${id}/verify-two-factor`, {
         twoFactorCode: twoFactorVerificationCode,
       })
       .then((resp) => {

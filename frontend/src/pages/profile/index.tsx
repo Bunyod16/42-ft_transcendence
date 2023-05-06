@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Typography, Box } from "@mui/material";
 import Profile from "@/components/profile/Profile";
+import axios from "../../components/apiClient/apiClient";
 
 /*
  * Default page for the user themselves
@@ -20,14 +21,12 @@ export default function ProfilePage() {
     state.nickName,
     state.avatar,
   ]);
-  const hostUrl = process.env.HOST_URL || 'localhost';
+  const hostUrl = process.env.HOST_URL || "localhost";
 
   const getUserProfile = async (username: string) => {
     try {
-      const res = await fetch(
-        `${hostUrl}:3000/user/findOneProfileByUsername/${username}`,
-      );
-      const data = await res.json();
+      const res = await axios.get(`/user/findOneProfileByUsername/${username}`);
+      const data = await res.data;
       const status = res.status;
 
       //not sure if it will ever 404 since user is logged in but just incase

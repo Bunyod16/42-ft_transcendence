@@ -10,7 +10,7 @@ import {
   ListItemText,
   AccordionDetails,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import { useEffect, useState } from "react";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";

@@ -4,7 +4,7 @@ import { Box, Avatar, Typography, Button } from "@mui/material";
 import { useRouter } from "next/router";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useUserStore from "@/store/userStore";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import { toast } from "react-hot-toast";
 
 function handleAddFriend(nickName: string) {

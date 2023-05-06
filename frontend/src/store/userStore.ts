@@ -32,7 +32,7 @@ interface UserStore {
 const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
-      isAuthenticated: false,
+      isAuthenticated: true,
       isLoggedIn: false,
       id: null,
       nickName: "",

@@ -33,11 +33,11 @@ export default function TwoFactorSettings() {
   );
   const [buttonTrollMessage, setButtonTrollMessage] =
     useState<string>("Disable Two-factor");
-  const hostUrl = process.env.HOST_URL || 'localhost';
+  const hostUrl = process.env.HOST_URL || "localhost";
 
   const handleEnableTwoFactor = () => {
     axios
-      .post(`${hostUrl}:3000/two-factor/${id}`)
+      .post(`/two-factor/${id}`)
       .then((res) => {
         const data: TwoFactorApiObject = { ...res.data };
         QRCode.toDataURL(data.otpauth_url, (_, url) => {
@@ -71,13 +71,10 @@ export default function TwoFactorSettings() {
   const handleTwoFactorVerificationCodeSubmit = () => {
     if (userTwoFactor?.key === undefined) return;
     axios
-      .post(
-        `${hostUrl}:3000/two-factor/${id}/verify-first-time-two-factor`,
-        {
-          twoFactorToken: twoFactorVerificationCode,
-          twoFactorKey: userTwoFactor.key,
-        },
-      )
+      .post(`/two-factor/${id}/verify-first-time-two-factor`, {
+        twoFactorToken: twoFactorVerificationCode,
+        twoFactorKey: userTwoFactor.key,
+      })
       .then(() => {
         toast.success(`Succesfully Created Two-Factor`, {
           position: "bottom-right",
@@ -111,7 +108,7 @@ export default function TwoFactorSettings() {
       setTrollState(trollCount + 1);
     } else {
       axios
-        .delete(`${hostUrl}:3000/two-factor/delete-with-user-id`)
+        .delete(`/two-factor/delete-with-user-id`)
         .then(() => {
           toast.success(`Succesfully Deleted Two-Factor`, {
             position: "bottom-right",
@@ -128,7 +125,7 @@ export default function TwoFactorSettings() {
 
   useEffect(() => {
     axios
-      .get(`${hostUrl}:3000/two-factor/user-two-factor`)
+      .get(`/two-factor/user-two-factor`)
       .then(() => {
         setUserHasTwoFactor(true);
       })

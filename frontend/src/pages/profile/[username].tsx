@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Profile from "@/components/profile/Profile";
-
+import axios from "../../components/apiClient/apiClient"
 export default function ProfilePage() {
   const router = useRouter();
   const { username } = router.query;
@@ -18,10 +18,10 @@ export default function ProfilePage() {
 
   const getUserProfile = async (username: string) => {
     try {
-      const res = await fetch(
-        `${hostUrl}:3000/user/findOneProfileByUsername/${username}`,
+      const res = await axios.get(
+        `/user/findOneProfileByUsername/${username}`,
       );
-      const data = await res.json();
+      const data = await res.data;
       const status = res.status;
       if (status === 200) {
         setUserExists(true);

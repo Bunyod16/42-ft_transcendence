@@ -1,5 +1,5 @@
 import { FriendType } from "@/types/social-type";
-import axios from "axios";
+import axios from "../components/apiClient/apiClient";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 

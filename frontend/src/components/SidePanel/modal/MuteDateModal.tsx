@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dispatch, SetStateAction, useState } from "react";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
 import dayjs, { Dayjs } from "dayjs";
-import axios from "axios";
+import axios from "../../apiClient/apiClient";
 import { ChannelMember, ChatChannel } from "@/types/social-type";
 import { toast } from "react-hot-toast";
 

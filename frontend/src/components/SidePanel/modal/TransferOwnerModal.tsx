@@ -14,7 +14,7 @@ import { ChannelMember, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import useConfirmToast from "@/hooks/useConfirmToast";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import axios from "../../apiClient/apiClient";
 
 interface TransferOwnerModalItem {
   members: ChannelMember[];
