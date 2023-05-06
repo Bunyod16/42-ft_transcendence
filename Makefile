@@ -18,7 +18,7 @@ HOST_URL := http://$(HOST_IP)
 
 host_url:
 	@echo $(HOST_URL)
-
+HOST_URL=http:\/\/
 dev :
 ifeq ($(OS),Windows_NT)
 	copy .\envs\dev.env .\.env
@@ -34,9 +34,10 @@ else ifeq ($(shell uname -s),Linux)
 	sed -i 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
 	sed -i 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 else ifeq ($(shell uname -s),Darwin)
-	sed -i '' 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
-	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
-	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
+	ESCAPED_HOST_URL=$(echo "$HOST_URL" | sed 's/\//\\\//g')
+	sed -i '' 's/^HOST_URL=.*/HOST_URL=$(ESCAPED_HOST_URL)/' ./.env
+	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(ESCAPED_HOST_URL):8080/' ./backend/.env
+	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(ESCAPED_HOST_URL):3000/' ./frontend/.env
 endif
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
