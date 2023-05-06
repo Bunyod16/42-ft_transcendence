@@ -67,6 +67,9 @@ start:
 restart:
 	docker compose restart
 
+stop:
+	docker compose stop
+
 down :
 	docker compose down
 
@@ -95,4 +98,4 @@ rm_everything_dev: dev_down down rm_dev_volume rm_img
 
 rm_everything_prod: down rm_prod_volume rm_img
 
-.PHONY : down clean_dev clean_prod re dev prod rm_img rm_everything_prod rm_everything_dev start restart host_url
+.PHONY : down clean_dev clean_prod re dev prod rm_img rm_everything_prod rm_everything_dev start restart host_url stop
