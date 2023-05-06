@@ -39,85 +39,82 @@ export default function UsernameSettings() {
   }, [usernameField]);
 
   return (
-    <Box component="div">
-      <Box
-        component="div"
+    <Box
+      component="div"
+      sx={{
+        bgcolor: "primary.200",
+        display: "flex",
+        flexDirection: "column",
+        padding: "12px 16px",
+        borderRadius: 2,
+      }}
+    >
+      <Typography
         sx={{
-          backgroundColor: "none",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          color: "text.primary",
+          fontSize: "1.4em",
+          fontWeight: "800",
+          marginBottom: "10px",
         }}
       >
-        <Typography
+        Username
+      </Typography>
+      <form
+        onSubmit={handleSubmitUsername}
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <TextField
+          label="username"
+          value={usernameField}
+          variant="outlined"
+          size="small"
+          error={!isValidUsername}
+          helperText={
+            !isValidUsername && "Must only contain alphanumeric characters"
+          }
+          sx={{
+            width: "210px",
+            backgroundColor: "primary.300",
+            "& label.Mui-focused": {
+              color: isValidUsername ? "white" : "red",
+            },
+            "& .MuiOutlinedInput-root": {
+              "&.Mui-focused fieldset": {
+                borderColor: isValidUsername ? "white" : "red",
+              },
+              "&.Mui-active fieldset:": {
+                borderColor: isValidUsername ? "white" : "red",
+              },
+            },
+            "& .Mui-error": {
+              color: isValidUsername ? "white" : "red",
+            },
+          }}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setUsernameField(event.target.value);
+          }}
+        ></TextField>
+        <Button
+          type="submit"
           sx={{
             color: "text.primary",
-            fontSize: "1.4em",
-            fontWeight: "800",
-            marginBottom: "10px",
+            fontSize: "1em",
+            fontWeight: "600",
+            backgroundColor:
+              usernameField === nickName || !isValidUsername
+                ? "accent.main"
+                : "accent.light",
+            marginTop: "10px",
+            textTransform: "none",
+            width: "210px",
+            height: "40px",
+            "&:hover": { backgroundColor: "primary.main" },
           }}
+          disabled={usernameField === nickName || !isValidUsername}
         >
-          Username
-        </Typography>
-        <form
-          onSubmit={handleSubmitUsername}
-          style={{ display: "flex", flexDirection: "column" }}
-        >
-          <TextField
-            label="username"
-            value={usernameField}
-            variant="outlined"
-            size="small"
-            error={!isValidUsername}
-            helperText={
-              !isValidUsername && "Must only contain alphanumeric characters"
-            }
-            sx={{
-              width: "210px",
-              backgroundColor: "primary.300",
-              "& label.Mui-focused": {
-                color: isValidUsername ? "white" : "red",
-              },
-              "& .MuiOutlinedInput-root": {
-                "&.Mui-focused fieldset": {
-                  borderColor: isValidUsername ? "white" : "red",
-                },
-                "&.Mui-active fieldset:": {
-                  borderColor: isValidUsername ? "white" : "red",
-                },
-              },
-              "& .Mui-error": {
-                color: isValidUsername ? "white" : "red",
-              },
-            }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setUsernameField(event.target.value);
-            }}
-          ></TextField>
-          <Button
-            type="submit"
-            sx={{
-              color: "text.primary",
-              fontSize: "1em",
-              fontWeight: "600",
-              backgroundColor:
-                usernameField === nickName || !isValidUsername
-                  ? "accent.main"
-                  : "accent.light",
-              marginTop: "10px",
-              textTransform: "none",
-              width: "210px",
-              height: "40px",
-              "&:hover": { backgroundColor: "primary.main" },
-            }}
-            disabled={usernameField === nickName || !isValidUsername}
-          >
-            Change username
-          </Button>
-        </form>
-      </Box>
+          Change username
+        </Button>
+      </form>
     </Box>
   );
 }

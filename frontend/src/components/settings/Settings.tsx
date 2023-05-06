@@ -75,6 +75,7 @@ export default function Settings() {
           flexDirection: "column",
           // justifyContent: "space-around",
           height: "100%",
+          gap: 3,
         }}
       >
         <AvatarSettings />
