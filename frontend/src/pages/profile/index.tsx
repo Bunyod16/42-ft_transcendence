@@ -15,7 +15,11 @@ export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile>();
   const [loading, setLoading] = useState(true);
   const [userExists, setUserExists] = useState(false);
-  const nickName = useUserStore((state) => state.nickName);
+  // const nickName = useUserStore((state) => state.nickName);
+  const [nickName, avatar] = useUserStore((state) => [
+    state.nickName,
+    state.avatar,
+  ]);
 
   const getUserProfile = async (username: string) => {
     try {
@@ -34,7 +38,8 @@ export default function ProfilePage() {
       setLoading(false);
       console.log(data);
 
-      setUser(data);
+      setUser({ ...data, avatar: avatar });
+      // setUser((prev) => ({ ...prev }));
     } catch (err) {
       setLoading(false);
       console.log(err);
@@ -45,6 +50,7 @@ export default function ProfilePage() {
     getUserProfile(nickName);
     //eslint-disable-next-line
   }, []);
+  console.log(user);
 
   return (
     <DefaultLayout>
@@ -82,7 +88,7 @@ export default function ProfilePage() {
           )}
         </>
       ) : (
-        <>User Not Logged In</>
+        <>User Not Logged In or you do not exist, hence you are here</>
       )}
     </DefaultLayout>
   );

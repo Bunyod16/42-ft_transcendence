@@ -5,7 +5,7 @@ import { socket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { Box } from "@mui/material";
 
 export default function Auth({ children }: { children: ReactElement }) {
@@ -33,7 +33,7 @@ export default function Auth({ children }: { children: ReactElement }) {
       .get("auth/profile")
       .then((res) => {
         if (isLoggedIn) return;
-        login(res.data.nickName, res.data.id);
+        login(res.data.nickName, res.data.id, res.data.avatar);
         console.log("user authenticated");
         socket.connect();
       })

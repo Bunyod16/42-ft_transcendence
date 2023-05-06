@@ -86,7 +86,11 @@ export default function BannerProfile(user: UserProfile) {
       <Box component="div" sx={{ display: "flex", flexDirection: "row" }}>
         <Avatar
           sx={{ width: "120px", height: "120px", borderRadius: "8px" }}
-          src={user.avatar}
+          src={
+            user.avatar === "default-stormtrooper.png"
+              ? `https://source.boringavatars.com/beam/40/${user.id}?square`
+              : user.avatar
+          }
         ></Avatar>
         <Box
           component="div"
