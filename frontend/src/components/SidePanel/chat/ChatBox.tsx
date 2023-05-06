@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { chatSocket, socket } from "../../socket/socket";
 import useUserStore from "@/store/userStore";
 import axios from "axios";
-import { ChannelMember } from "@/types/social-type";
+import { ChannelMember, UserInfo } from "@/types/social-type";
 import { UserProfile } from "@/types/user-profile-type";
 // import { button, useControls } from "leva";
 interface ChatBoxProps {
@@ -21,22 +21,6 @@ interface ChatType {
     nickName: string;
   };
   chatLineType?: "message" | "activeinvite";
-}
-
-enum FriendStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-  BLOCKED = "blocked",
-}
-
-interface BlockedUser {
-  friend: UserInfo;
-  friendRequest: {
-    id: number;
-    createdAt: Date;
-    friendStatus: FriendStatus;
-  };
 }
 
 enum FriendStatus {
@@ -227,9 +211,24 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                   >
                     {`${chat.sender.nickName}`}
                   </Typography>
-                  <Typography sx={{ lineHeight: 1, ml: 4 }}>
-                    {chat.text}
-                  </Typography>
+                  {blockedFriends.some(
+                    (friend) => friend.friend.id !== chat.sender.id,
+                  ) ? (
+                    <Typography sx={{ lineHeight: 1, ml: 4 }}>
+                      {chat.text}
+                    </Typography>
+                  ) : (
+                    <Typography
+                      sx={{
+                        lineHeight: 1,
+                        ml: 4,
+                        fontStyle: "italic",
+                        color: "text.secondary",
+                      }}
+                    >
+                      You blocked {chat.sender.nickName}
+                    </Typography>
+                  )}
                 </>
               )}
             </Box>
