@@ -2,24 +2,16 @@ version: "3.8"
 
 services:
   postgresdb:
-    environment:
-      POSTGRES_USER: ${DEV_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD}
-      DB_NAME: ${DEV_DB_NAME}
-      DB_USER: ${DEV_DB_USER}
-      DB_PASSWORD: ${DEV_DB_PASSWORD}
     ports:
-      - "7000:${DEV_DB_PORT}"
+      - "7000:${DB_PORT}"
     volumes:
       - dev_trancendence_posgresdb:/var/lib/postgresql/data
     # to ensure database is alive before starting every other service
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $DEV_POSTGRES_USER -d $DEV_DB_NAME"]
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
       interval: 10s
       timeout: 5s
       retries: 3
-    expose:
-      - ${DEV_DB_PORT}
 
   redis:
     volumes:
@@ -32,22 +24,10 @@ services:
       - dev_cdn_volume:/var/www/42trancendence/avatar:ro
 
   nestjs:
-    environment:
-      DB_HOST: ${DEV_DB_HOST}
-      DB_PORT: ${DEV_DB_PORT}
-      DB_NAME: ${DEV_DB_NAME}
-      DB_USERNAME: ${DEV_DB_USER}
-      DB_PASSWORD: ${DEV_DB_PASSWORD}
-      LISTEN_PORT: ${DEV_NEST_LISTEN_PORT}
-      ENV: ${DEV_ENV}
     volumes:
       - dev_cdn_volume:/trancendence_nestjs/avatars
       - ./backend:/trancendence_nestjs
       - /trancendence_nestjs/node_modules/
-    ports:
-      - "3000:${DEV_NEST_LISTEN_PORT}"
-    expose:
-      - ${DEV_NEST_LISTEN_PORT}
     entrypoint: ["npx", "nest", "start", "--watch"]
 
   nextjs:

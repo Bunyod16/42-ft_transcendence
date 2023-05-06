@@ -31,6 +31,22 @@ export default function AchievementBoxProfile(user: UserProfile) {
               key={userAchievement.id}
               component="div"
               sx={{
+                display: "flex",
+                flexDirection: "row",
+                backgroundColor: "primary.100",
+                borderRadius: "8px",
+                margin: "10px 0px",
+                padding: "7px 10px",
+                width: "calc(100% - 10px)",
+              }}
+            >
+              <img src={achievement.url} width={100} height={100} />
+              <Box
+              key={userAchievement.id}
+              component="div"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
                 backgroundColor: "primary.100",
                 borderRadius: "8px",
                 margin: "10px 0px",
@@ -56,6 +72,7 @@ export default function AchievementBoxProfile(user: UserProfile) {
               >
                 {achievement.description}
               </Typography>
+              </Box>
             </Box>
           );
         })}

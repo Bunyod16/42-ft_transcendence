@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserAchievement } from './entities/user_achievement.entity';
 import { UserService } from 'src/user/user.service';
 import { AchievementService } from 'src/achievement/achievement.service';
+import { MatchModule } from 'src/match/match.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AchievementService } from 'src/achievement/achievement.service';
     ConfigModule,
     UserModule,
     AchievementModule,
+    MatchModule,
   ],
   controllers: [UserAchievementController],
   providers: [UserAchievementService, UserService, AchievementService],

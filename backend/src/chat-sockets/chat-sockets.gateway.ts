@@ -31,9 +31,10 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
 import { FriendRequestService } from 'src/friend_request/friend_request.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
-import { findUserSocketWithNamespace } from 'src/utils/socket-utils';
 import { ChatChannelMember } from 'src/chat_channel_member/entities/chat_channel_member.entity';
 import { UpdateChatChannelMemberDto } from 'src/chat_channel_member/dto/update-chat_channel_member.dto';
+import { findUserSocketWithNamespace } from 'src/utils/socket-utils';
+import { UserAchievementService } from 'src/user_achievement/user_achievement.service';
 
 class ChatMessage {
   @IsNotEmpty()
@@ -64,6 +65,7 @@ export class ChatSocketsGateway
     private readonly chatLineService: ChatLineService,
     private readonly chatChannelMemberService: ChatChannelMemberService,
     private readonly friendRequestService: FriendRequestService,
+    private userAchievementsService: UserAchievementService,
   ) {}
 
   afterInit() {
@@ -93,6 +95,7 @@ export class ChatSocketsGateway
     this.io.emit('connected');
     this.userService.setOnline(client.user);
     this.emitConnectedToFriends(client.user);
+    this.userAchievementsService.checkAchivementEligibility(client.user);
   }
 
   async emitDisconnectedToFriends(user: User) {
