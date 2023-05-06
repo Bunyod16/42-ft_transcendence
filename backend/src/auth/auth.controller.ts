@@ -58,8 +58,6 @@ export class AuthController {
       'Content-Type': 'application/json';
     };
     try {
-      console.log('CALL BACK');
-      console.log(postData);
       const resp = await this.httpService.axiosRef.post(
         'https://api.intra.42.fr/oauth/token',
         postData,
@@ -89,12 +87,10 @@ export class AuthController {
   async refresh(@Req() req: RequestWithUser, @Res() res) {
     try {
       const cookieString = req.headers?.cookie;
-      if (!cookieString)
-        throw Error('Cookie is missing in request');
+      if (!cookieString) throw Error('Cookie is missing in request');
       const cookies = parse(cookieString);
       const refresh = cookies?.Refresh;
-      if (!refresh)
-        throw Error('Refresh field missing in cookies');
+      if (!refresh) throw Error('Refresh field missing in cookies');
       const user = await this.jwtRefreshService.verifyRefreshToken(refresh);
       const accessTokenCookie = this.jwtAccessService.generateAccessToken(user);
       req.res.setHeader('Set-Cookie', accessTokenCookie);
@@ -108,8 +104,13 @@ export class AuthController {
 
   @UseGuards(UserAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    const data = await this.userService.getRefreshToken2FA(req.user);
+    console.log(`RAW DATA ${data}`);
+    const copy: any = req.user;
+    copy.isAuthenticated = data.refreshToken2FA;
+    console.log(copy);
+    return copy;
   }
 
   @UseGuards(UserAuthGuard)

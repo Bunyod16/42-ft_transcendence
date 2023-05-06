@@ -133,7 +133,6 @@ export class ChatSocketsGateway
   ) {
     const user: User = socket.user;
     const roomName = `chatChannel/${chatChannelId}`;
-    console.log('asdfasdf');
     // if (friendId == user.id)
     //   throw new CustomWSException(
     //     `FriendId Can't be the same as UserId`,
@@ -340,7 +339,6 @@ export class ChatSocketsGateway
 
   @SubscribeMessage('getRooms')
   getRooms(client: Socket) {
-    console.log(client.rooms);
     this.io.emit('serverMessage', { rooms: [...client.rooms] });
   }
 }

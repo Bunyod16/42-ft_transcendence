@@ -1,3 +1,4 @@
+import useUserStore from "@/store/userStore";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -5,6 +6,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const TwoFactorPrompt = () => {
+  const [id] = useUserStore((store) => [store.id]);
+  const { authenticate } = useUserStore();
   const [twoFactorVerificationCode, setTwoFactorVerificationCode] =
     useState<string>("");
   const router = useRouter();
@@ -27,36 +30,31 @@ const TwoFactorPrompt = () => {
   };
 
   const handleTwoFactorVerificationCodeSubmit = () => {
-    // if (userTwoFactor?.key === undefined) return;
-    // axios
-    //   .post(
-    //     `http://localhost:3000/two-factor/${id}/verify-first-time-two-factor`,
-    //     {
-    //       twoFactorToken: twoFactorVerificationCode,
-    //       twoFactorKey: userTwoFactor.key,
-    //     },
-    //   )
-    //   .then(() => {
-    //     toast.success(`Succesfully Created Two-Factor`, {
-    //       position: "bottom-right",
-    //     });
-    //     console.log(`Succesfully Created Two-Factor`);
-    //     setShowQRModal(false);
-    //     setUserHasTwoFactor(true);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error.message);
-    //     if (error.response.status === 400) {
-    //       toast.error(`Wrong Two-factor token`, {
-    //         position: "bottom-right",
-    //       });
-    //     }
-    //     console.log(`Failed to craete Two-Factor`);
-    //   });
     if (twoFactorVerificationCode.length < 6)
       return toast.error("Code is not 6 digits!");
-    toast.success("Verified!");
-    router.push("/");
+    if (twoFactorVerificationCode == null) return;
+    axios
+      .post(`http://localhost:3000/two-factor/${id}/verify-two-factor`, {
+        twoFactorCode: twoFactorVerificationCode,
+      })
+      .then((resp) => {
+        console.log(resp.data);
+        if (!resp.data.verified) throw new Error("Failed to verify two factor");
+        toast.success(`Good job`, {
+          position: "top-center",
+        });
+        console.log(`Verified two factor`);
+        authenticate(true);
+        router.push("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+        toast.error(`Yo dude don't be tryin shit here`, {
+          position: "top-center",
+        });
+        console.log(`Failed to verify two factor`);
+        return;
+      });
   };
 
   return (

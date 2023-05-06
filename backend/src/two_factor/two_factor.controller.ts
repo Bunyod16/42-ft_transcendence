@@ -99,6 +99,25 @@ export class TwoFactorController {
     return verification;
   }
 
+  @Post(':userId/verify-two-factor')
+  async verifyTwoFactor(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query('twoFactorCode') twoFactorCode: string,
+    @Body() body: any,
+  ) {
+    console.log('Attemp to verify two factor');
+    const verification = await this.twoFactorService.verifyUserTwoFactor(
+      userId,
+      body.twoFactorCode,
+    );
+
+    Logger.log(
+      `Trying to get verify-testing TwoFactor for user with id = [${userId}]`,
+      'TwoFactor => verify()',
+    );      
+    return { verified: verification };
+  }
+
   @Get()
   async findAll() {
     const twoFactor = this.twoFactorService.findAll();

@@ -153,19 +153,23 @@ export class TwoFactorService {
     const secretKey = await this.userService.findOne(userId);
 
     //decrypt secret
+    console.log(userId, twoFactorToken);
     const decryptedSecretKey = decryptTOTP(
       twoFactor.key,
       secretKey.created_at.toString(),
     );
 
     //verify secret
-    const verication = speakeasy.totp.verify({
+    const verification = speakeasy.totp.verify({
       secret: decryptedSecretKey,
       encoding: 'ascii',
       token: twoFactorToken,
     });
 
-    return verication;
+    if (verification) {
+      await this.userService.setRefeshToken2FA(userId, true);
+    }
+    return verification;
   }
 
   // update(id: number, updateTwoFactorDto: UpdateTwoFactorDto) {

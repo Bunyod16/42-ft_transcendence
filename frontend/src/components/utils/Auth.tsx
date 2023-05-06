@@ -7,9 +7,11 @@ import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
 import { toast } from "react-hot-toast";
 import { Box } from "@mui/material";
+import TwoFactorAuthPage from "@/pages/two-factor-auth";
 
 export default function Auth({ children }: { children: ReactElement }) {
-  const { isLoggedIn, logout, login, nickName } = useUserStore();
+  const { isLoggedIn, isAuthenticated, logout, login, authenticate, nickName } =
+    useUserStore();
   const [isHydrated, setIsHydrated] = React.useState(false);
   const [error, setError] = useState("");
 
@@ -32,9 +34,11 @@ export default function Auth({ children }: { children: ReactElement }) {
     axios
       .get("auth/profile")
       .then((res) => {
+        console.log(`IS LOGGED IN ${isLoggedIn}`);
+        authenticate(res.data.isAuthenticated);
         if (isLoggedIn) return;
         login(res.data.nickName, res.data.id, res.data.avatar);
-        console.log("user authenticated");
+        console.log(`user authenticated ${res.data.isAuthenticated}`);
         socket.connect();
       })
       .catch((err) => {
@@ -61,11 +65,19 @@ export default function Auth({ children }: { children: ReactElement }) {
     );
 
   if (!isHydrated) return <Loading />;
-
+  console.log(`user authenticated 2fa ${isAuthenticated}`);
   return (
     <>
       {/* <Toaster /> */}
-      {nickName == null ? <PickUsername /> : isLoggedIn ? children : <Login />}
+      {nickName == null ? (
+        <PickUsername />
+      ) : !isAuthenticated ? (
+        <TwoFactorAuthPage />
+      ) : isLoggedIn ? (
+        children
+      ) : (
+        <Login />
+      )}
     </>
   );
 }
