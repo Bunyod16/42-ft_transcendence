@@ -34,7 +34,7 @@ ifeq ($(OS),Windows_NT)
 else
 	cp ./envs/prod.env ./.env
 endif
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+	docker-compose up --build
 
 down :
 	docker compose down
