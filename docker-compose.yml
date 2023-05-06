@@ -21,7 +21,6 @@ services:
     volumes:
       - trancendence_posgresdb:/var/lib/postgresql/data
 
-
   redis:
     container_name: redis
     image: redis:7.2-rc1-alpine3.17
@@ -32,7 +31,7 @@ services:
     networks:
       - ft_trancendence
     expose:
-      - "6379"
+      - ${REDIS_PORT}
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -75,17 +74,16 @@ services:
     networks:
       - ft_trancendence
     environment:
-      HOST_IP: ${HOST_IP}
+      HOST_URL: ${HOST_URL}
       REDIS_HOST: ${REDIS_HOST}
-      HOST: ${NEST_LISTEN_PORT}
+      REDIS_PORT: ${REDIS_PORT}
+      NESTJS_PORT: ${NEST_LISTEN_PORT}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      LISTEN_PORT: ${NEST_LISTEN_PORT}
       ENV: ${ENV}
-      CDN_HOST: ${CDN_HOST}
       CDN_PORT: ${CDN_PORT}
     ports:
       - "3000:${NEST_LISTEN_PORT}"
@@ -100,7 +98,7 @@ services:
     build:
       context: ./frontend
     environment:
-      HOST_IP: ${HOST_IP}
+      HOST_URL: ${HOST_URL}
     ports:
       - "8080:${NEXT_LISTEN_PORT}"
     depends_on:
