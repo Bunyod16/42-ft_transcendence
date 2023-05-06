@@ -41,6 +41,28 @@ import Error from "next/error";
 //   },
 // );
 
+axios.interceptors.response.use(
+  (response) => {
+    if (response.status === 401) {
+      alert("You are not authorized");
+    }
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.log(error.response);
+      console.log("Access denied. Redirecting to login page.");
+      // if (window.location.toString() != "http://localhost:8080/") {
+      //   window.location.replace("/");
+      // }
+    }
+    if (error.response && error.response.data) {
+      return Promise.reject(error.response.data);
+    }
+    return Promise.reject(error.message);
+  },
+);
+
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 axios.defaults.withCredentials = true;
 
