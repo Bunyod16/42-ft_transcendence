@@ -12,7 +12,7 @@ services:
     volumes:
       - dev_redis_volume:/data
     ports:
-      - "3002:6379"
+      - "3002:${REDIS_PORT}"
 
   nginx:
     volumes:
