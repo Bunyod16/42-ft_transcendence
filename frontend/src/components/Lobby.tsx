@@ -94,7 +94,7 @@ const Lobby = () => {
     return () => {
       socket.off("queueEnterSuccess", onQueueEnterSuccess);
       socket.off("matchFound", onMatchFound);
-      socket.disconnect();
+      // socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
