@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useEffect } from "react";
-import axios from "axios";
+import axios from "../apiClient/apiClient";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 
@@ -29,17 +29,16 @@ const PendingBox = () => {
         friendStatus: "Accepted",
       })
       .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
   };
 
   useEffect(() => {
     axios
       .get("/friend-request/findUserPendingRequest")
       .then((res) => {
-        // console.log(res);
         setRequests(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

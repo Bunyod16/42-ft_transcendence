@@ -1,6 +1,6 @@
 import { UserProfile } from "@/types/user-profile-type";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Avatar, Typography, IconButton } from "@mui/material";
+import { Box, Avatar, Typography, Button } from "@mui/material";
 import { useRouter } from "next/router";
 
 export default function BannerProfile(user: UserProfile) {
@@ -54,39 +54,30 @@ export default function BannerProfile(user: UserProfile) {
         component="div"
         sx={{ display: "flex", flexDirection: "row", marginBottom: "10px" }}
       >
-        <IconButton
-          onClick={() => {
-            router.back();
-          }}
-          sx={{
-            padding: "0px",
-          }}
+        <Button
+          variant="text"
+          startIcon={<ArrowBackIcon />}
+          sx={{ color: "text.primary" }}
+          onClick={() => router.push("/")}
         >
-          <ArrowBackIcon
+          <Typography
+            variant="h5"
             sx={{
-              height: "30px",
-              width: "30px",
-              marginRight: "20px",
-              color: "text.primary",
+              textTransform: "uppercase",
             }}
-          />
-        </IconButton>
-        <Typography
-          variant="h2"
-          sx={{
-            color: "text.secondary",
-            fontSize: "1.5em",
-            fontWeight: "500",
-            textTransform: "uppercase",
-          }}
-        >
-          PLAYER PROFILE
-        </Typography>
+          >
+            Player Profile
+          </Typography>
+        </Button>
       </Box>
       <Box component="div" sx={{ display: "flex", flexDirection: "row" }}>
         <Avatar
           sx={{ width: "120px", height: "120px", borderRadius: "8px" }}
-          src={user.avatar}
+          src={
+            user.avatar === "default-stormtrooper.png"
+              ? `https://source.boringavatars.com/beam/40/${user.id}?square`
+              : user.avatar
+          }
         ></Avatar>
         <Box
           component="div"

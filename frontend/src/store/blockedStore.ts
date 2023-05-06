@@ -1,44 +1,36 @@
+import { FriendType } from "@/types/social-type";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import axios from "axios";
+import { get } from "http";
 
-interface BlockedUserType {
-	id: number;
-	nickName: string;
-	img?: string;
+interface BlockedStoreType {
+  blocked: FriendType[];
+  setBlocked: (data: any[]) => void;
+  clearBlocked: () => void;
+  updateBlocked: () => void;
 }
 
-interface BlockedStoreType{
-	users: BlockedUserType[] | [];
-	setUsers: (blockedQuery: any) => void;
-	clearUsers: () => void;
-}
-
-const useBlockStore = create<BlockedStoreType>()(
-	persist((set) => ({
-		users: [],
-		setUsers: (blockedQuery: any) => {
-			let blockedList: BlockedUserType[];
-
-			blockedQuery.map((query: any) => {
-				blockedList.push({
-					id: query.friend.id,
-					nickName: query.friend.nickName
-				})
-			})
-			set(()=>({
-				users: blockedList
-			}))
-		},
-		clearUsers: () => {
-			set(()=>({
-				users: [],
-			}))
-		}
-	}),{
-		name: "rgm-blocked-user-store",
-		storage: createJSONStorage(() => sessionStorage)
-	})
-)
+const useBlockStore = create<BlockedStoreType>()((set, get) => ({
+  blocked: [],
+  setBlocked: (data: any[]) => {
+    const blockedList: FriendType[] = [];
+    data.map((tmp) => {
+      blockedList.push({ ...tmp.friend, chatChannel: tmp.chatChannels });
+    });
+    set(() => ({
+      blocked: blockedList,
+    }));
+  },
+  clearBlocked: () => {
+    set(() => ({
+      blocked: [],
+    }));
+  },
+  updateBlocked: async () => {
+    const res = await axios.get("/friend-request/findUserBlockedFriends");
+    get().setBlocked(res.data);
+  },
+}));
 
 export default useBlockStore;
 //blocked user api. http://localhost:3000/friend-request/findUserBlockedFriends

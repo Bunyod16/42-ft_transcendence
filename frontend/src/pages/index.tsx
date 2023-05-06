@@ -1,10 +1,7 @@
 import React from "react";
-import useUserStore from "@/store/userStore";
-import PickUsername from "./pickusername";
 import Lobby from "@/components/Lobby";
 
 export default function Home() {
-  const { nickName } = useUserStore();
   // const { isLoggedIn, nickName, logout, login } = useUserStore();
   // const [isHydrated, setIsHydrated] = React.useState(false);
 

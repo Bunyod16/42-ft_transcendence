@@ -13,16 +13,17 @@ export const inconsolata = Inconsolata({
   fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
-// declare module "@mui/material/TextField"{
+// declare module "@mui/material/TextField" {
 //   interface TextFieldPropsVariantOverrides {
 //     primary: true;
 //   }
 // }
-// https://stackoverflow.com/questions/59145165/change-root-background-color-with-material-ui-theme
+//stackoverflow.com/questions/59145165/change-root-background-color-with-material-ui-theme
 
 // Create a theme instance.
-const theme = createTheme({
+let theme = createTheme({
   palette: {
+    mode: "dark",
     background: {
       default: "#1B2429",
     },
@@ -73,19 +74,53 @@ const theme = createTheme({
       fontFamily: oswald.style.fontFamily,
     },
   },
+});
+
+theme = createTheme(theme, {
   components: {
-    MuiMenu: {
+    // MuiMenu: {
+    //   styleOverrides: {
+    //     paper: {
+    //       backgroundColor: "palette.primary.main",
+    //       color: "red",
+    //     },
+    //   },
+    // },
+    MuiAccordion: {
       styleOverrides: {
-        paper: {
-          backgroundColor: "palette.primary.main",
-          color: "red",
+        root: {
+          width: "100%",
+          backgroundColor: "transparent",
+          border: "2px solid #A3A3A3",
+          borderRadius: "4px",
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          minHeight: 36,
+          "& .MuiAccordionSummary-content, & .MuiAccordionSummary-content.Mui-expanded":
+            {
+              margin: 0,
+            },
+          "&.Mui-expanded": {
+            minHeight: 36,
+          },
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: "none",
+          // textTransform: "none",
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 4,
         },
       },
     },
@@ -154,14 +189,14 @@ const theme = createTheme({
             backgroundColor: "transparent",
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-            backgroundColor: "#00000020",
+            backgroundColor: theme.palette.primary.main,
             borderRadius: "20px",
             // border: "6px solid transparent",
             backgroundClip: "content-box",
           },
           "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
             {
-              backgroundColor: "#ffffff20",
+              backgroundColor: "#ffffff40",
             },
         },
       },
