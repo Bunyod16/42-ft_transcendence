@@ -57,9 +57,9 @@ else ifeq ($(shell uname -s),Linux)
 	sed -i 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
 	sed -i 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
 else ifeq ($(shell uname -s),Darwin)
-	sed -i '' 's/^HOST_URL=.*/HOST_URL=$(HOST_URL)/' ./.env
-	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=$(HOST_URL):8080/' ./backend/.env
-	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=$(HOST_URL):3000/' ./frontend/.env
+	sed -i '' 's/^HOST_URL=.*/HOST_URL=http:\/\/$(HOST_IP)/' ./.env
+	sed -i '' 's/^AUTH_REDIRECT_URI=.*/AUTH_REDIRECT_URI=http:\/\/$(HOST_IP):8080/' ./backend/.env
+	sed -i '' 's/^NEXT_PUBLIC_API_URL=.*/NEXT_PUBLIC_API_URL=http:\/\/$(HOST_IP):3000/' ./frontend/.env
 endif
 	docker-compose up --build
 
