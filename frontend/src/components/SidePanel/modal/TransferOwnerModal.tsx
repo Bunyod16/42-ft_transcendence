@@ -10,16 +10,21 @@ import {
   Divider,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { ChannelMember } from "@/types/social-type";
+import { ChannelMember, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import useConfirmToast from "@/hooks/useConfirmToast";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface TransferOwnerModalItem {
   members: ChannelMember[];
+  channel: Channel;
 }
 
-export const TransferOwnerModal = ({ members }: TransferOwnerModalItem) => {
+export const TransferOwnerModal = ({
+  members,
+  channel,
+}: TransferOwnerModalItem) => {
   const [selected, setSelected] = useState(-1);
   const [open, setOpen] = useState(false);
   const [candidates, setCandidates] = useState<ChannelMember[]>([]);
@@ -35,7 +40,29 @@ export const TransferOwnerModal = ({ members }: TransferOwnerModalItem) => {
   }, [open]);
 
   const handleTransferOwner = () => {
-    toast.success(`transfer owner to ${candidates[selected].user.nickName}???`);
+    axios
+      .patch(`/chat-channels/${channel.chatChannel.id}/transferOwner`, {
+        newOwnerId: candidates[selected].user.id,
+      })
+      .then(() => {
+        toast.success(
+          `Transfered ownership to ${candidates[selected].user.nickName}`,
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err?.response?.status === 400) {
+          let message: string = err.response.data.message;
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          toast.error(`${message}`);
+        } else if (err?.statusCode === 400) {
+          let message: string = err.message;
+          console.log(message);
+          message = message.slice(message.indexOf(":") + 1, message.length);
+          console.log(message);
+          toast.error(`${message}`);
+        }
+      });
     setOpen(false);
   };
 

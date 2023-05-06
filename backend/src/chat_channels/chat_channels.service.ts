@@ -270,6 +270,30 @@ export class ChatChannelsService {
     return chatChannel;
   }
 
+  async transferOwner(chatChannelId: number, newOwnerId: number) {
+    //check if new owner exist
+    await this.userService.findOne(newOwnerId);
+
+    const updateChannelDto = new UpdateChatChannelDto();
+    updateChannelDto.ownerId = newOwnerId;
+
+    const savedChannel = await this.chatChannelRepository.update(
+      { id: chatChannelId },
+      updateChannelDto,
+    );
+
+    if (savedChannel.affected === 0) {
+      throw new CustomException(
+        `ChatChannel with id = [${chatChannelId}] doesn't exist`,
+        HttpStatus.NOT_FOUND,
+        'ChatChannel => transferOwner()',
+      );
+    }
+
+    savedChannel.raw = await this.findOne(chatChannelId);
+    return savedChannel;
+  }
+
   async update(
     id: number,
     channelType: ChannelType,

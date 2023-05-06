@@ -13,7 +13,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ChatChannelsService } from './chat_channels.service';
-import { UpdateChatChannelDto } from './dto/update-chat_channel.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/auth/auth.guard';
 import { ChannelType } from './entities/chat_channel.entity';
@@ -173,8 +172,46 @@ export class ChatChannelsController {
     return chatChannel;
   }
 
+  @Patch(':chatChannelId/transferOwner')
+  @UseGuards(UserAuthGuard)
+  async transferOwner(
+    @Param('chatChannelId', ParseIntPipe) chatChannelId: number,
+    @Req() req: any,
+    @Body('newOwnerId', ParseIntPipe) newOwnerId: number,
+  ) {
+    const requester: User = req.user;
+
+    //check if requester is owner (the entity is fucked)
+    if (
+      requester.id !==
+      ((await this.chatChannelsService.findOne(chatChannelId)).ownerId as any)
+        .id
+    ) {
+      throw new CustomException(
+        `Only owner can transfer Ownership`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    if (requester.id === newOwnerId) {
+      throw new CustomException(
+        `Owner cannot transfer ownership to himself`,
+        HttpStatus.BAD_REQUEST,
+        `ChatChannel => transferOwner()`,
+      );
+    }
+
+    Logger.log(
+      `Updating ChatChannel ownership with id = [${chatChannelId}] to new user with id = [${newOwnerId}]`,
+      'ChatChannel => transferOwner()',
+    );
+
+    return this.chatChannelsService.transferOwner(chatChannelId, newOwnerId);
+  }
+
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body('channelType') channelType?: string,
     @Body('password') password?: string,
@@ -189,7 +226,7 @@ export class ChatChannelsController {
         )
       ) {
         throw new CustomException(
-          `Bad Request: Invalid ChannelType Status`,
+          `Invalid ChannelType Status`,
           HttpStatus.BAD_REQUEST,
           `ChatChannel => update()`,
         );

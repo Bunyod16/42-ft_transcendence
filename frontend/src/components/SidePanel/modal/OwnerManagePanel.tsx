@@ -16,16 +16,22 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddModeratorSharpIcon from "@mui/icons-material/AddModeratorSharp";
 import RemoveModeratorSharpIcon from "@mui/icons-material/RemoveModeratorSharp";
-import { ChannelMember } from "@/types/social-type";
+import { ChannelMember, Channel } from "@/types/social-type";
 import TransferOwnerModal from "./TransferOwnerModal";
 import useConfirmToast from "@/hooks/useConfirmToast";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 interface OwnerManagePanelProp {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   members: ChannelMember[];
+  channel: Channel;
 }
-const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
+const OwnerManagePanel = ({
+  setShow,
+  members,
+  channel,
+}: OwnerManagePanelProp) => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
@@ -134,7 +140,7 @@ const OwnerManagePanel = ({ setShow, members }: OwnerManagePanelProp) => {
           </ListItemButton>
         ))}
       </List>
-      <TransferOwnerModal members={members} />
+      <TransferOwnerModal members={members} channel={channel} />
     </Box>
   );
 };

@@ -400,7 +400,11 @@ const ManageChannelModal = ({
             ))}
           </>
         ) : (
-          <OwnerManagePanel setShow={setShowManage} members={members} />
+          <OwnerManagePanel
+            setShow={setShowManage}
+            members={members}
+            channel={channel}
+          />
         )}
       </Box>
     </Modal>
