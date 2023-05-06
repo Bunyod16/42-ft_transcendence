@@ -2,17 +2,10 @@ import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
-import { useEffect, useState } from "react";
 // import { chatSocket } from "../socket/socket";
 import axios from "axios";
-import {
-  Channel,
-  ChannelMember,
-  PanelData,
-  UserInfo,
-} from "@/types/social-type";
+import { PanelData } from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
-import ManageChannelModal from "../modal/ManageChannelModal";
 import useUserStore from "@/store/userStore";
 import ChannelDetail from "./ChannelDetaill";
 import { socket } from "@/components/socket/socket";

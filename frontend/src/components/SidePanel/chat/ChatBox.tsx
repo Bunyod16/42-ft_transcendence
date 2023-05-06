@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { chatSocket, socket } from "../../socket/socket";
 import useUserStore from "@/store/userStore";
 import axios from "axios";
-import { ChannelMember, FriendType } from "@/types/social-type";
+import { ChannelMember } from "@/types/social-type";
 import { UserProfile } from "@/types/user-profile-type";
 // import { button, useControls } from "leva";
 interface ChatBoxProps {
@@ -158,15 +158,15 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
               {chat.chatLineType === "activeinvite" ? (
                 <Button
                   sx={{
-                    color: "accent.main",
+                    color: "text.primary",
                     ml: 4,
                     alignSelf: "center",
-                    backgroundColor: "primary.200",
+                    backgroundColor: "accent.main",
                     borderRadius: "8px",
                     fontWeight: "700",
                     transition: "all 0.2s ease",
                     "&:hover": {
-                      backgroundColor: "primary.main",
+                      backgroundColor: "accent.dark",
                     },
                     "&:active": {
                       transform: "scale(0.9)",
