@@ -3,8 +3,8 @@ import { ClientToServerEvents, ServerToClientEvents } from "./socket-types";
 import { FriendType } from "@/types/social-type";
 
 // "undefined" means the URL will be computed from the `window.location` object
-const host_url = process.env.HOST_URL || 'localhost';
-const URL = `${host_url}:3000`;
+const hostUrl = process.env.HOST_URL || 'localhost';
+const URL = `${hostUrl}:3000`;
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   URL,

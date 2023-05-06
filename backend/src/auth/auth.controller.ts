@@ -85,7 +85,7 @@ export class AuthController {
 
   @Get('refresh')
   async refresh(@Req() req: RequestWithUser, @Res() res) {
-    const host_url = this.configService.get('HOST_URL') || 'localhost';
+    const hostUrl = this.configService.get('HOST_URL') || 'localhost';
     try {
       const cookieString = req.headers?.cookie;
       if (!cookieString) throw Error('Cookie is missing in request');
@@ -99,7 +99,7 @@ export class AuthController {
     } catch (error) {
       console.log(error);
       req.res.setHeader('Set-Cookie', this.authService.getCookiesForLogOut());
-      return res.redirect(`${host_url}:8080`);
+      return res.redirect(`${hostUrl}:8080`);
     }
   }
 

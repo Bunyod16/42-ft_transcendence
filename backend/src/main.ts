@@ -13,11 +13,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // To be passed to custom socketIO adapter
   const configService = app.get(ConfigService);
-  const host_url = configService.get('HOST_URL')
-  console.log(host_url);
+  const hostUrl = configService.get('HOST_URL')
+  console.log(hostUrl);
   app.enableCors({
     origin: [
-      `${host_url}:8080`,
+      `${hostUrl}:8080`,
       'http://localhost:8080',
     ],
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
