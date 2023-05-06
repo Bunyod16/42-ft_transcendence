@@ -166,8 +166,9 @@ export class UserService {
   async getRefreshToken2FA(user: User) {
     const q = await this.userRepository
       .createQueryBuilder('user')
+      .where('user.id = :id', { id: user.id })
       .addSelect('user.refreshToken2FA')
-      .getOne();
+      .getOneOrFail();
     return q;
   }
 

@@ -38,6 +38,7 @@ const TwoFactorPrompt = () => {
         twoFactorCode: twoFactorVerificationCode,
       })
       .then((resp) => {
+        console.log(resp.data);
         if (!resp.data.verified) throw new Error("Failed to verify two factor");
         toast.success(`Good job`, {
           position: "top-center",

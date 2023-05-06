@@ -106,9 +106,11 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req) {
     const data = await this.userService.getRefreshToken2FA(req.user);
+    console.log(`RAW DATA ${data}`);
     const copy: any = req.user;
     copy.isAuthenticated = data.refreshToken2FA;
-    return req.user;
+    console.log(copy);
+    return copy;
   }
 
   @UseGuards(UserAuthGuard)
