@@ -2,8 +2,10 @@ import React from "react";
 
 import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function LoginPanel() {
+  const router = useRouter();
   return (
     <Box
       component={"div"}
@@ -11,42 +13,53 @@ export default function LoginPanel() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        gap: "32px",
         alignItems: "center",
-        padding: "40px 20px",
-        borderRadius: "12px",
+        borderRadius: 4,
         border: "3px solid #93032E",
-        height: "260px",
-        width: "600px",
+        // height: "260px",
+        maxWidth: "600px",
+        width: "100%",
+        padding: "40px 32px",
         color: "accent.contrastText",
+        bgcolor: "primary.100",
+        boxshadow: 2,
       }}
     >
+      <Typography>Welcome to</Typography>
       <Typography
-        component="h2"
+        variant="h3"
+        padding={2}
         sx={{
-          fontSize: "40px",
+          // fontSize: "40px",
           fontWeight: "700",
-          lineHeight: "59px",
+          // lineHeight: "59px",
         }}
       >
         RGM PONG
       </Typography>
-      <Link
+      {/* <Link
         href={`${process.env.NEXT_PUBLIC_API_URL}/auth/login`}
         style={{ textDecoration: "none" }}
+      > */}
+      <Button
+        variant="contained"
+        color="accent"
+        sx={{
+          padding: "10px 40px",
+          textDecoration: "none",
+          mt: 4,
+          // backgroundColor: "accent.main",
+          // transition: "0.3s",
+          // "&:hover": { backgroundColor: "accent.hover" },
+        }}
+        onClick={() =>
+          router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`)
+        }
       >
-        <Button
-          variant="contained"
-          sx={{
-            padding: "10px 40px",
-            backgroundColor: "accent.main",
-            transition: "0.3s",
-            "&:hover": { backgroundColor: "accent.hover" },
-          }}
-        >
-          <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography>
-        </Button>
-      </Link>
+        {/* <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography> */}
+        Login with 42
+      </Button>
+      {/* </Link> */}
     </Box>
   );
 }

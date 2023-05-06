@@ -113,7 +113,7 @@ theme = createTheme(theme, {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: "none",
+          // textTransform: "none",
         },
       },
     },
