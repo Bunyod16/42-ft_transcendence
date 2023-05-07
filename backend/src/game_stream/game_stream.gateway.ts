@@ -107,6 +107,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
       const state = await this.gameStateService.getGame(match.id);
       if (!state) {
         console.log('game has not been found, cannot send state');
+        this.endGame(match, null);
         return;
       }
       const moved_state = await this.gameStateService.moveBall(state, match.id);
