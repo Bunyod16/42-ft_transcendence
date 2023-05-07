@@ -1,6 +1,6 @@
 import { Channel, ChatChannel } from "@/types/social-type";
 import { Box, Typography, Button } from "@mui/material";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 import { useState, useEffect } from "react";
 import ManageChannelModal from "../modal/ManageChannelModal";
 import { privateDecrypt } from "crypto";

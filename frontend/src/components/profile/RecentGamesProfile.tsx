@@ -41,24 +41,20 @@ export default function RecentGamesProfile(user: UserProfile) {
         }}
       >
         {user.matches.map((match) => {
-          console.log(match.id);
-
-          // console.log("match.id", match.id);
-
           const isPlayerOne =
             match.playerOne.nickName === user.nickName ? true : false;
           const playerOneWonMatch = match.playerOneScore > match.playerTwoScore;
 
-          console.log(
-            match.playerTwo.nickName,
-            match.playerTwoScore,
-            ":",
-            match.playerOneScore,
-            match.playerOne.nickName,
-          );
+          // console.log(
+          //   match.playerTwo.nickName,
+          //   match.playerTwoScore,
+          //   ":",
+          //   match.playerOneScore,
+          //   match.playerOne.nickName,
+          // );
 
-          console.log("isPlayerOne = ", isPlayerOne);
-          console.log("playerOneWonMatch = ", playerOneWonMatch);
+          // console.log("isPlayerOne = ", isPlayerOne);
+          // console.log("playerOneWonMatch = ", playerOneWonMatch);
 
           const dateAsString = parseISOString(match.createdAt);
           return (

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Profile from "@/components/profile/Profile";
-import axios from "../../components/apiClient/apiClient"
+import axios from "../../components/utils/apiClient";
 export default function ProfilePage() {
   const router = useRouter();
   const { username } = router.query;
@@ -14,13 +14,11 @@ export default function ProfilePage() {
   const [userExists, setUserExists] = useState(false);
   const [loading, setLoading] = useState(true);
   const nickName = useUserStore((state) => state.nickName);
-  const hostUrl = process.env.HOST_URL || 'localhost';
+  const hostUrl = process.env.HOST_URL || "localhost";
 
   const getUserProfile = async (username: string) => {
     try {
-      const res = await axios.get(
-        `/user/findOneProfileByUsername/${username}`,
-      );
+      const res = await axios.get(`/user/findOneProfileByUsername/${username}`);
       const data = await res.data;
       const status = res.status;
       if (status === 200) {
@@ -46,7 +44,8 @@ export default function ProfilePage() {
   }, [router.isReady]);
 
   return (
-    <DefaultLayout>
+    // <DefaultLayout>
+    <>
       {loading ? (
         <Box
           component="div"
@@ -87,6 +86,7 @@ export default function ProfilePage() {
           </Typography>
         </Box>
       )}
-    </DefaultLayout>
+    </>
+    // </DefaultLayout>
   );
 }

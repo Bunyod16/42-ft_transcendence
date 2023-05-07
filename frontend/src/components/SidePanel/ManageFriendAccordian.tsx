@@ -10,7 +10,7 @@ import {
   ListItemText,
   AccordionDetails,
 } from "@mui/material";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import { useEffect, useState } from "react";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
@@ -72,7 +72,6 @@ const ManageFriendAccordian = () => {
   };
 
   const handleDeleteReq = (friendId: number) => {
-    console.log("delete req");
     axios
       .delete(`/friend-request/deleteFriendRequestByFriendId`, {
         data: {

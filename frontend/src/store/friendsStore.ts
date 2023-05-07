@@ -1,5 +1,5 @@
 import { FriendType } from "@/types/social-type";
-import axios from "../components/apiClient/apiClient";
+import axios from "../components/utils/apiClient";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -24,7 +24,6 @@ const useFriendsStore = create<FriendsStoreType>()(
             chatChannel: query.directMessage,
           });
         });
-        console.log("firendList: ", friendList);
         set(() => ({
           friends: friendList,
         }));

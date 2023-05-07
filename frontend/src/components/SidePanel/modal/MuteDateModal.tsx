@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dispatch, SetStateAction, useState } from "react";
 import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
 import dayjs, { Dayjs } from "dayjs";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 import { ChannelMember, ChatChannel } from "@/types/social-type";
 import { toast } from "react-hot-toast";
 
@@ -57,7 +57,7 @@ export const MuteDateModal = ({
           toast.error(`${message}`);
         } else if (err?.statusCode === 400) {
           let message: string = err.message;
-          console.log(message);
+          // console.log(message);
           message = message.slice(message.indexOf(":") + 1, message.length);
           toast.error(`${message}`);
         }

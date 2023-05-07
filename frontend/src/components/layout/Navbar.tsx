@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import SettingsIcon from "@mui/icons-material/Settings";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
@@ -45,24 +45,31 @@ export default function Navbar({ sx }: { sx: SxProps }) {
     <Box component={"div"} sx={{ ...sx }}>
       <AppBar position="static" sx={{ backgroundColor: "accent.main" }}>
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontFamily: "typography.oswald",
-              fontWeight: 500,
-            }}
+          <Button
+            variant="text"
+            startIcon={<HomeIcon />}
+            onClick={() => router.push("/")}
+            sx={{ mr: "auto", color: "text.primary" }}
           >
-            RGM PONG
-          </Typography>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                flexGrow: 1,
+                fontFamily: "typography.oswald",
+                fontWeight: 500,
+              }}
+            >
+              RGM PONG
+            </Typography>
+          </Button>
           <div>
             <Button
               variant="contained"
               sx={{
                 backgroundColor: "rgba(0, 0, 0, 0.3)",
                 width: "200px",
-                mr: 2,
+                mr: 1,
               }}
               onClick={() => router.push("/profile")}
             >
@@ -71,10 +78,8 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               </Typography>
               <Avatar src={avatar} variant="rounded" />
             </Button>
-            <IconButton onClick={() => router.push("/")}>
-              <HomeIcon />
-            </IconButton>
-            <IconButton onClick={() => router.push("/settings")}>
+
+            <IconButton sx={{ mr: 1 }} onClick={() => router.push("/settings")}>
               <SettingsIcon />
             </IconButton>
             <IconButton onClick={handleLogout}>

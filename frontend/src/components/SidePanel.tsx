@@ -27,10 +27,10 @@ export default function SidePanel() {
     state.panel,
   ]);
   useEffect(() => {
-    chatSocket.connect();
+    // chatSocket.connect();
 
     function onConnect() {
-      console.log("chat socket connected");
+      // console.log("chat socket connected");
     }
 
     chatSocket.on("connect", onConnect);

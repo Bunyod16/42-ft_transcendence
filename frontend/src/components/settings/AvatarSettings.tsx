@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Tooltip } from "@mui/material";
 import { useState } from "react";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import useUserStore from "@/store/userStore";
 import toast from "react-hot-toast";
 
@@ -27,7 +27,7 @@ export default function AvatarSettings() {
         toast.success("Succesfully Updated Avatar!", {
           position: "bottom-right",
         });
-        console.log("Succesfully Updated Avatar!");
+        // console.log("Succesfully Updated Avatar!");
         updateAvatar(res.data.avatarURI);
       })
       .catch((error) => {
@@ -108,7 +108,7 @@ export default function AvatarSettings() {
           variant="contained"
           fullWidth
           sx={{
-            marginTop: 2,
+            marginTop: "",
           }}
           type="submit"
           disabled={newAvatar === undefined}

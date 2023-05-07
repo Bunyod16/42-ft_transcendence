@@ -19,7 +19,7 @@ import EmojiPeopleSharpIcon from "@mui/icons-material/EmojiPeopleSharp";
 import dayjs, { Dayjs } from "dayjs";
 import GrassSharpIcon from "@mui/icons-material/GrassSharp";
 import LocalFireDepartmentSharpIcon from "@mui/icons-material/LocalFireDepartmentSharp";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 import { toast } from "react-hot-toast";
 import useUserStore from "@/store/userStore";
 import MuteDateModal from "./MuteDateModal";

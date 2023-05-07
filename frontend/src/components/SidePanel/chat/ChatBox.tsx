@@ -3,7 +3,7 @@ import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { chatSocket, socket } from "../../socket/socket";
 import useUserStore from "@/store/userStore";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 import { ChannelMember, UserInfo } from "@/types/social-type";
 import { UserProfile } from "@/types/user-profile-type";
 // import { button, useControls } from "leva";
@@ -96,8 +96,6 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
       .then((res) => setChannelMembers([...res.data]))
       .catch((err) => console.log(err.response));
   }, [chatChannelId]);
-
-  console.log("blocked friends", blockedFriends);
 
   useEffect(() => {
     if (chatChannelId === -1) return;
