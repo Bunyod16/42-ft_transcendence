@@ -29,7 +29,7 @@ function CustomAddButton({
   personalNickName: string;
   userNickName: string;
 }) {
-  if (personalNickName !== userNickName) return <></>;
+  if (personalNickName === userNickName) return <></>;
   return (
     <Button
       onClick={() => handleAddFriend(userNickName)}
