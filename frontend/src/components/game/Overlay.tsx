@@ -262,7 +262,7 @@ const Overlay = () => {
         top: 0,
         left: 0,
         pointerEvents: "none",
-        // zIndex: 100,
+        zIndex: 100,
       }}
     >
       <Score />

@@ -73,7 +73,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       scale={[tableSize.y / 2, tableSize.y, tableSize.z / 5]}
       position={[playerLR * (tableSize.x / 2 - 0.1), 0, tableSize.y + 0.02]}
       rotation={[Math.PI / 2, 0, 0]}
-      // castShadow
+      castShadow
     >
       <meshStandardMaterial {...playerSkin} ref={mat} />
     </mesh>
