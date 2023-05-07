@@ -199,7 +199,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                   }}
                   onClick={handleAcceptInvite}
                 >
-                  {chat.text}
+                  Accept Game Invite
                 </Button>
               ) : (
                 <>
