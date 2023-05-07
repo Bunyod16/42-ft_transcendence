@@ -48,7 +48,9 @@ export class ChatChannel {
   @Column({ nullable: true, select: false })
   password: string;
 
-  @OneToMany(() => ChatLine, (chatLine) => chatLine.chatChannel)
+  @OneToMany(() => ChatLine, (chatLine) => chatLine.chatChannel, {
+    onDelete: 'CASCADE',
+  })
   chatLines: ChatLine[];
 
   @OneToMany(

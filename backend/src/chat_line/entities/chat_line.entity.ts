@@ -28,7 +28,9 @@ export class ChatLine {
   sender: User;
 
   //For chat channel link
-  @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatLines)
+  @ManyToOne(() => ChatChannel, (chatChannel) => chatChannel.chatLines, {
+    onDelete: 'CASCADE',
+  })
   chatChannel: ChatChannel;
 
   @Column({ type: 'enum', enum: ChatLineType, default: ChatLineType.MESSAGE })
