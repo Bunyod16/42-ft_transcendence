@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import { useRouter } from "next/router";
 import { SxProps } from "@mui/material";
 import { toast } from "react-hot-toast";
+import HomeIcon from "@mui/icons-material/Home";
 
 export default function Navbar({ sx }: { sx: SxProps }) {
   const [nickName, logout, avatar] = useUserStore((store) => [
@@ -70,6 +71,9 @@ export default function Navbar({ sx }: { sx: SxProps }) {
               </Typography>
               <Avatar src={avatar} variant="rounded" />
             </Button>
+            <IconButton onClick={() => router.push("/")}>
+              <HomeIcon />
+            </IconButton>
             <IconButton onClick={() => router.push("/settings")}>
               <SettingsIcon />
             </IconButton>

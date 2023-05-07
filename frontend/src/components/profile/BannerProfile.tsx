@@ -29,7 +29,7 @@ function CustomAddButton({
   personalNickName: string;
   userNickName: string;
 }) {
-  if (personalNickName !== userNickName) return <></>;
+  if (personalNickName === userNickName) return <></>;
   return (
     <Button
       onClick={() => handleAddFriend(userNickName)}
@@ -162,6 +162,7 @@ export default function BannerProfile(user: UserProfile) {
                 lineHeight: "0.8em",
                 color: "text.primary",
                 textTransform: "uppercase",
+                textOverflow: "ellipsis",
               }}
             >
               {user.nickName}

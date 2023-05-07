@@ -199,7 +199,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                   }}
                   onClick={handleAcceptInvite}
                 >
-                  {chat.text}
+                  Accept Game Invite
                 </Button>
               ) : (
                 <>
@@ -207,6 +207,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                     sx={{
                       color: "gray",
                       ml: 4,
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {`${chat.sender.nickName}`}

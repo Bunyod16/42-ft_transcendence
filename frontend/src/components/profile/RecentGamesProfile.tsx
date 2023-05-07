@@ -92,6 +92,7 @@ export default function RecentGamesProfile(user: UserProfile) {
                         : "accent.main",
                     fontWeight: "800",
                     letterSpacing: "2px",
+                    textOverflow: "ellipsis",
                   }}
                 >
                   {playerOneWonMatch && isPlayerOne ? "Victory" : "Defeat"}
@@ -132,6 +133,7 @@ export default function RecentGamesProfile(user: UserProfile) {
                       fontWeight: "600",
                       transition: "0.5s",
                       textTransform: "none",
+                      textOverflow: "ellipsis",
                       "&:hover": {
                         color:
                           playerOneWonMatch && isPlayerOne
