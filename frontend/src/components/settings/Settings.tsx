@@ -27,7 +27,7 @@ export default function Settings() {
       <Button
         variant="text"
         startIcon={<ArrowBackIcon />}
-        sx={{ color: "text.primary" }}
+        sx={{ color: "text.primary", mr: "auto" }}
         onClick={() => router.push("/")}
       >
         <Typography
