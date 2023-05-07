@@ -51,6 +51,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   const [gameUserProfile, setGameUserProfile] = useState<UserProfile | null>(
     null,
   );
+
   useEffect(() => {
     axios
       .get("/friend-request/findUserBlockedFriends")
@@ -95,6 +96,8 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
       .then((res) => setChannelMembers([...res.data]))
       .catch((err) => console.log(err.response));
   }, [chatChannelId]);
+
+  console.log("blocked friends", blockedFriends);
 
   useEffect(() => {
     if (chatChannelId === -1) return;
@@ -214,7 +217,7 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
                   </Typography>
                   {blockedFriends.some(
                     (friend) => friend.friend.id !== chat.sender.id,
-                  ) ? (
+                  ) || blockedFriends.length === 0 ? (
                     <Typography sx={{ lineHeight: 1, ml: 4 }}>
                       {chat.text}
                     </Typography>
