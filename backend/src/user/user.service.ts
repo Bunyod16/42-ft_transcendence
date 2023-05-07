@@ -213,6 +213,22 @@ export class UserService {
     });
   }
 
+  async addWin(userId: number) {
+    const user = await this.findOne(userId);
+    const wins = user.wins + 1;
+    await this.userRepository.update(userId, {
+      wins,
+    });
+  }
+
+  async addLoss(userId: number) {
+    const user = await this.findOne(userId);
+    const losses = user.losses + 1;
+    await this.userRepository.update(userId, {
+      losses,
+    });
+  }
+
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
     const user = await this.findOne(userId);
 

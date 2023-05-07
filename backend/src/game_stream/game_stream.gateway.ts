@@ -23,6 +23,7 @@ import { GameStateService } from 'src/game_state/gameState.service';
 import { MatchService } from 'src/match/match.service';
 import { GameState } from 'src/game_state/gameState.class';
 import { SocketWithAuthData } from 'src/socket_io_adapter/socket-io-adapter.types';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
@@ -33,6 +34,7 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
     private schedulerRegistry: SchedulerRegistry,
     private gameStateService: GameStateService,
     private matchService: MatchService,
+    private userService: UserService,
   ) {}
 
   @UseGuards(UserAuthGuard)
@@ -75,12 +77,24 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
 
   async endGame(match: Match, gameState: GameState) {
     this.server.to(`${match.id}`).emit('gameEnded', gameState);
+    if (!gameState) {
+      console.log('gameState is null, cannot end game');
+      return;
+    }
     match.playerOneScore = gameState.playerOne.score;
     match.playerTwoScore = gameState.playerTwo.score;
     await this.matchService.updateGameEnded(match.id, match);
     await this.gameStateService.deleteGame(match.id);
+
     try {
       this.removeInterval(match);
+      if (match.playerOneScore > match.playerTwoScore) {
+        await this.userService.addWin(match.playerOne.id);
+        await this.userService.addLoss(match.playerTwo.id);
+      } else {
+        await this.userService.addWin(match.playerTwo.id);
+        await this.userService.addLoss(match.playerOne.id);
+      }
     } catch (error) {
       console.log(
         'Tried to remove interval for updateGame but it was already removed',
@@ -109,9 +123,16 @@ export class GameStreamGateway implements OnGatewayDisconnect, OnModuleDestroy {
       this.server.to(`${moved_state.id}`).emit('updateGame', moved_state);
     };
 
-    const interval = setInterval(callback, 10);
-    this.schedulerRegistry.addInterval(`${match.id}`, interval);
-    console.log(`match stream ${match.id} created!`);
+    try {
+      const interval = setInterval(callback, 10);
+      this.schedulerRegistry.addInterval(`${match.id}`, interval);
+      console.log(`match stream ${match.id} created!`);
+    } catch (error) {
+      try {
+        this.schedulerRegistry.deleteInterval(`${match.id}`);
+      } catch {}
+      this.endGame(match, null);
+    }
   }
 
   removeInterval(match: Match) {
