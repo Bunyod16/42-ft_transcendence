@@ -36,6 +36,8 @@ export default function UsernameSettings() {
   useEffect(() => {
     const reg = /^[a-z0-9]+$/i;
     setIsValidUsername(reg.test(usernameField));
+    const reg2 = /^.{1,10}$/i;
+    setIsValidUsername(reg2.test(usernameField));
   }, [usernameField]);
 
   return (
@@ -70,7 +72,7 @@ export default function UsernameSettings() {
           size="small"
           error={!isValidUsername}
           helperText={
-            !isValidUsername && "Must only contain alphanumeric characters"
+            !isValidUsername && "Alphanumeric characters only, 10 characters max."
           }
           sx={{
             width: "210px",

@@ -83,6 +83,10 @@ export default function PickUsernamePanel() {
           reg.test(event.target.value)
             ? (setErrorText(""), setText(event.target.value))
             : setErrorText("Alphanumeric characters only");
+          const reg_length = /^.{1,10}$/i;
+          reg_length.test(event.target.value)
+            ? (setErrorText(""), setText(event.target.value))
+            : setErrorText("Length mustbe between 1 and 10 characters");
         }}
       />
       <Button
