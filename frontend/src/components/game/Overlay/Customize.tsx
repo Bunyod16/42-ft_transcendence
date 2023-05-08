@@ -25,17 +25,19 @@ const Customize = () => {
       {!selected ? (
         <>
           <Button
-            sx={{ pointerEvents: "all" }}
+            variant="outlined"
+            sx={{ pointerEvents: "all", mr: 2 }}
             onClick={() => setSelectedSkin(selectedSkin ? selectedSkin - 1 : 4)}
           >
-            Left
+            {"<"}
           </Button>
 
           <Button
+            variant="outlined"
             sx={{ pointerEvents: "all" }}
             onClick={() => setSelectedSkin((selectedSkin + 1) % 4)}
           >
-            Right
+            {">"}
           </Button>
           <Button
             variant="contained"
@@ -44,6 +46,7 @@ const Customize = () => {
               fontSize: 40,
               width: "max-content",
               display: "block",
+              mt: 2,
             }}
             onClick={() => {
               socket.emit("userConnected", { skin: selectedSkin });
