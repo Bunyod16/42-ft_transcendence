@@ -2,14 +2,12 @@ import { Controls, ISize } from "./types";
 import { boxGeometry } from "./resource";
 import { Mesh, MeshStandardMaterial } from "three";
 import { socket } from "../socket/socket";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import useGameState from "@/hooks/useGameState";
 import useGameStore from "@/store/gameStore";
-import { Center, useKeyboardControls, useTexture } from "@react-three/drei";
-import { useEffect, useRef } from "react";
+import { useKeyboardControls, useTexture } from "@react-three/drei";
+import { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
-import { Flex } from "@react-three/flex";
-import CustomizeStep from "./CustomizeStep";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -37,8 +35,8 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const tmpSkin = useTexture({
     ...material[selectedSkin],
   });
-  // const relativeCameraOffset = new THREE.Vector3(0, 50, 200);
-  // const [playerSkin, setPlayerSkin] = useState<any>();
+  const [updatedCamera, setUpdatedCamera] = useState(false);
+  const cameraPosition = new THREE.Vector3();
 
   useEffect(() => {
     console.log("player rendered");
@@ -54,28 +52,25 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
     }
   }, [gameStatus, playerSkin]);
 
+  useEffect(() => {
+    setUpdatedCamera(false);
+  }, [gameStatus]);
+
   useFrame((state, delta) => {
     if (!body.current) return null;
 
-    if (gameStatus === "Customize" && playerLR === 1) {
-      const cameraPosition = new THREE.Vector3();
+    if (gameStatus === "Customize" && isPlayer && !updatedCamera) {
       cameraPosition.copy(body.current.position);
-      cameraPosition.x -= 1;
-      // // cameraPosition.y -= 1;
-      // // cameraPosition.z += 1;
-
-      const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+      cameraPosition.x -= playerLR === -1 ? -1 : 1;
 
       state.camera.position.lerp(cameraPosition, 0.01);
-      // // state.camera.quaternion.lerp(deg2rad(30), 0, 0);
       state.camera.lookAt(body.current.position);
-      // state.camera.rotation.set(1.5, 0, 0);
-      state.camera.rotateZ(-1.55);
-      // // state.camera.position.lerp(body.current.position, 0.05);
-      // // state.camera.updateProjectionMatrix();
-      // 1;
-      // return null;
-      // camera.rotation.set(deg2rad(20), 0, 0);
+      state.camera.rotateZ(-1.55 * playerLR);
+
+      if (state.camera.position.equals(cameraPosition)) {
+        setUpdatedCamera(true);
+        // console.log("posistion dao");
+      }
     }
 
     if (gameStatus === "InGame") {

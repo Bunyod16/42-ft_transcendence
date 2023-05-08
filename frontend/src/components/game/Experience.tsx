@@ -1,13 +1,14 @@
 import useGameStore from "@/store/gameStore";
-import { socket } from "../socket/socket";
-import CustomizeStep from "./CustomizeStep";
+// import { socket } from "../socket/socket";
+// import CustomizeStep from "./CustomizeStep";
 import Pong from "./Pong";
 import VictoryDefeat from "./VictoryDefeat";
 import * as THREE from "three";
 
-import { button, useControls } from "leva";
-import { useFrame, useThree } from "@react-three/fiber";
-import { GizmoHelper, GizmoViewport } from "@react-three/drei";
+// import { button, useControls } from "leva";
+import { useFrame } from "@react-three/fiber";
+// import { GizmoHelper, GizmoViewport } from "@react-three/drei";
+import { useEffect, useState } from "react";
 
 function Lights() {
   return (
@@ -32,6 +33,12 @@ function Lights() {
 function CameraRig() {
   const gameStatus = useGameStore((state) => state.gameStatus);
   const vec = new THREE.Vector3();
+  const [updatedCamera, setUpdatedCamera] = useState(false);
+
+  useEffect(() => {
+    setUpdatedCamera(false);
+  }, [gameStatus]);
+
   useFrame((state) => {
     // Three.easing.damp3(
     //   state.camera.position,
@@ -40,16 +47,20 @@ function CameraRig() {
     //   delta,
     // );
     if (gameStatus === "Customize") return null;
-    state.camera.lookAt(0, 0, 0);
-    state.camera.position.lerp(vec.set(0, -4, 2), 0.01);
-    state.camera.updateProjectionMatrix();
+    if (!updatedCamera) {
+      state.camera.lookAt(0, 0, 0);
+      state.camera.position.lerp(vec.set(0, -4, 2), 0.01);
+      state.camera.updateProjectionMatrix();
+
+      if (state.camera.position === vec) setUpdatedCamera(true);
+    }
     return null;
   });
   return <></>;
 }
 
 function Experience() {
-  const updateGameStatus = useGameStore((state) => state.updateGameStatus);
+  // const updateGameStatus = useGameStore((state) => state.updateGameStatus);
 
   // useControls({
   //   InGame: button(() => updateGameStatus("InGame")),

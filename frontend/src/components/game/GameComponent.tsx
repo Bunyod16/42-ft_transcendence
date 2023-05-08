@@ -1,8 +1,7 @@
 import Experience from "./Experience";
 import { Perf } from "r3f-perf";
-import { KeyboardControls, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Box } from "@mui/material";
-// import Overlay from "./Overlay";
 import Overlay from "./Overlay";
 import { useRouter } from "next/router";
 import { socket } from "../socket/socket";
@@ -50,7 +49,7 @@ function GameComponent() {
           <Perf position="bottom-left" />
 
           <Experience />
-          {/* <OrbitControls /> */}
+          <OrbitControls />
         </Suspense>
       </Three>
       {/* </Canvas> */}
