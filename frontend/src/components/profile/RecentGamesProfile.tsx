@@ -45,9 +45,12 @@ export default function RecentGamesProfile(user: UserProfile) {
 
           // console.log("match.id", match.id);
 
-          const isPlayerOne =
-            match.playerOne.nickName === user.nickName ? true : false;
+          const isPlayerOne = match.playerOne.nickName === user.nickName;
           const playerOneWonMatch = match.playerOneScore > match.playerTwoScore;
+          const winner =
+            (match.playerOneScore > match.playerTwoScore
+              ? match.playerOne.nickName
+              : match.playerTwo.nickName) === user.nickName;
 
           console.log(
             match.playerTwo.nickName,
@@ -57,8 +60,9 @@ export default function RecentGamesProfile(user: UserProfile) {
             match.playerOne.nickName,
           );
 
-          console.log("isPlayerOne = ", isPlayerOne);
-          console.log("playerOneWonMatch = ", playerOneWonMatch);
+          console.log("winner = ", winner);
+          console.log("isPlayerOne[right] = ", isPlayerOne);
+          console.log("playerOneWonMatch[right] = ", playerOneWonMatch);
 
           const dateAsString = parseISOString(match.createdAt);
           return (
@@ -68,10 +72,7 @@ export default function RecentGamesProfile(user: UserProfile) {
               sx={{
                 backgroundColor: "primary.100",
                 border: "2px solid",
-                borderColor:
-                  playerOneWonMatch && isPlayerOne
-                    ? "accent.light"
-                    : "accent.main",
+                borderColor: winner ? "accent.light" : "accent.main",
                 borderRadius: "8px",
                 height: "130px",
                 margin: "10px 0px",
@@ -86,16 +87,13 @@ export default function RecentGamesProfile(user: UserProfile) {
                   sx={{
                     fontSize: "1.4em",
                     textTransform: "uppercase",
-                    color:
-                      playerOneWonMatch && isPlayerOne
-                        ? "accent.light"
-                        : "accent.main",
+                    color: winner ? "accent.light" : "accent.main",
                     fontWeight: "800",
                     letterSpacing: "2px",
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {playerOneWonMatch && isPlayerOne ? "Victory" : "Defeat"}
+                  {winner ? "Victory" : "Defeat"}
                 </Typography>
               </Box>
               <Box
@@ -135,10 +133,7 @@ export default function RecentGamesProfile(user: UserProfile) {
                       textTransform: "none",
                       textOverflow: "ellipsis",
                       "&:hover": {
-                        color:
-                          playerOneWonMatch && isPlayerOne
-                            ? "accent.main"
-                            : "accent.light",
+                        color: "text.primary",
                       },
                     }}
                     onClick={() => {
@@ -200,10 +195,7 @@ export default function RecentGamesProfile(user: UserProfile) {
                       transition: "0.5s",
                       textTransform: "none",
                       "&:hover": {
-                        color:
-                          !playerOneWonMatch && !isPlayerOne
-                            ? "accent.main"
-                            : "accent.light",
+                        color: "text.primary",
                       },
                     }}
                     onClick={() => {
