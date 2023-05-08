@@ -8,7 +8,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "../utils/apiClient";
 import useFriendsStore from "@/store/friendsStore";
 import useUserStore from "@/store/userStore";
@@ -17,6 +17,7 @@ import { chatSocket } from "../socket/socket";
 import ManageFriendAccordian from "./ManageFriendAccordian";
 import usePendingFriendStore from "@/store/pendingFriendStore";
 import { toast } from "react-hot-toast";
+import AddFriendModal from "./modal/AddFriendModal";
 
 function FriendBox() {
   const [friends] = useFriendsStore((state) => [state.friends]);
@@ -78,6 +79,7 @@ export default function FriendList() {
     state.setOffline,
   ]);
   const updateRequests = usePendingFriendStore((state) => state.updateRequests);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   // const [pendingActive, setPendingActive] = useState(false);
   useEffect(() => {
     // axios
@@ -113,13 +115,13 @@ export default function FriendList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleAddFriend() {
-    const promptFriend: string = prompt("Enter friend Name") || "";
+  function handleAddFriend(friendName: string) {
+    // const promptFriend: string = prompt("Enter friend Name") || "";
     axios
       .post("/friend-request/addFriendByNickName", {
-        nickName: promptFriend,
+        nickName: friendName,
       })
-      .then((response) => {
+      .then(() => {
         // alert("BEFRIENDING SUCCESSFUL");
         // console.log(response);
         updateRequests();
@@ -145,6 +147,11 @@ export default function FriendList() {
         my: 2,
       }}
     >
+      <AddFriendModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        handleAddFriend={handleAddFriend}
+      />
       <Button
         variant="outlined"
         fullWidth
@@ -157,7 +164,8 @@ export default function FriendList() {
             border: "2px solid #626262",
           },
         }}
-        onClick={handleAddFriend}
+        onClick={() => setOpenModal(true)}
+        // onClick={handleAddFriend}
       >
         Add Friend
       </Button>

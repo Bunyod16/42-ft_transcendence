@@ -1,5 +1,5 @@
 import { UserProfile } from "@/types/user-profile-type";
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 
 export default function AchievementBoxProfile(user: UserProfile) {
   return (
@@ -40,38 +40,42 @@ export default function AchievementBoxProfile(user: UserProfile) {
                 width: "calc(100% - 10px)",
               }}
             >
-              <img src={achievement.url} width={100} height={100} />
+              <Avatar
+                alt="Achievement Image"
+                src={achievement.url}
+                sx={{ margin: "10px 0px", height: "100px", width: "100px" }}
+              />
               <Box
-              key={userAchievement.id}
-              component="div"
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "primary.100",
-                borderRadius: "8px",
-                margin: "10px 0px",
-                padding: "7px 10px",
-                width: "calc(100% - 10px)",
-              }}
-            >
-              <Typography
+                key={userAchievement.id}
+                component="div"
                 sx={{
-                  color: "text.primary",
-                  fontSize: "1.2em",
-                  textTransform: "capitalize",
+                  display: "flex",
+                  flexDirection: "column",
+                  backgroundColor: "primary.100",
+                  borderRadius: "8px",
+                  margin: "10px 0px",
+                  padding: "7px 10px",
+                  width: "calc(100% - 10px)",
                 }}
               >
-                {achievement.name}
-              </Typography>
-              <Typography
-                sx={{
-                  color: "text.secondary",
-                  fontSize: "1.0em",
-                  textTransform: "capitalize",
-                }}
-              >
-                {achievement.description}
-              </Typography>
+                <Typography
+                  sx={{
+                    color: "text.primary",
+                    fontSize: "1.2em",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {achievement.name}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "1.0em",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {achievement.description}
+                </Typography>
               </Box>
             </Box>
           );

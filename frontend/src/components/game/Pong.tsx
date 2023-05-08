@@ -60,12 +60,15 @@ function Pong() {
     }
     function onGameEnded(data: GameState) {
       console.log("gameEnded");
-      setMatchInfo({
-        ...matchInfo,
-        playerOneScore: data.playerOne.score,
-        playerTwoScore: data.playerTwo.score,
-        isWinner: checkIsWinner(data),
-      });
+      console.log("data", data);
+      if (data !== null) {
+        setMatchInfo({
+          ...matchInfo,
+          playerOneScore: data.playerOne.score,
+          playerTwoScore: data.playerTwo.score,
+          isWinner: checkIsWinner(data),
+        });
+      }
       updateGameStatus("Ended");
     }
 
