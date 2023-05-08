@@ -93,11 +93,13 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
   useEffect(() => {
     axios
       .get(`/chat-channel-member/${chatChannelId}/usersInChatChannel`)
-      .then((res) => setChannelMembers([...res.data]))
+      .then((res) => {
+        setChannelMembers([...res.data]);
+      })
       .catch((err) => console.log(err.response));
   }, [chatChannelId]);
 
-  console.log("blocked friends", blockedFriends);
+  // console.log("blocked friends", blockedFriends);
 
   useEffect(() => {
     if (chatChannelId === -1) return;
@@ -165,79 +167,86 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
         ref={listInnerRef}
         onScroll={handleScroll}
       >
-        {chats.map((chat, i) => {
-          const avatar =
-            channelMembers.find((member) => member.user.id === chat.sender.id)
-              ?.user.avatar || "nothing";
-          return (
-            <Box
-              component="div"
-              sx={{
-                mb: 1,
-                wordWrap: "break-word",
-                position: "relative",
-              }}
-              key={i}
-            >
-              <Avatar
-                sx={{ width: 24, height: 24, position: "absolute", top: 8 }}
-                src={avatar}
-              />
-              {chat.chatLineType === "activeinvite" ? (
-                <Button
+        {panel?.chatChannel.isBlacklisted ? (
+          <>BLACKLAD</>
+        ) : (
+          <>
+            {chats.map((chat, i) => {
+              const avatar =
+                channelMembers.find(
+                  (member) => member.user.id === chat.sender.id,
+                )?.user.avatar || "nothing";
+              return (
+                <Box
+                  component="div"
                   sx={{
-                    color: "text.primary",
-                    ml: 4,
-                    alignSelf: "center",
-                    backgroundColor: "accent.main",
-                    borderRadius: "8px",
-                    fontWeight: "700",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      backgroundColor: "accent.dark",
-                    },
-                    "&:active": {
-                      transform: "scale(0.9)",
-                    },
+                    mb: 1,
+                    wordWrap: "break-word",
+                    position: "relative",
                   }}
-                  onClick={handleAcceptInvite}
+                  key={i}
                 >
-                  Accept Game Invite
-                </Button>
-              ) : (
-                <>
-                  <Typography
-                    sx={{
-                      color: "gray",
-                      ml: 4,
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {`${chat.sender.nickName}`}
-                  </Typography>
-                  {blockedFriends.some(
-                    (friend) => friend.friend.id !== chat.sender.id,
-                  ) || blockedFriends.length === 0 ? (
-                    <Typography sx={{ lineHeight: 1, ml: 4 }}>
-                      {chat.text}
-                    </Typography>
-                  ) : (
-                    <Typography
+                  <Avatar
+                    sx={{ width: 24, height: 24, position: "absolute", top: 8 }}
+                    src={avatar}
+                  />
+                  {chat.chatLineType === "activeinvite" ? (
+                    <Button
                       sx={{
-                        lineHeight: 1,
+                        color: "text.primary",
                         ml: 4,
-                        fontStyle: "italic",
-                        color: "text.secondary",
+                        alignSelf: "center",
+                        backgroundColor: "accent.main",
+                        borderRadius: "8px",
+                        fontWeight: "700",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "accent.dark",
+                        },
+                        "&:active": {
+                          transform: "scale(0.9)",
+                        },
                       }}
+                      onClick={handleAcceptInvite}
                     >
-                      You blocked {chat.sender.nickName}
-                    </Typography>
+                      Accept Game Invite
+                    </Button>
+                  ) : (
+                    <>
+                      <Typography
+                        sx={{
+                          color: "gray",
+                          ml: 4,
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {`${chat.sender.nickName}`}
+                      </Typography>
+                      {blockedFriends.some(
+                        (friend) => friend.friend.id !== chat.sender.id,
+                      ) || blockedFriends.length === 0 ? (
+                        <Typography sx={{ lineHeight: 1, ml: 4 }}>
+                          {chat.text}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          sx={{
+                            lineHeight: 1,
+                            ml: 4,
+                            fontStyle: "italic",
+                            color: "text.secondary",
+                          }}
+                        >
+                          You blocked {chat.sender.nickName}
+                        </Typography>
+                      )}
+                    </>
                   )}
-                </>
-              )}
-            </Box>
-          );
-        })}
+                </Box>
+              );
+            })}
+          </>
+        )}
       </Box>
 
       {/* Textbox input here */}
@@ -245,7 +254,13 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
       <form onSubmit={handleMessageSubmit}>
         <TextField
           variant="outlined"
-          placeholder="message..."
+          placeholder={
+            panel?.chatChannel.isBlacklisted
+              ? "You are blacklisted..."
+              : panel?.chatChannel.mutedUntil !== null
+              ? "You are muted..."
+              : "message..."
+          }
           autoComplete="off"
           onChange={(event) => setMessage(event.target.value)}
           value={message}
@@ -253,8 +268,34 @@ export default function ChatBox({ chatChannelId }: ChatBoxProps) {
             height: 56,
             width: "100%",
             color: "#FEFEFE",
-            "&::placeholder": { color: "#FEFEFE" },
+            "&::placeholder": {
+              color:
+                panel?.chatChannel.isBlacklisted ||
+                panel?.chatChannel.mutedUntil !== null
+                  ? "accent.main"
+                  : "#FEFEFE",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor:
+                  panel?.chatChannel.isBlacklisted ||
+                  panel?.chatChannel.mutedUntil !== null
+                    ? "accent.main"
+                    : "",
+              },
+              "&:hover fieldset": {
+                borderColor:
+                  panel?.chatChannel.isBlacklisted ||
+                  panel?.chatChannel.mutedUntil !== null
+                    ? "accent.main"
+                    : "",
+              },
+            },
           }}
+          disabled={
+            panel?.chatChannel.isBlacklisted ||
+            panel?.chatChannel.mutedUntil !== null
+          }
         />
       </form>
       {/* </Box> */}
