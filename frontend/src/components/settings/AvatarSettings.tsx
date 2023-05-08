@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Tooltip } from "@mui/material";
 import { useState } from "react";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import useUserStore from "@/store/userStore";
 import toast from "react-hot-toast";
 
@@ -27,7 +27,7 @@ export default function AvatarSettings() {
         toast.success("Succesfully Updated Avatar!", {
           position: "bottom-right",
         });
-        console.log("Succesfully Updated Avatar!");
+        // console.log("Succesfully Updated Avatar!");
         updateAvatar(res.data.avatarURI);
       })
       .catch((error) => {
@@ -71,8 +71,8 @@ export default function AvatarSettings() {
         onSubmit={handleSubmitAvatar}
         style={{
           display: "flex",
-          // flexDirection: "column",
-          alignItems: "center",
+          flexDirection: "column",
+          // alignItems: "end",
         }}
       >
         <Tooltip title="Choose Image" followCursor>
@@ -81,6 +81,7 @@ export default function AvatarSettings() {
               borderRadius: "8px",
               width: "140px",
               height: "140px",
+              // mr: "auto",
               backgroundImage: newAvatarUrl
                 ? `url("${newAvatarUrl}")`
                 : `url("${avatar}")`,
@@ -103,18 +104,11 @@ export default function AvatarSettings() {
           </Button>
         </Tooltip>
         <Button
+          color="accent"
+          variant="contained"
+          fullWidth
           sx={{
-            color: "text.primary",
-            fontSize: "1em",
-            fontWeight: "600",
-            backgroundColor:
-              newAvatar === undefined ? "accent.main" : "accent.light",
-            marginTop: "10px",
-            textTransform: "none",
-            width: "210px",
-            height: "40px",
-            "&:hover": { backgroundColor: "primary.main" },
-            ml: 3,
+            marginTop: "",
           }}
           type="submit"
           disabled={newAvatar === undefined}

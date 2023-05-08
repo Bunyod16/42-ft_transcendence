@@ -1,6 +1,14 @@
-import CustomizeStep from "./CustomizeStep";
+import useGameStore from "@/store/gameStore";
+// import { socket } from "../socket/socket";
+// import CustomizeStep from "./CustomizeStep";
 import Pong from "./Pong";
 import VictoryDefeat from "./VictoryDefeat";
+import * as THREE from "three";
+
+// import { button, useControls } from "leva";
+import { useFrame } from "@react-three/fiber";
+// import { GizmoHelper, GizmoViewport } from "@react-three/drei";
+import { useEffect, useState } from "react";
 
 function Lights() {
   return (
@@ -21,6 +29,36 @@ function Lights() {
     </>
   );
 }
+
+function CameraRig() {
+  const gameStatus = useGameStore((state) => state.gameStatus);
+  const vec = new THREE.Vector3();
+  const [updatedCamera, setUpdatedCamera] = useState(false);
+
+  useEffect(() => {
+    setUpdatedCamera(false);
+  }, [gameStatus]);
+
+  useFrame((state) => {
+    // Three.easing.damp3(
+    //   state.camera.position,
+    //   [gameStatus === "InGame" ? -state.viewport.width / 4 : 0, 0, 2],
+    //   0.25,
+    //   delta,
+    // );
+    if (gameStatus === "Customize") return null;
+    if (!updatedCamera) {
+      state.camera.lookAt(0, 0, 0);
+      state.camera.position.lerp(vec.set(0, -4, 2), 0.01);
+      state.camera.updateProjectionMatrix();
+
+      if (state.camera.position === vec) setUpdatedCamera(true);
+    }
+    return null;
+  });
+  return <></>;
+}
+
 function Experience() {
   // const updateGameStatus = useGameStore((state) => state.updateGameStatus);
 
@@ -39,11 +77,21 @@ function Experience() {
 
       {/* <Physics gravity={[0, 0, 0]}> */}
       {/* <Debug /> */}
+      <CameraRig />
       <Lights />
-      <CustomizeStep />
+      {/* <CustomizeStep /> */}
       <Pong />
       <VictoryDefeat />
-      {/* </Physics> */}
+      {/* <GizmoHelper
+        alignment="bottom-right" // widget alignment within scene
+        margin={[80, 80]} // widget margins (X, Y)
+        onUpdate={() => console.log(camera)}
+      >
+        <GizmoViewport
+          axisColors={["red", "green", "blue"]}
+          labelColor="black"
+        />
+      </GizmoHelper> */}
     </>
   );
 }

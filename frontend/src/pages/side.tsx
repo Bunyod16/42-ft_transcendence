@@ -10,7 +10,7 @@ export default function Side() {
     setIsHydrated(true);
   }, []);
 
-  if (!isHydrated) return <></>;
   if (!isLoggedIn) return <Login />;
-  return <DefaultLayout />;
+  return <></>;
+  // return <DefaultLayout />;
 }

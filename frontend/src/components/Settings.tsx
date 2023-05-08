@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect } from "react";
-import axios from "./apiClient/apiClient";
+import axios from "./utils/apiClient";
 import useUserStore from "@/store/userStore";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -44,7 +44,7 @@ export default function Settings() {
     e.preventDefault();
     const formData = new FormData();
     if (newAvatar === undefined) return;
-    console.log("avatar before upadate", avatar);
+    // console.log("avatar before upadate", avatar);
     formData.append("avatar", newAvatar);
     axios
       .post("/content/upload_avatar", formData, {
@@ -57,7 +57,7 @@ export default function Settings() {
           position: "bottom-right",
         });
         updateAvatar(res.data.avatarURI); //i HAVE TO CHANGE THIS AND UPDATE STORE AVATAR
-        console.log("avatar after succesfull upadate", avatar);
+        // console.log("avatar after succesfull upadate", avatar);
       })
       .catch((error) => {
         toast.error(`${error.mossage}`, {
@@ -78,7 +78,7 @@ export default function Settings() {
 
   const handleSubmitUsername = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(usernameField);
+    // console.log(usernameField);
     axios
       .patch(`/user`, { nickName: usernameField })
       .then(() => {

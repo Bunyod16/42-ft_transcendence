@@ -20,7 +20,7 @@ import { ChannelMember, Channel } from "@/types/social-type";
 import TransferOwnerModal from "./TransferOwnerModal";
 import useConfirmToast from "@/hooks/useConfirmToast";
 import toast from "react-hot-toast";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 
 interface OwnerManagePanelProp {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;

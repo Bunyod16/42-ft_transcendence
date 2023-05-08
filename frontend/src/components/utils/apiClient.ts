@@ -50,8 +50,8 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      console.log(error.response);
-      console.log("Access denied. Redirecting to login page.");
+      // console.log(error.response);
+      // console.log("Access denied. Redirecting to login page.");
       // if (window.location.toString() != "http://localhost:8080/") {
       //   window.location.replace("/");
       // }

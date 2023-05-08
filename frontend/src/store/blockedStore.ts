@@ -1,6 +1,6 @@
 import { FriendType } from "@/types/social-type";
 import { create } from "zustand";
-import axios from "../components/apiClient/apiClient";
+import axios from "../components/utils/apiClient";
 import { get } from "http";
 
 interface BlockedStoreType {

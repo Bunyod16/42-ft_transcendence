@@ -6,9 +6,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import theme from "@/styles/theme";
 import createEmotionCache from "@/styles/createEmotionCache";
-import axios from "../components/apiClient/apiClient";
+import axios from "../components/utils/apiClient";
 import { Toaster } from "react-hot-toast";
 import Auth from "@/components/utils/Auth";
+import DefaultLayout from "@/components/layout/DefaultLayout";
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
@@ -51,7 +52,9 @@ export default function MyApp(props: MyAppProps) {
         />
 
         <Auth>
-          <Component {...pageProps} />
+          <DefaultLayout>
+            <Component {...pageProps} />
+          </DefaultLayout>
         </Auth>
       </ThemeProvider>
     </CacheProvider>

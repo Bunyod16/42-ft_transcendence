@@ -47,13 +47,12 @@ const Lobby = () => {
   // *start queue here
   const handleQueue = () => {
     socket.emit("queueEnter");
-
-    console.log("trying to queue");
+    // TODO settimeout and have feedback if emit failed
+    // console.log("trying to queue");
   };
 
   //! queue leave function
   const handleQueueLeave = () => {
-    console.log("queue leave");
     socket.emit("queueLeave");
     setIsQueueing(false);
   };
@@ -79,15 +78,14 @@ const Lobby = () => {
     setOpen(true);
   };
 
-  // https://nextjs.org/docs/api-reference/next/router#routerbeforepopstate
-  // TODO implement this thing ^^
-
   React.useEffect(() => {
     toast.remove();
+
+    socket.connect();
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }
-    socket.connect();
+    // socket.connect();
     socket.on("queueEnterSuccess", onQueueEnterSuccess);
     socket.on("matchFound", onMatchFound);
 
@@ -139,62 +137,60 @@ const Lobby = () => {
     };
   }, []);
 
-  console.log(isQueueing, open);
-
   return (
     <>
-      <DefaultLayout>
-        <Box
-          // container
-          component={"div"}
-          sx={{
-            // alignContent:"center",
-            // justifyContent:"center",
-            height: "100%",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {!(isQueueing || open) ? (
-            <>
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{
-                  typography: "h4",
-                  fontWeight: "medium",
-                  width: "300px",
-                  padding: 2,
-                  marginBottom: 5,
-                }}
-                onClick={isQueueing ? handleQueueLeave : handleQueue}
-              >
-                {isQueueing ? "Cancel" : "Quick Play"}
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{
-                  typography: "h4",
-                  fontWeight: "medium",
-                  width: "300px",
-                  padding: 2,
-                }}
-                onClick={handleOpen}
-              >
-                {"Play With Friends"}
-              </Button>
-            </>
-          ) : (
-            <QueueingState handleQueueLeave={handleQueueLeave} />
-          )}
-          <CustomGameModal open={open} setOpen={setOpen} socket={socket} />
-        </Box>
-        {/* <Toaster /> */}
-      </DefaultLayout>
+      {/* <DefaultLayout> */}
+      <Box
+        // container
+        component={"div"}
+        sx={{
+          // alignContent:"center",
+          // justifyContent:"center",
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {!(isQueueing || open) ? (
+          <>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                typography: "h4",
+                fontWeight: "medium",
+                width: "300px",
+                padding: 2,
+                marginBottom: 5,
+              }}
+              onClick={isQueueing ? handleQueueLeave : handleQueue}
+            >
+              {isQueueing ? "Cancel" : "Quick Play"}
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                typography: "h4",
+                fontWeight: "medium",
+                width: "300px",
+                padding: 2,
+              }}
+              onClick={handleOpen}
+            >
+              {"Play With Friends"}
+            </Button>
+          </>
+        ) : (
+          <QueueingState handleQueueLeave={handleQueueLeave} />
+        )}
+        <CustomGameModal open={open} setOpen={setOpen} socket={socket} />
+      </Box>
+      {/* <Toaster /> */}
+      {/* </DefaultLayout> */}
     </>
   );
 };

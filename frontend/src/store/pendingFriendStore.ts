@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "../components/apiClient/apiClient";
+import axios from "../components/utils/apiClient";
 
 interface RequestType {
   friend: {

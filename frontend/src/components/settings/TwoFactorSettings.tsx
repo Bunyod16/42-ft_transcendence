@@ -6,7 +6,7 @@ import {
   Avatar,
   TextField,
 } from "@mui/material";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import useUserStore from "@/store/userStore";
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
@@ -143,12 +143,11 @@ export default function TwoFactorSettings() {
       <Box
         component="div"
         sx={{
-          backgroundColor: "none",
-          height: "100%",
+          bgcolor: "primary.200",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          padding: "12px 16px",
+          borderRadius: 2,
         }}
       >
         {userHasTwoFactor ? (
@@ -192,17 +191,10 @@ export default function TwoFactorSettings() {
               Two-factor authentication
             </Typography>
             <Button
-              sx={{
-                color: "text.primary",
-                fontSize: "1em",
-                height: "40px",
-                fontWeight: "600",
-                backgroundColor: "accent.light",
-                marginTop: "10px",
-                textTransform: "none",
-                width: "210px",
-                "&:hover": { backgroundColor: "primary.main" },
-              }}
+              color="secondary"
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
               onClick={handleEnableTwoFactor}
             >
               Enable

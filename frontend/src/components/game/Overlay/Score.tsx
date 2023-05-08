@@ -3,8 +3,13 @@ import useGameStore from "@/store/gameStore";
 import { GameState } from "@/types/game-type";
 import { Box, Typography, Avatar } from "@mui/material";
 import { useState, useEffect } from "react";
+import { Avatars } from ".";
 
-const Score = () => {
+interface ScoreProp {
+  avatars: Avatars;
+}
+
+const Score = ({ avatars }: ScoreProp) => {
   const [score, setScore] = useState({ p1Score: 0, p2Score: 0 });
   const matchInfo = useGameStore((state) => state.matchInfo);
   const gameStatus = useGameStore((state) => state.gameStatus);
@@ -63,7 +68,7 @@ const Score = () => {
         </Typography>
         <Typography>{matchInfo.playerTwo?.nickName || "noname"}</Typography>
         <Avatar
-          src={`https://source.boringavatars.com/beam/80/${matchInfo.playerTwo?.nickName}`}
+          src={avatars.p2}
           sx={{
             width: 80,
             height: 80,
@@ -92,7 +97,7 @@ const Score = () => {
         </Typography>
         <Typography>{matchInfo.playerOne?.nickName || "noname"}</Typography>
         <Avatar
-          src={`https://source.boringavatars.com/beam/80/${matchInfo.playerOne?.nickName}`}
+          src={avatars.p1}
           sx={{
             width: 80,
             height: 80,

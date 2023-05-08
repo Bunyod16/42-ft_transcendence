@@ -1,6 +1,6 @@
 import useUserStore from "@/store/userStore";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
-import axios from "./apiClient/apiClient";
+import axios from "./utils/apiClient";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -38,12 +38,12 @@ const TwoFactorPrompt = () => {
         twoFactorCode: twoFactorVerificationCode,
       })
       .then((resp) => {
-        console.log(resp.data);
+        // console.log(resp.data);
         if (!resp.data.verified) throw new Error("Failed to verify two factor");
         toast.success(`Good job`, {
           position: "top-center",
         });
-        console.log(`Verified two factor`);
+        // console.log(`Verified two factor`);
         authenticate(true);
         router.push("/");
       })

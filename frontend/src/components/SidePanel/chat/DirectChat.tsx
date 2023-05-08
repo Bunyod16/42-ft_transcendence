@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChatBox from "./ChatBox";
 // import { chatSocket } from "../socket/socket";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 import { PanelData } from "@/types/social-type";
 import PersonOffSharpIcon from "@mui/icons-material/PersonOffSharp";
 import useUserStore from "@/store/userStore";

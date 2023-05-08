@@ -69,7 +69,7 @@ const useGameStore = create<GameStore>()(
         state.matchInfo.playerTwo.skin = skinTwo;
       });
     },
-    gameStatus: "NoGame",
+    gameStatus: "InGame",
     updateGameStatus: (gameStatus: GameStatus) => set(() => ({ gameStatus })),
     gameState: {
       playerOne: { y: 0, isConnected: false, score: 0, skin: 0 },

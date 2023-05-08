@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Typography, Box } from "@mui/material";
 import Profile from "@/components/profile/Profile";
-import axios from "../../components/apiClient/apiClient";
+import axios from "../../components/utils/apiClient";
 
 /*
  * Default page for the user themselves
@@ -36,7 +36,6 @@ export default function ProfilePage() {
         setUserExists(false);
       }
       setLoading(false);
-      console.log(data);
 
       setUser({ ...data, avatar: avatar });
       // setUser((prev) => ({ ...prev }));
@@ -50,10 +49,10 @@ export default function ProfilePage() {
     getUserProfile(nickName);
     //eslint-disable-next-line
   }, []);
-  console.log(user);
 
   return (
-    <DefaultLayout>
+    // <DefaultLayout>
+    <>
       {loading ? (
         <Box
           component="div"
@@ -90,6 +89,7 @@ export default function ProfilePage() {
       ) : (
         <>User Not Logged In or you do not exist, hence you are here</>
       )}
-    </DefaultLayout>
+    </>
+    // </DefaultLayout>
   );
 }

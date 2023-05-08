@@ -113,7 +113,7 @@ theme = createTheme(theme, {
     MuiButton: {
       styleOverrides: {
         root: {
-          // textTransform: "none",
+          textTransform: "none",
           transition: "all 0.2s ease",
           "&:hover": {
             backgroundColor: "primary.main",

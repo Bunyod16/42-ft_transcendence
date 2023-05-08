@@ -1,7 +1,7 @@
 import useUserStore from "@/store/userStore";
 import React, { ReactElement, useState } from "react";
-import axios from "../apiClient/apiClient";
-import { socket } from "@/components/socket/socket";
+import axios from "./apiClient";
+import { socket, chatSocket } from "@/components/socket/socket";
 import Login from "@/pages/login";
 import PickUsername from "@/pages/pickusername";
 import Loading from "./Loading";
@@ -30,30 +30,34 @@ export default function Auth({ children }: { children: ReactElement }) {
         });
     }
 
-    // if (isLoggedIn) return;
-    axios
-      .get("auth/profile")
-      .then((res) => {
-        console.log(`IS LOGGED IN ${isLoggedIn}`);
-        authenticate(res.data.isAuthenticated);
-        if (isLoggedIn) return;
-        login(res.data.nickName, res.data.id, res.data.avatar);
-        console.log(`user authenticated ${res.data.isAuthenticated}`);
-        socket.connect();
-      })
-      .catch((err) => {
-        // try refresh token
-        if (err.code === "ERR_NETWORK") {
-          console.log("here?");
-          setError(`${err.code} | The server is down. Try again later...`);
-          return;
-        }
-        console.log("auth/profil");
-        console.log(`${axios.defaults.baseURL}`);
-        console.log("READ THIS", err);
-        refreshToken();
-      })
-      .finally(() => setIsHydrated(true));
+    function checkUser() {
+      axios
+        .get("auth/profile")
+        .then((res) => {
+          console.log(`IS LOGGED IN ${isLoggedIn}`);
+          authenticate(res.data.isAuthenticated);
+          socket.connect();
+          chatSocket.connect();
+          if (isLoggedIn) return;
+          login(res.data.nickName, res.data.id, res.data.avatar);
+          console.log(`user authenticated ${res.data.isAuthenticated}`);
+        })
+        .catch((err) => {
+          // try refresh token
+          if (err.code === "ERR_NETWORK") {
+            console.log("here?");
+            setError(`${err.code} | The server is down. Try again later...`);
+            return;
+          }
+          console.log("auth/profil");
+          console.log(`${axios.defaults.baseURL}`);
+          console.log("READ THIS", err);
+          refreshToken();
+        })
+        .finally(() => setIsHydrated(true));
+    }
+
+    checkUser();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,7 +70,7 @@ export default function Auth({ children }: { children: ReactElement }) {
     );
 
   if (!isHydrated) return <Loading />;
-  console.log(`user authenticated 2fa ${isAuthenticated}`);
+  // console.log(`user authenticated 2fa ${isAuthenticated}`);
   return (
     <>
       {/* <Toaster /> */}

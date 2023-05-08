@@ -1,6 +1,6 @@
 import { Box, Button, Typography, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import useUserStore from "@/store/userStore";
 import toast from "react-hot-toast";
 
@@ -97,20 +97,10 @@ export default function UsernameSettings() {
         ></TextField>
         <Button
           type="submit"
-          sx={{
-            color: "text.primary",
-            fontSize: "1em",
-            fontWeight: "600",
-            backgroundColor:
-              usernameField === nickName || !isValidUsername
-                ? "accent.main"
-                : "accent.light",
-            marginTop: "10px",
-            textTransform: "none",
-            width: "210px",
-            height: "40px",
-            "&:hover": { backgroundColor: "primary.main" },
-          }}
+          color="accent"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
           disabled={usernameField === nickName || !isValidUsername}
         >
           Change username

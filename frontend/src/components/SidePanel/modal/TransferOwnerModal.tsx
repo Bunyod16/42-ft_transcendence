@@ -14,7 +14,7 @@ import { ChannelMember, Channel } from "@/types/social-type";
 import useUserStore from "@/store/userStore";
 import useConfirmToast from "@/hooks/useConfirmToast";
 import { toast } from "react-hot-toast";
-import axios from "../../apiClient/apiClient";
+import axios from "../../utils/apiClient";
 
 interface TransferOwnerModalItem {
   members: ChannelMember[];
@@ -57,9 +57,9 @@ export const TransferOwnerModal = ({
           toast.error(`${message}`);
         } else if (err?.statusCode === 400) {
           let message: string = err.message;
-          console.log(message);
+          // console.log(message);
           message = message.slice(message.indexOf(":") + 1, message.length);
-          console.log(message);
+          // console.log(message);
           toast.error(`${message}`);
         }
       });

@@ -1,19 +1,24 @@
-import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience";
 import { Perf } from "r3f-perf";
-import { KeyboardControls, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Box } from "@mui/material";
 import Overlay from "./Overlay";
 import { useRouter } from "next/router";
 import { socket } from "../socket/socket";
+import { Three } from "@/helpers/Three";
+import { Suspense, useEffect } from "react";
 
 function GameComponent() {
   const router = useRouter();
 
-  router.beforePopState(() => {
-    socket.disconnect();
-    return true;
-  });
+  useEffect(() => {
+    router.beforePopState(() => {
+      socket.disconnect();
+      return true;
+    });
+    console.log("game loaded?");
+  }, []);
+
   return (
     <Box
       component={"div"}
@@ -27,13 +32,7 @@ function GameComponent() {
         // zIndex: -100,
       }}
     >
-      <KeyboardControls
-        map={[
-          { name: "up", keys: ["ArrowUp", "KeyW"] },
-          { name: "down", keys: ["ArrowDown", "KeyS"] },
-        ]}
-      >
-        <Canvas
+      {/* <Canvas
           // orthographic
           shadows
           camera={{
@@ -43,14 +42,17 @@ function GameComponent() {
             near: 0.1,
             far: 1000,
           }}
-        >
+        > */}
+      <Overlay />
+      <Three>
+        <Suspense fallback={null}>
           <Perf position="bottom-left" />
 
           <Experience />
           <OrbitControls />
-        </Canvas>
-        <Overlay />
-      </KeyboardControls>
+        </Suspense>
+      </Three>
+      {/* </Canvas> */}
     </Box>
   );
 }

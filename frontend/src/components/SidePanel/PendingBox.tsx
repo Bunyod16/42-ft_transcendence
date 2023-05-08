@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useEffect } from "react";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 
@@ -28,7 +28,7 @@ const PendingBox = () => {
         friendId: id,
         friendStatus: "Accepted",
       })
-      .then((res) => console.log(res))
+      .then()
       .catch((err) => console.log(err.response));
   };
 

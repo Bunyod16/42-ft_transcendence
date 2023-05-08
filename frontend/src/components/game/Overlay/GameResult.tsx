@@ -1,7 +1,8 @@
 import useGameStore from "@/store/gameStore";
 import useUserStore from "@/store/userStore";
-import { Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import { Avatars } from ".";
 
 interface BgColorBox {
   color: string;
@@ -28,8 +29,9 @@ interface Player {
   score: number;
   color: string;
   position: "left" | "right";
+  avatar: string;
 }
-const PlayerResult = ({ name, score, color, position }: Player) => {
+const PlayerResult = ({ name, score, color, position, avatar }: Player) => {
   return (
     <Box
       component={"div"}
@@ -57,13 +59,12 @@ const PlayerResult = ({ name, score, color, position }: Player) => {
           display: "flex",
           flexDirection: position == "left" ? "row" : "row-reverse",
           gap: 2,
-          px: 5,
+          px: 4,
         }}
       >
-        <Box
-          component={"div"}
+        <Avatar
+          src={avatar}
           sx={{
-            backgroundImage: `url(https://source.boringavatars.com/beam/200/${name})`,
             width: 200,
             height: 200,
             position: "relative",
@@ -76,7 +77,10 @@ const PlayerResult = ({ name, score, color, position }: Player) => {
   );
 };
 
-const GameResult = () => {
+interface GameResultProp {
+  avatars: Avatars;
+}
+const GameResult = ({ avatars }: GameResultProp) => {
   const matchInfo = useGameStore((store) => store.matchInfo);
   const router = useRouter();
   const players = {
@@ -115,8 +119,8 @@ const GameResult = () => {
           width: "100%",
         }}
       >
-        <PlayerResult {...players.p2} position="left" />
-        <PlayerResult {...players.p1} position="right" />
+        <PlayerResult {...players.p2} avatar={avatars.p2} position="left" />
+        <PlayerResult {...players.p1} avatar={avatars.p1} position="right" />
       </Box>
 
       <Button

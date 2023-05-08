@@ -52,13 +52,13 @@ export default function RecentGamesProfile(user: UserProfile) {
               ? match.playerOne.nickName
               : match.playerTwo.nickName) === user.nickName;
 
-          console.log(
-            match.playerTwo.nickName,
-            match.playerTwoScore,
-            ":",
-            match.playerOneScore,
-            match.playerOne.nickName,
-          );
+          // console.log(
+          //   match.playerTwo.nickName,
+          //   match.playerTwoScore,
+          //   ":",
+          //   match.playerOneScore,
+          //   match.playerOne.nickName,
+          // );
 
           console.log("winner = ", winner);
           console.log("isPlayerOne[right] = ", isPlayerOne);

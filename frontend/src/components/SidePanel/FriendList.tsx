@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useEffect, useState } from "react";
-import axios from "../apiClient/apiClient";
+import axios from "../utils/apiClient";
 import useFriendsStore from "@/store/friendsStore";
 import useUserStore from "@/store/userStore";
 import { FriendType } from "@/types/social-type";
@@ -121,9 +121,9 @@ export default function FriendList() {
       .post("/friend-request/addFriendByNickName", {
         nickName: friendName,
       })
-      .then((response) => {
+      .then(() => {
         // alert("BEFRIENDING SUCCESSFUL");
-        console.log(response);
+        // console.log(response);
         updateRequests();
         toast.success("Request successful!");
       })

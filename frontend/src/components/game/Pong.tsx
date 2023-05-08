@@ -85,7 +85,7 @@ function Pong() {
   }, []);
 
   return (
-    <group visible={gameStatus == "InGame" || gameStatus == "Ended"}>
+    <group visible={gameStatus !== "NoGame"}>
       <Table tableSize={tableSize} />
 
       <Player
