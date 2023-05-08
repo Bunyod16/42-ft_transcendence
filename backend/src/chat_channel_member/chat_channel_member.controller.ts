@@ -480,10 +480,17 @@ export class ChatChannelMemberController {
       `ChatChannelMember => delete()`,
     );
 
-    return this.chatChannelMemberService.removeByUserInChatChannel(
+    const result = await this.chatChannelMemberService.removeByUserInChatChannel(
       requester.id,
       chatChannelId,
     );
+
+    const check = await this.chatChannelMemberService.findAllUsersInChatChannel(
+      chatChannelId,
+    );
+    if (check.length < 1)
+      await this.chatChannelService.remove(chatChannelId);
+    return result;
   }
 
   @Delete(':chatChannelMemberId')

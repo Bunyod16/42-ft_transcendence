@@ -18,6 +18,7 @@ import { ChatLineService } from 'src/chat_line/chat_line.service';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { User } from 'src/user/entities/user.entity';
 import { findUserSocket } from 'src/utils/socket-utils';
+import { GameStreamGateway } from 'src/game_stream/game_stream.gateway';
 
 @WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class QueueGateway implements OnGatewayDisconnect {
@@ -29,6 +30,7 @@ export class QueueGateway implements OnGatewayDisconnect {
     private matchService: MatchService,
     private chatLineService: ChatLineService,
     private chatChannelMemberService: ChatChannelMemberService,
+    private gameStreamGateway: GameStreamGateway,
   ) {}
 
   @UseGuards(UserAuthGuard)
@@ -46,6 +48,10 @@ export class QueueGateway implements OnGatewayDisconnect {
   ) {
     // console.log('entered queue');
     try {
+      const currentGame = await this.matchService.findCurrentByUser(req.user);
+      if (currentGame != null) {
+        await this.gameStreamGateway.endGame(currentGame, null);
+      }
       const game = await this.queueService.addUserToQueue(req.user, socket);
       socket.emit('queueEnterSuccess', game);
     } catch (error) {
