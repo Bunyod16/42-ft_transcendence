@@ -1,9 +1,12 @@
 import { Center, Text3D } from "@react-three/drei";
 import useGameStore from "@/store/gameStore";
+import * as THREE from "three";
 
 const VictoryDefeat = () => {
   const isWinner = useGameStore((state) => state.matchInfo.isWinner);
   const gameStatus = useGameStore((state) => state.gameStatus);
+  const winColor = new THREE.Color("yellow");
+  const loseColor = new THREE.Color("crimson");
 
   return (
     <group visible={gameStatus === "Ended"}>
@@ -20,7 +23,7 @@ const VictoryDefeat = () => {
           font="/Oswald_Bold.json"
         >
           {`${isWinner ? "Victory" : "Defeat"}`}
-          <meshNormalMaterial />
+          <meshStandardMaterial color={isWinner ? winColor : loseColor} />
         </Text3D>
       </Center>
     </group>

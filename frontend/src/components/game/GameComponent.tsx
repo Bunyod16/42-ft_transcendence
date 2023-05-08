@@ -2,11 +2,12 @@ import Experience from "./Experience";
 import { Perf } from "r3f-perf";
 import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { Box } from "@mui/material";
+// import Overlay from "./Overlay";
 import Overlay from "./Overlay";
 import { useRouter } from "next/router";
 import { socket } from "../socket/socket";
 import { Three } from "@/helpers/Three";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 function GameComponent() {
   const router = useRouter();
@@ -45,10 +46,12 @@ function GameComponent() {
         > */}
       <Overlay />
       <Three>
-        <Perf position="bottom-left" />
+        <Suspense fallback={null}>
+          <Perf position="bottom-left" />
 
-        <Experience />
-        <OrbitControls />
+          <Experience />
+          {/* <OrbitControls /> */}
+        </Suspense>
       </Three>
       {/* </Canvas> */}
     </Box>

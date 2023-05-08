@@ -46,15 +46,16 @@ export default function LoginPanel() {
         color="accent"
         sx={{
           padding: "10px 40px",
-          textDecoration: "none",
+          // textDecoration: "none",
           mt: 4,
           // backgroundColor: "accent.main",
           // transition: "0.3s",
           // "&:hover": { backgroundColor: "accent.hover" },
         }}
-        onClick={() =>
-          router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`)
-        }
+        onClick={() => {
+          router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+          console.log(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+        }}
       >
         {/* <Typography sx={{ color: "accent.text" }}>LOGIN WITH 42</Typography> */}
         Login with 42

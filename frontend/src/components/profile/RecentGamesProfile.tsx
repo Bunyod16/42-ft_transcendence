@@ -44,6 +44,10 @@ export default function RecentGamesProfile(user: UserProfile) {
           const isPlayerOne =
             match.playerOne.nickName === user.nickName ? true : false;
           const playerOneWonMatch = match.playerOneScore > match.playerTwoScore;
+          const isWinner =
+            (match.playerOneScore > match.playerTwoScore
+              ? match.playerOne.nickName
+              : match.playerTwo.nickName) === user.nickName;
 
           // console.log(
           //   match.playerTwo.nickName,
@@ -91,7 +95,11 @@ export default function RecentGamesProfile(user: UserProfile) {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {playerOneWonMatch && isPlayerOne ? "Victory" : "Defeat"}
+                  {playerOneWonMatch && isPlayerOne
+                    ? "Victory"
+                    : !playerOneWonMatch && !isPlayerOne
+                    ? "Victory"
+                    : "Defeat"}
                 </Typography>
               </Box>
               <Box

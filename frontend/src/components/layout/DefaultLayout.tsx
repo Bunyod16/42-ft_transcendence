@@ -5,6 +5,7 @@ import SidePanel from "../SidePanel";
 import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import { socket, chatSocket } from "../socket/socket";
 
 const Scene = dynamic(() => import("@/components/canvas/Scene"), {
   ssr: false,
@@ -19,6 +20,7 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
   const router = useRouter();
   useEffect(() => {
     console.log("mounted!!");
+
     return () => {
       console.log("un- mounted!!");
     };
@@ -59,12 +61,15 @@ function DefaultLayout({ children }: IDefaultLayoutProps) {
           width: "100vw",
           height: "100vh",
           pointerEvents: "none",
+          display: router.pathname === "/game" ? "block" : "none",
         }}
+        // orthographic
         shadows
         eventSource={ref}
         eventPrefix="client"
         camera={{
           position: [0, -4, 2],
+          rotation: [Math.PI / 2, 0, 0],
           // zoom: 200,
           // fov: 45,
           near: 0.1,

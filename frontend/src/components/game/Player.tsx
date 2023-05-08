@@ -2,11 +2,14 @@ import { Controls, ISize } from "./types";
 import { boxGeometry } from "./resource";
 import { Mesh, MeshStandardMaterial } from "three";
 import { socket } from "../socket/socket";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import useGameState from "@/hooks/useGameState";
 import useGameStore from "@/store/gameStore";
-import { useKeyboardControls, useTexture } from "@react-three/drei";
+import { Center, useKeyboardControls, useTexture } from "@react-three/drei";
 import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { Flex } from "@react-three/flex";
+import CustomizeStep from "./CustomizeStep";
 
 interface IPlayerProps {
   tableSize: ISize;
@@ -16,20 +19,25 @@ interface IPlayerProps {
 
 function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   const [, getKeys] = useKeyboardControls<Controls>();
-  // const body = useRef<RapierRigidBody>(null);
-  console.log("player render");
   const body = useRef<Mesh>(null);
   const mat = useRef<MeshStandardMaterial>(null);
   const matchInfo = useGameStore((state) => state.matchInfo);
   const gameStatus = useGameStore((state) => state.gameStatus);
   const lastEmit = useRef<number>(0);
   const gameState = useGameState();
-  const material = useGameStore((state) => state.material);
+  const [material, selectedSkin] = useGameStore((state) => [
+    state.material,
+    state.selectedSkin,
+  ]);
   const playerSkin = useTexture({
     ...material[
       playerLR == 1 ? matchInfo.playerOne.skin : matchInfo.playerTwo.skin
     ],
   });
+  const tmpSkin = useTexture({
+    ...material[selectedSkin],
+  });
+  // const relativeCameraOffset = new THREE.Vector3(0, 50, 200);
   // const [playerSkin, setPlayerSkin] = useState<any>();
 
   useEffect(() => {
@@ -47,7 +55,30 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
   }, [gameStatus, playerSkin]);
 
   useFrame((state, delta) => {
-    if (body.current && gameStatus == "InGame") {
+    if (!body.current) return null;
+
+    if (gameStatus === "Customize" && playerLR === 1) {
+      const cameraPosition = new THREE.Vector3();
+      cameraPosition.copy(body.current.position);
+      cameraPosition.x -= 1;
+      // // cameraPosition.y -= 1;
+      // // cameraPosition.z += 1;
+
+      const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
+      state.camera.position.lerp(cameraPosition, 0.01);
+      // // state.camera.quaternion.lerp(deg2rad(30), 0, 0);
+      state.camera.lookAt(body.current.position);
+      // state.camera.rotation.set(1.5, 0, 0);
+      state.camera.rotateZ(-1.55);
+      // // state.camera.position.lerp(body.current.position, 0.05);
+      // // state.camera.updateProjectionMatrix();
+      // 1;
+      // return null;
+      // camera.rotation.set(deg2rad(20), 0, 0);
+    }
+
+    if (gameStatus === "InGame") {
       if (isPlayer) {
         const keys = getKeys();
         lastEmit.current += delta;
@@ -63,6 +94,7 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
           : gameState.current.playerTwo.y;
       body.current.position.y = targetPosition / 100;
     }
+    return null;
   });
 
   return (
@@ -75,7 +107,10 @@ function Player({ tableSize, playerLR, isPlayer }: IPlayerProps) {
       rotation={[Math.PI / 2, 0, 0]}
       castShadow
     >
-      <meshStandardMaterial {...playerSkin} ref={mat} />
+      <meshStandardMaterial
+        {...(gameStatus === "Customize" ? { ...tmpSkin } : { ...playerSkin })}
+        ref={mat}
+      />
     </mesh>
   );
 }

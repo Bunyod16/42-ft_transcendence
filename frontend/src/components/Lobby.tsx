@@ -80,6 +80,8 @@ const Lobby = () => {
 
   React.useEffect(() => {
     toast.remove();
+
+    socket.connect();
     function onQueueEnterSuccess() {
       setIsQueueing(true);
     }

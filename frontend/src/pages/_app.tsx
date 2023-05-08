@@ -51,11 +51,11 @@ export default function MyApp(props: MyAppProps) {
           }}
         />
 
-        {/* <Auth> */}
-        <DefaultLayout>
-          <Component {...pageProps} />
-        </DefaultLayout>
-        {/* </Auth> */}
+        <Auth>
+          <DefaultLayout>
+            <Component {...pageProps} />
+          </DefaultLayout>
+        </Auth>
       </ThemeProvider>
     </CacheProvider>
   );

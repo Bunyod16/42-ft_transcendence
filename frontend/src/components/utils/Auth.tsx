@@ -36,11 +36,11 @@ export default function Auth({ children }: { children: ReactElement }) {
         .then((res) => {
           console.log(`IS LOGGED IN ${isLoggedIn}`);
           authenticate(res.data.isAuthenticated);
+          socket.connect();
+          chatSocket.connect();
           if (isLoggedIn) return;
           login(res.data.nickName, res.data.id, res.data.avatar);
           console.log(`user authenticated ${res.data.isAuthenticated}`);
-          socket.connect();
-          chatSocket.connect();
         })
         .catch((err) => {
           // try refresh token
@@ -57,7 +57,7 @@ export default function Auth({ children }: { children: ReactElement }) {
         .finally(() => setIsHydrated(true));
     }
 
-    // checkUser();
+    checkUser();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
