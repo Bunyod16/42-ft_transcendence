@@ -112,6 +112,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
     id: id || 0,
   });
   const [password, setPassword] = useState("");
+  const [isValidChannelName, setIsValidChannelName] = useState<boolean>(false);
 
   function getAllChannels() {
     return axios.get("/chat-channels/findAllPublicAndProtectedChannels");
@@ -150,7 +151,7 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
       axios
         .post("/chat-channels/protectedGroupMessage", {
           name: channelValue.name,
-          // password: channelValue.password,
+          password: channelValue.password,
         })
         .then(() => {
           toast.success(`Created ${channelValue.name}!`, {
@@ -159,8 +160,14 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           });
         })
         .catch((err) => {
-          console.log(err.response);
-          toast.error(err.response.data.message, { id: "createChannel" });
+          // console.log(err.response);
+          if (err?.statusCode === 400) {
+            let message: string = err.message;
+            console.log(message);
+            message = message.slice(message.indexOf(":") + 1, message.length);
+            toast.error(`${message}`);
+          }
+          // toast.error(err.response.data.message, { id: "createChannel" });
         })
         .finally(() => setOpen(false));
     } else {
@@ -173,9 +180,15 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
             id: "createChannel",
           }),
         )
-        .catch((err) =>
-          toast.error(err.response.data.message, { id: "createChannel" }),
-        )
+        .catch((err) => {
+          if (err?.statusCode === 400) {
+            let message: string = err.message;
+            console.log(message);
+            message = message.slice(message.indexOf(":") + 1, message.length);
+            toast.error(`${message}`);
+          }
+          // toast.error(err.response.data.message, { id: "createChannel" }),
+        })
         .finally(() => setOpen(false));
     }
   };
@@ -196,6 +209,14 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           console.log(err.response);
         });
   };
+
+  useEffect(() => {
+    const reg = /^[a-z0-9]{1,10}$/i;
+    setIsValidChannelName(reg.test(channelValue.name));
+  }, [channelValue.name]);
+
+  console.log(isValidChannelName);
+  console.log(channelValue.name);
 
   return (
     <Modal
@@ -303,9 +324,14 @@ const AddChannelModal = ({ open, setOpen }: AddChannelModalProp) => {
           fullWidth
           sx={{
             textTransform: "none",
+            color: "text.primary",
             mt: 2,
+            backgroundColor: !isValidChannelName
+              ? "accent.main"
+              : "accent.light",
           }}
           onClick={handleCreateChannel}
+          disabled={!isValidChannelName}
         >
           Create channel
         </Button>
