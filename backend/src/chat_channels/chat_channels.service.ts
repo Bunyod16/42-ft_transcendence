@@ -18,6 +18,7 @@ import { CustomException } from 'src/utils/app.exception-filter';
 import { ChatChannelMemberService } from 'src/chat_channel_member/chat_channel_member.service';
 import { UserService } from 'src/user/user.service';
 import { encodePassword } from 'src/utils/bcrypt';
+import { UpdateChatChannelMemberDto } from 'src/chat_channel_member/dto/update-chat_channel_member.dto';
 
 @Injectable()
 export class ChatChannelsService {
@@ -56,8 +57,19 @@ export class ChatChannelsService {
 
     const savedChannel = await this.chatChannelRepository.save(channel);
 
-    //immeadiately add owner to channelmembers
-    await this.chatChannelsMembersService.create(ownerId, savedChannel.id);
+    //immeadiately add owner to channelmembers and make him admin
+    const owner = await this.chatChannelsMembersService.create(
+      ownerId,
+      savedChannel.id,
+    );
+    const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
+    updateChatChannelMemberDto.isAdmin = true;
+
+    await this.chatChannelsMembersService.update(
+      owner.id,
+      updateChatChannelMemberDto,
+    );
+
     return savedChannel;
   }
 
@@ -103,6 +115,18 @@ export class ChatChannelsService {
       savedChannel.id,
       channelPassword,
       true,
+    );
+
+    const owner = await this.chatChannelsMembersService.create(
+      ownerId,
+      savedChannel.id,
+    );
+    const updateChatChannelMemberDto = new UpdateChatChannelMemberDto();
+    updateChatChannelMemberDto.isAdmin = true;
+
+    await this.chatChannelsMembersService.update(
+      owner.id,
+      updateChatChannelMemberDto,
     );
 
     return savedChannel;
