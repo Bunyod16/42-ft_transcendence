@@ -14,7 +14,7 @@
 <!-- ABOUT THE PROJECT -->
 
 ## Demo
-<iframe width="560" height="315" src="https://www.youtube.com/embed/GJV4d4vHxng" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![WATCH DEMO](https://i.imgur.com/qTcxwmn.png)](https://youtu.be/GJV4d4vHxng)
 
 ## Features:
  - 42 network's OAuth authentication
